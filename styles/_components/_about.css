@@ -1,0 +1,85 @@
+/*
+ * COMPONENTE: About Section
+ *
+ * Estilos para a seção "Sobre a Artista".
+ */
+
+.about-section {
+    /* * Espaçamento interno generoso para a seção
+     * (xl = 64px em cima/baixo, 0 nas laterais)
+     */
+    padding: var(--spacing-xl) 0;
+    
+    /* * Usamos um dos nossos fundos escuros, mas um tom
+     * um pouco diferente do "body" para criar uma leve
+     * separação visual (Efeito "Smoke").
+     */
+    background-color: var(--color-gray-dark); /* #181818 */
+}
+
+/* * Container de Duas Colunas
+ * Usamos flexbox para alinhar a imagem e o texto lado a lado.
+ */
+.about-container {
+    display: flex;
+    align-items: center; /* Alinha verticalmente */
+    gap: var(--spacing-lg); /* Espaço de 32px entre a imagem e o texto */
+}
+
+/* * 1. Coluna da Imagem */
+.about-image {
+    /* A coluna da imagem ocupará 40% do espaço */
+    flex-basis: 40%; 
+}
+
+.about-image img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    
+    /* * Destaque dourado sutil na imagem
+     * Usamos uma borda e uma sombra para criar um
+     * efeito de "moldura de galeria".
+     */
+    border: 3px solid var(--color-gold-dark);
+    border-radius: var(--border-radius-sm);
+    box-shadow: 0 0 15px var(--color-gold-deep);
+}
+
+/* * 2. Coluna do Texto */
+.about-text {
+    /* A coluna de texto ocupará 60% do espaço */
+    flex-basis: 60%;
+}
+
+.about-text .section-title {
+    /* O H2 já pega a fonte e cor global,
+     * mas vamos ajustar o tamanho e a margem. */
+    font-size: var(--font-size-h2);
+    margin-bottom: var(--spacing-md); /* 16px */
+}
+
+.about-text p {
+    font-size: var(--font-size-md);
+    color: var(--color-text-medium); /* Cinza claro */
+    line-height: 1.7;
+    max-width: 600px; /* Limita a largura do texto para melhor legibilidade */
+}
+
+/* * Responsividade para Mobile (Telas menores que 768px)
+ * Quando a tela for pequena, as colunas vão ficar
+ * uma em cima da outra (layout de pilha).
+ */
+@media (max-width: 768px) {
+    .about-container {
+        flex-direction: column; /* Empilha as colunas */
+        text-align: center;
+    }
+
+    .about-text {
+        /* Garante que o texto fique centralizado */
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+}
