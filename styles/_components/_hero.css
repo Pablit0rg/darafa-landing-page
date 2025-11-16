@@ -26,6 +26,19 @@
      * em telas de celular.
      */
     padding: 0 var(--spacing-md); /* 0 em cima/baixo, 16px nas laterais */
+
+    /* (Encontre o seletor .hero-section no seu _hero.css) */
+
+.hero-section {
+    /* (Linhas existentes: height: 100vh; min-height: 500px; etc...) */
+    height: 100vh;
+    min-height: 500px; 
+    
+    /* ... (display: flex; etc...) */
+    
+    /* ADICIONE ESTA LINHA PARA NÃO FICAR EMBAIXO DA NAVBAR */
+    padding-top: 65px; 
+}
 }
 
 /* * Estilo do Título Principal (H1)
