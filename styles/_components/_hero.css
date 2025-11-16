@@ -1,0 +1,89 @@
+/*
+ * COMPONENTE: Hero Section
+ *
+ * Estilos para a seção de abertura do site (o "Hero").
+ */
+
+.hero-section {
+    /* * 1. Layout (Tela Cheia)
+     * Define a seção para ocupar 100% da altura da tela (vh = viewport height).
+     */
+    height: 100vh;
+    min-height: 500px; /* Garante uma altura mínima em telas menores */
+    
+    /* * 2. Flexbox para Centralização
+     * Usamos flexbox para centralizar perfeitamente o conteúdo 
+     * (título, subtítulo, botão) na vertical e horizontal.
+     */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    
+    /* * 3. Espaçamento
+     * Adiciona um padding para o conteúdo não colar nas bordas
+     * em telas de celular.
+     */
+    padding: 0 var(--spacing-md); /* 0 em cima/baixo, 16px nas laterais */
+}
+
+/* * Estilo do Título Principal (H1)
+ * Sobrescreve o dourado padrão para um brilho mais intenso.
+ */
+.hero-section .hero-title {
+    font-size: var(--font-size-h1);
+    color: var(--color-gold-bright); /* Dourado brilhante */
+    
+    /* Sombra de texto para dar o efeito "glow" */
+    text-shadow: 0 0 10px var(--color-gold-dark);
+}
+
+/* * Estilo do Subtítulo (P) */
+.hero-section .hero-subtitle {
+    font-size: var(--font-size-lg); /* 18px */
+    color: var(--color-text-medium); /* Cinza claro */
+    font-weight: 300;
+    margin-top: var(--spacing-sm); /* 8px */
+    margin-bottom: var(--spacing-lg); /* 32px */
+}
+
+/* * Estilo do Botão Principal (CTA - Call to Action) */
+.cta-button {
+    display: inline-block; /* Permite aplicar padding */
+    padding: var(--spacing-sm) var(--spacing-lg); /* 8px 32px */
+    
+    /* * 4. O Degradê Dourado
+     * Criamos o efeito de metal polido usando os nossos
+     * tons de dourado.
+     */
+    background-image: linear-gradient(
+        145deg,
+        var(--color-gold-bright),
+        var(--color-gold-medium) 50%,
+        var(--color-gold-dark) 90%
+    );
+    
+    color: var(--color-black-pure); /* Cor do texto do botão */
+    font-family: var(--font-family-body);
+    font-weight: 500;
+    font-size: var(--font-size-md);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    
+    border: none;
+    border-radius: var(--border-radius-pill); /* Bordas arredondadas */
+    cursor: pointer;
+    
+    /* * Sombra para destacar o botão do fundo */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    
+    /* * Transição suave para o efeito :hover */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* * Efeito :hover (passar o mouse) no botão */
+.cta-button:hover {
+    transform: translateY(-3px); /* Levanta o botão levemente */
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
