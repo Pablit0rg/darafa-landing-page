@@ -26,3 +26,10 @@
 @import url('_components/_gallery.css');
 @import url('_components/_cta.css');
 @import url('_components/_footer.css');
+
+/* (Linhas existentes...) */
+@import url('_components/_cta.css');
+@import url('_components/_footer.css');
+
+/* ADICIONE ESTA NOVA LINHA NO FIM */
+@import url('_components/_uiverse-button.css');
