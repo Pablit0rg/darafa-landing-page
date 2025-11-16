@@ -1,36 +1,15 @@
-/*
- * COMPONENTE: Botão Uiverse (Traduzido)
- *
- * Pegamos o código do Uiverse e o "traduzimos" para
- * usar nossas variáveis de cor e corrigir o alinhamento.
- */
-
+/* From Uiverse.io by vinodjangid07 */
 .Btn {
-  width: 220px; /* Aumentei a largura para o novo texto */
-  height: 50px; /* Aumentei a altura para ficar mais destacado */
+  width: 140px;
+  height: 40px;
   border: none;
-  border-radius: var(--border-radius-pill); /* Usa nossa variável de borda */
-  
-  /* * TRADUÇÃO DE COR:
-   * Substituímos o gradiente original pelo nosso gradiente dourado.
-   */
-  background: linear-gradient(
-        145deg,
-        var(--color-gold-bright),
-        var(--color-gold-medium) 50%,
-        var(--color-gold-dark) 90%
-    );
+  border-radius: 10px;
+  background: linear-gradient(to right,#77530a,#ffd277,#77530a,#77530a,#ffd277,#77530a);
   background-size: 250%;
   background-position: left;
-  
+  color: #ffd277;
   position: relative;
-  
-  /* * CORREÇÃO DE ALINHAMENTO:
-   * Mudamos de 'flex' para 'inline-flex' para que o 
-   * 'text-align: center' do Hero possa centralizá-lo.
-   */
-  display: inline-flex; 
-  
+  display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
@@ -40,37 +19,19 @@
 
 .Btn::before {
   position: absolute;
-  
-  /* * TRADUÇÃO DE TEXTO:
-   * Trocamos "SUBSCRIBE" por "CONHECER AS JOIAS".
-   */
-  content: "CONHECER AS JOIAS"; 
-  
-  /* * TRADUÇÃO DE COR:
-   * Trocamos a cor do texto para nosso preto.
-   */
-  color: var(--color-black-pure);
-  font-weight: 500;
-  font-size: 0.9rem; /* Ajustei o tamanho da fonte */
-  letter-spacing: 0.5px;
-  
+  content: "SUBSCRIBE";
+  color: #ffd277;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 97%; /* Largura da parte interna */
-  height: 90%; /* Altura da parte interna */
-  border-radius: var(--border-radius-pill); /* Borda interna */
+  width: 97%;
+  height: 90%;
+  border-radius: 8px;
   transition-duration: 1s;
-  
-  /* * TRADUÇÃO DE COR:
-   * Trocamos o fundo interno preto pelo nosso dourado brilhante,
-   * para que o texto preto fique legível.
-   */
-  background-color: var(--color-gold-bright);
+  background-color: rgba(0, 0, 0, 0.842);
   background-size: 200%;
 }
 
-/* Animações (não precisam de tradução) */
 .Btn:hover {
   background-position: right;
   transition-duration: 1s;
