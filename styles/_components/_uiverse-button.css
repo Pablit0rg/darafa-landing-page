@@ -1,15 +1,25 @@
-/* From Uiverse.io by vinodjangid07 */
+/* * From Uiverse.io by vinodjangid07
+ * --- MODIFICADO (Híbrido) ---
+ */
 .Btn {
-  width: 140px;
-  height: 40px;
+  /* TAMANHO: Aumentado para o novo texto */
+  width: 220px;
+  height: 50px;
+  
   border: none;
   border-radius: 10px;
+  
+  /* ESTILO: Mantido 100% original */
   background: linear-gradient(to right,#77530a,#ffd277,#77530a,#77530a,#ffd277,#77530a);
   background-size: 250%;
   background-position: left;
   color: #ffd277;
+  
   position: relative;
-  display: flex;
+  
+  /* ALINHAMENTO: Corrigido para centralizar */
+  display: inline-flex; /* Era 'flex' */
+  
   align-items: center;
   justify-content: center;
   cursor: pointer;
@@ -19,7 +29,12 @@
 
 .Btn::before {
   position: absolute;
-  content: "SUBSCRIBE";
+  
+  /* TEXTO: Alterado */
+  content: "CONHECER AS JOIAS";
+  font-size: 0.9rem; /* Ajuste para o novo texto */
+  
+  /* ESTILO: Mantido 100% original */
   color: #ffd277;
   display: flex;
   align-items: center;
@@ -32,6 +47,7 @@
   background-size: 200%;
 }
 
+/* ANIMAÇÃO: Mantida 100% original */
 .Btn:hover {
   background-position: right;
   transition-duration: 1s;
