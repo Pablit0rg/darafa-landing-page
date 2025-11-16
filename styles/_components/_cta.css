@@ -1,0 +1,58 @@
+/*
+ * COMPONENTE: CTA Section (Call to Action)
+ *
+ * Estilos para a seção final de chamada para o Instagram.
+ */
+
+.cta-section {
+    padding: var(--spacing-xl) 0; /* 64px em cima/baixo */
+    
+    /* * Usamos um dos tons de fundo escuros para variar
+     * e dar ritmo à rolagem (Efeito "Smoke").
+     */
+    background-color: var(--color-gray-medium); /* #262626 */
+    
+    /* * Centraliza todo o conteúdo */
+    text-align: center;
+}
+
+.cta-section .section-title {
+    font-size: var(--font-size-h2);
+}
+
+.cta-section p {
+    font-size: var(--font-size-lg); /* 18px */
+    color: var(--color-text-medium);
+    margin-top: var(--spacing-sm); /* 8px */
+    margin-bottom: var(--spacing-lg); /* 32px */
+    
+    /* Limita a largura do texto para melhor leitura */
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* * Botão Específico do Instagram
+ *
+ * Reutilizamos a classe .cta-button que definimos no Hero,
+ * mas adicionamos uma classe nova (.cta-button-instagram)
+ * para fazer ajustes finos.
+ */
+.cta-button-instagram {
+    /* * Aumentamos o tamanho do botão e do texto
+     * para ele ser o foco principal da seção.
+     */
+    padding: var(--spacing-md) var(--spacing-xl); /* 16px 64px */
+    font-size: var(--font-size-lg); /* 18px */
+    font-weight: 500;
+
+    /* (Ele já herda o degradê, a borda e o :hover
+     * da classe .cta-button do _hero.css)
+     */
+    
+    /* * Adiciona o ícone do Instagram (simulado)
+     * NOTA: O ideal seria um SVG, mas podemos 
+     * simular com font-awesome ou unicode.
+     * Por enquanto, vamos apenas estilizar o botão.
+     */
+}
