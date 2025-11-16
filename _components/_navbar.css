@@ -1,0 +1,154 @@
+/*
+ * COMPONENTE: Navbar
+ *
+ * Estilos para a barra de navegação principal.
+ */
+
+.navbar {
+    width: 100%;
+    padding: var(--spacing-md) 0; /* 16px em cima/baixo */
+    
+    /* * Design "Ouro na Noite"
+     * Fundo escuro com uma leve transparência para 
+     * sentir a rolagem "por baixo".
+     */
+    background-color: rgba(7, 7, 7, 0.85); /* --color-black-pure com 85% alpha */
+    backdrop-filter: blur(10px); /* Efeito de vidro fosco */
+    
+    /* * Posição Fixa
+     * Mantém a navbar no topo o tempo todo.
+     */
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000; /* Garante que fique acima de tudo */
+    
+    border-bottom: 1px solid var(--color-gray-dark);
+}
+
+.navbar-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* * Logo / Marca (reutiliza o efeito glitter) */
+.navbar-brand {
+    font-size: 1.5rem; /* 24px */
+    text-decoration: none;
+    /* (O efeito glitter-text é aplicado via HTML) */
+}
+
+/* * Menu Desktop */
+.navbar-menu {
+    display: flex;
+    list-style: none;
+    gap: var(--spacing-lg); /* 32px entre os links */
+}
+
+.navbar-link {
+    color: var(--color-text-medium);
+    font-weight: 400;
+    text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-size: var(--font-size-sm); /* 14px */
+    transition: color 0.3s ease;
+}
+
+/* * Efeito hover nos links
+ * Usa o dourado do botão Uiverse para consistência
+ */
+.navbar-link:hover {
+    color: #ffd277; /* Dourado do botão Uiverse */
+}
+
+/* * Botão Hambúrguer (Mobile) - Escondido no Desktop */
+.navbar-toggler {
+    display: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    
+    /* Configuração do "hambúrguer" */
+    display: none;
+    flex-direction: column;
+    gap: 4px;
+    padding: 5px;
+}
+
+.toggler-icon {
+    display: block;
+    width: 24px;
+    height: 3px;
+    background-color: var(--color-gold-medium);
+    border-radius: 2px;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+/* --- RESPONSIVIDADE (Mobile) --- */
+@media (max-width: 768px) {
+    /* Mostra o botão hambúrguer */
+    .navbar-toggler {
+        display: flex;
+    }
+
+    /* Esconde o menu desktop */
+    .navbar-menu {
+        /* * Estilo do Menu Mobile (Popup) */
+        position: fixed;
+        top: 65px; /* Altura da navbar */
+        left: -100%; /* Começa escondido fora da tela */
+        
+        width: 100%;
+        height: calc(100vh - 65px); /* Altura total menos a navbar */
+        
+        background-color: rgba(7, 7, 7, 0.95); /* Fundo "Ouro na Noite" */
+        backdrop-filter: blur(10px);
+        
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        
+        transition: left 0.4s cubic-bezier(0.77, 0, 0.175, 1);
+    }
+    
+    /* * Classe que o JavaScript vai adicionar */
+    .navbar-menu.is-active {
+        left: 0; /* Puxa o menu para a tela */
+    }
+
+    .navbar-link {
+        /* Aumenta o texto para mobile */
+        font-size: 1.5rem; /* 24px */
+        padding: var(--spacing-md);
+    }
+
+    /* * Animação do "X" no hambúrguer (quando ativo) */
+    .navbar-toggler.is-active .toggler-icon:nth-child(1) {
+        transform: rotate(45deg) translate(5px, 5px);
+    }
+    .navbar-toggler.is-active .toggler-icon:nth-child(2) {
+        opacity: 0;
+    }
+    .navbar-toggler.is-active .toggler-icon:nth-child(3) {
+        transform: rotate(-45deg) translate(7px, -7px);
+    }
+}
+Passo 4: Atualizar o "Maestro" (Importante!)
+O senhor criou um novo componente, agora precisa "avisar" o main.css.
+
+Arquivo para editar: styles/main.css
+
+Adicione a importação do _navbar.css na sua lista de componentes:
+
+CSS
+
+/* * 2. COMPONENTES */
+/* (Linhas existentes...) */
+@import url('_components/_hero.css');
+/* ...etc... */
+@import url('_components/_uiverse-button.css');
+
+/* ADICIONE ESTA NOVA LINHA */
+@import url('_components/_navbar.css');
