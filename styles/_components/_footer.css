@@ -1,0 +1,34 @@
+/*
+ * COMPONENTE: Footer Section
+ *
+ * Estilos para o rodapé final do site.
+ */
+
+.footer-section {
+    padding: var(--spacing-lg) 0; /* 32px em cima/baixo */
+    
+    /* * Usamos o tom de preto mais profundo para
+     * encerrar a página.
+     */
+    background-color: var(--color-black-pure); /* #070707 */
+    
+    /* * Borda superior sutil para separar o rodapé
+     * do resto do conteúdo.
+     */
+    border-top: 1px solid var(--color-gray-dark); /* #181818 */
+    
+    text-align: center;
+}
+
+.footer-section p {
+    font-size: var(--font-size-sm); /* 14px */
+    color: var(--color-text-medium); /* Cinza claro */
+    line-height: 1.6;
+}
+
+/* * Estiliza o segundo parágrafo (créditos) se houver */
+.footer-section p + p {
+    margin-top: var(--spacing-xs); /* 4px */
+    font-size: 0.8rem; /* 12.8px */
+    color: var(--color-gray-medium); /* Cinza mais escuro */
+}
