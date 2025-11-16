@@ -1,0 +1,28 @@
+/*
+ * ARQUITETURA MODULAR CSS - DARAFA LANDING PAGE
+ *
+ * ATENÇÃO:
+ * Este arquivo (main.css) NÃO DEVE SER EDITADO DIRETAMENTE.
+ * Ele serve apenas como o "maestro" que importa todos os 
+ * componentes de estilo.
+ *
+ * Para editar estilos, modifique os arquivos individuais 
+ * dentro das pastas _base/ ou _components/.
+ */
+
+/* * 1. BASE
+ * (Reset, Variáveis de Cor, Fontes e Estilos Globais)
+ */
+@import url('_base/_reset.css');
+@import url('_base/_variables.css');
+@import url('_base/_global.css');
+
+
+/* * 2. COMPONENTES
+ * (Estilos específicos para cada seção da página)
+ */
+@import url('_components/_hero.css');
+@import url('_components/_about.css');
+@import url('_components/_gallery.css');
+@import url('_components/_cta.css');
+@import url('_components/_footer.css');
