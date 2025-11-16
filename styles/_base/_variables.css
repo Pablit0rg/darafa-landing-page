@@ -1,0 +1,59 @@
+/*
+ * ARQUIVO DE VARIÁVEIS
+ *
+ * Aqui definimos todos os nossos "tokens" de design:
+ * - Paleta de cores (Nossa paleta "Ouro na Noite")
+ * - Tipografia (Famílias e tamanhos de fonte)
+ * - Espaçamentos e bordas
+ */
+
+:root {
+    /* * 1. Paleta de Cores (Ouro na Noite) */
+
+    /* Pretos e Tons de Fundo (Efeito "Smoke") */
+    --color-black-pure: #070707;
+    --color-black-deep: #080808;
+    --color-black-medium: #0E0E0E;
+    --color-gray-dark: #181818;
+    --color-gray-medium: #262626;
+
+    /* Dourados e Destaques */
+    --color-gold-bright: #F6D48A; /* Dourado brilhante (reflexos) */
+    --color-gold-medium: #C6A36B; /* Dourado principal (botões, textos) */
+    --color-gold-dark: #593202;  /* Dourado escuro (sombras) */
+    --color-gold-deep: #3C2900;  /* Sombra profunda do dourado */
+
+    /* Texto */
+    --color-text-light: #FAFAFA; /* Branco suave (principal) */
+    --color-text-medium: #a0a0a0; /* Cinza claro (subtítulos) */
+
+
+    /* * 2. Tipografia (Fontes) */
+    --font-family-headings: 'Playfair Display', serif;
+    --font-family-body: 'Poppins', sans-serif;
+
+    /* Tamanhos de Fonte (Base) */
+    --font-size-base: 16px;
+    --font-size-sm: 0.875rem; /* 14px */
+    --font-size-md: 1rem;     /* 16px */
+    --font-size-lg: 1.125rem; /* 18px */
+
+    /* Tamanhos de Títulos */
+    --font-size-h1: 3.5rem;   /* 56px */
+    --font-size-h2: 2.5rem;   /* 40px */
+    --font-size-h3: 1.75rem;  /* 28px */
+
+
+    /* * 3. Layout e Espaçamento */
+    --container-width: 1140px;
+    --spacing-xs: 4px;
+    --spacing-sm: 8px;
+    --spacing-md: 16px;
+    --spacing-lg: 32px;
+    --spacing-xl: 64px;
+
+    /* * 4. Bordas */
+    --border-radius-sm: 4px;
+    --border-radius-md: 8px;
+    --border-radius-pill: 50px;
+}
