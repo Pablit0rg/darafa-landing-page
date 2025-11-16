@@ -1,65 +1,57 @@
 /*
- * ARQUIVO DE RESET (CSS RESET)
+ * ARQUIVO DE ESTILOS GLOBAIS
  *
- * Remove estilos padrão do navegador para garantir
- * consistência e começar com uma "tela em branco".
+ * Define os estilos básicos do site que serão aplicados
+ * em todas as páginas e seções (ex: body, containers, títulos).
  */
 
-/* 1. Remove margens e preenchimentos de tudo. */
-*,
-*::before,
-*::after {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box; /* Garante que padding e border não afetem o tamanho total */
+/* 1. Estilos do Corpo (Body) */
+body {
+    /* * Efeito de fundo "Smoke"
+     * Criamos um degradê radial muito sutil usando nossas cores
+     * de fundo mais escuras. Começa com um preto médio (#0E0E0E)
+     * e vai para um preto puro (#070707) nas bordas.
+     */
+    background-color: var(--color-black-pure);
+    background-image: radial-gradient(
+        circle at 50% 50%,
+        var(--color-black-medium),
+        var(--color-black-pure) 70%
+    );
+
+    /* * Define a fonte principal (Poppins) e a cor de texto (branco suave)
+     * para todo o site.
+     */
+    font-family: var(--font-family-body);
+    font-size: var(--font-size-base); /* 16px */
+    font-weight: 300; /* Um peso mais leve para Poppins fica elegante */
+    color: var(--color-text-light);
 }
 
-/* 2. Define um comportamento de altura de linha mais natural. */
-html {
-  line-height: 1.5;
-  -webkit-font-smoothing: antialiased; /* Deixa fontes mais suaves no macOS/iOS */
-  -moz-osx-font-smoothing: grayscale; /* Deixa fontes mais suaves no Firefox */
+/* 2. Definição dos Títulos (Headings) */
+h1, h2, h3, h4, h5, h6 {
+    /* * Aplica a fonte de título (Playfair Display) e a cor dourada
+     * média a todos os títulos.
+     */
+    font-family: var(--font-family-headings);
+    font-weight: 700;
+    color: var(--color-gold-medium);
+    line-height: 1.2;
 }
 
-/* 3. Remove estilos padrão de listas. */
-ul,
-ol {
-  list-style: none;
+/* 3. Classe de Container Padrão */
+/* * Esta é uma classe "helper" que usaremos em todas as seções
+ * para centralizar o conteúdo e limitar sua largura máxima.
+ */
+.container {
+    width: 90%; /* Funciona bem em mobile */
+    max-width: var(--container-width); /* Limita a 1140px em desktops */
+    margin: 0 auto; /* Centraliza o container */
 }
 
-/* 4. Remove decoração de texto (sublinhado) de links. */
+/* 4. Estilos de Links e Botões Globais (se houver) */
+/* (Vamos definir botões específicos nos componentes, 
+ * mas podemos ter um estilo base aqui se quisermos) */
 a {
-  text-decoration: none;
-  color: inherit; /* Faz links herdarem a cor do texto pai */
-}
-
-/* 5. Simplifica o estilo de imagens e mídias. */
-img,
-picture,
-video,
-canvas,
-svg {
-  display: block;
-  max-width: 100%;
-}
-
-/* 6. Remove estilos padrão de botões e inputs. */
-input,
-button,
-textarea,
-select {
-  font: inherit; /* Faz com que herdem a fonte do pai */
-  border: none;
-  background: none;
-  color: inherit;
-}
-
-/* 7. Remove setas de inputs do tipo número */
-input[type="number"] {
-    -moz-appearance: textfield;
-}
-input[type="number"]::-webkit-outer-spin-button,
-input[type="number"]::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
+    transition: color 0.3s ease, background-color 0.3s ease;
 }
