@@ -29,14 +29,44 @@
 }
 
 /* * Estilo do Título Principal (H1)
- * Sobrescreve o dourado padrão para um brilho mais intenso.
+ * Agora com o efeito "Glitter Dourado" do botão Uiverse.
  */
 .hero-section .hero-title {
     font-size: var(--font-size-h1);
-    color: var(--color-gold-bright); /* Dourado brilhante */
     
-    /* Sombra de texto para dar o efeito "glow" */
-    text-shadow: 0 0 10px var(--color-gold-dark);
+    /* * Efeito "Glitter Dourado" no Texto */
+    background: linear-gradient(
+        to right,
+        #77530a,   /* Cor escura do botão Uiverse */
+        #ffd277,   /* Cor clara do botão Uiverse */
+        #77530a    /* Cor escura do botão Uiverse */
+    );
+    background-size: 200% auto; /* Tamanho para a animação */
+    -webkit-background-clip: text; /* Faz o background aparecer no texto */
+    background-clip: text;
+    -webkit-text-fill-color: transparent; /* Torna o texto transparente */
+    color: transparent; /* Fallback */
+    
+    transition: background-position 1s ease-out; /* Transição para o hover */
+}
+
+/* * Animação do "Glitter" ao passar o mouse */
+.hero-section .hero-title.glitter-text:hover {
+    background-position: -100% center; /* Faz o degradê "correr" */
+    cursor: default; /* Remove o cursor de link, já que é um título */
+}
+
+/* Reduz o tamanho da fonte em telas menores */
+@media (max-width: 768px) {
+    .hero-section .hero-title {
+        font-size: 2.5rem; /* Ajuste para tablets */
+    }
+}
+
+@media (max-width: 480px) {
+    .hero-section .hero-title {
+        font-size: 2rem; /* Ajuste para celulares */
+    }
 }
 
 /* * Estilo do Subtítulo (P) */
