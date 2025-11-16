@@ -33,3 +33,12 @@
 
 /* ADICIONE ESTA NOVA LINHA NO FIM */
 @import url('_components/_uiverse-button.css');
+
+/* * 2. COMPONENTES */
+/* (Linhas existentes...) */
+@import url('_components/_hero.css');
+/* ...etc... */
+@import url('_components/_uiverse-button.css');
+
+/* ADICIONE ESTA NOVA LINHA */
+@import url('_components/_navbar.css');
