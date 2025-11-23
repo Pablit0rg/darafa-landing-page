@@ -1,0 +1,136 @@
+/*
+ * COMPONENTE: Navbar
+ * Design: Luxo, Fixo, Efeito Vidro
+ */
+
+.navbar {
+    width: 100%;
+    height: 80px; /* Altura fixa para cálculo de layout */
+    
+    position: fixed; /* Fica presa no topo */
+    top: 0;
+    left: 0;
+    z-index: 1000; /* Acima de tudo */
+    
+    /* Fundo Escuro com Transparência e Blur */
+    background-color: rgba(5, 5, 5, 0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(198, 163, 107, 0.1); /* Borda dourada muito sutil */
+    
+    display: flex;
+    align-items: center;
+}
+
+.navbar-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+/* --- Logo da Navbar --- */
+.navbar-brand-logo {
+    display: flex;
+    align-items: center;
+}
+
+.nav-logo-img {
+    height: 50px; /* Tamanho controlado da logo na barra */
+    width: auto;
+    transition: transform 0.3s ease;
+}
+
+.navbar-brand-logo:hover .nav-logo-img {
+    transform: scale(1.05); /* Leve zoom ao passar o mouse */
+}
+
+/* --- Menu Desktop --- */
+.navbar-menu {
+    display: flex;
+    gap: var(--spacing-lg);
+    list-style: none;
+}
+
+.navbar-link {
+    font-family: var(--font-sans);
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--color-text-muted);
+    font-weight: 400;
+    position: relative;
+    transition: color 0.3s ease;
+}
+
+/* Efeito Hover Dourado nos Links */
+.navbar-link:hover {
+    color: var(--color-gold-light);
+}
+
+.navbar-link::after {
+    /* Linha dourada que aparece embaixo ao passar o mouse */
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 1px;
+    bottom: -4px;
+    left: 0;
+    background-color: var(--color-gold-medium);
+    transition: width 0.3s ease;
+}
+
+.navbar-link:hover::after {
+    width: 100%;
+}
+
+/* --- Botão Hambúrguer (Mobile) --- */
+.navbar-toggler {
+    display: none; /* Escondido no Desktop */
+    cursor: pointer;
+    flex-direction: column;
+    gap: 6px;
+    padding: 10px;
+    z-index: 1001;
+}
+
+.toggler-icon {
+    width: 30px;
+    height: 2px;
+    background-color: var(--color-gold-medium);
+    transition: all 0.3s ease;
+}
+
+/* --- Responsividade Mobile (Telas menores que 768px) --- */
+@media (max-width: 768px) {
+    .navbar-toggler {
+        display: flex; /* Mostra o botão */
+    }
+
+    .navbar-menu {
+        position: fixed;
+        top: 0;
+        right: -100%; /* Começa escondido na direita */
+        width: 70%;
+        height: 100vh;
+        background-color: var(--color-black-pure);
+        border-left: 1px solid var(--color-gold-dark);
+        
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: var(--spacing-xl);
+        
+        transition: right 0.4s cubic-bezier(0.77, 0, 0.175, 1);
+        box-shadow: -10px 0 30px rgba(0,0,0,0.8);
+    }
+
+    /* Classe ativa (adicionada via JS) */
+    .navbar-menu.active {
+        right: 0;
+    }
+
+    .navbar-link {
+        font-size: 1.2rem;
+        color: var(--color-gold-medium);
+    }
+}
