@@ -1,48 +1,61 @@
 /*
- * COMPONENTE: Destaques (Highlights)
- * Design: Grid Duplo com Molduras Douradas
+ * COMPONENTE: Destaques e Galeria
+ * Design: Molduras Douradas e Grid de 5 Colunas
  */
 
 .highlights-section {
     padding: var(--spacing-xl) 0;
-    position: relative;
 }
 
-/* Wrapper Principal: Divide a tela em 2 grandes colunas */
-.highlights-grid-wrapper {
-    display: flex;
-    justify-content: space-between;
-    gap: var(--spacing-xl); /* Espaço grande entre "Sobre" e "Galeria" */
+/* --- Títulos das Seções Internas --- */
+.highlights-title {
+    text-align: center;
+    font-family: var(--font-serif);
+    font-size: var(--font-size-h2);
+    color: var(--color-gold-medium);
+    margin-bottom: var(--spacing-lg);
 }
 
-/* Coluna Individual */
-.highlights-column {
-    flex: 1; /* Cada coluna ocupa 50% */
-    display: flex;
-    flex-direction: column;
+/* --- Parte 1: Sobre a Artista (Grid Simples) --- */
+.about-preview-container {
+    max-width: 800px;
+    margin: 0 auto; /* Centraliza */
+    margin-bottom: 80px; /* Espaço antes da galeria */
+    text-align: center;
 }
 
-/* Grid Interno de 4 Imagens (2x2) */
-.gold-grid {
+.about-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr); /* 2 colunas */
-    gap: var(--spacing-md); /* Espaço entre as fotos */
+    grid-template-columns: repeat(3, 1fr); /* 3 fotos de destaque */
+    gap: var(--spacing-md);
     margin-top: var(--spacing-md);
 }
 
-/* --- O Quadro Dourado (Moldura) --- */
+/* --- Parte 2: Galeria Virtual (Grid de 5 Colunas) --- */
+.gallery-full-container {
+    width: 100%;
+}
+
+.gallery-5-cols {
+    display: grid;
+    /* O SEGREDO: 5 frações iguais */
+    grid-template-columns: repeat(5, 1fr); 
+    gap: var(--spacing-md); /* Espacinho entre eles */
+}
+
+/* --- A Moldura Dourada (O Item do Card) --- */
 .gold-framebox {
     position: relative;
     width: 100%;
-    aspect-ratio: 3 / 4; /* Formato retrato elegante */
+    aspect-ratio: 3 / 4; /* Formato retrato (vertical) */
     overflow: hidden;
     
-    /* A Borda Dourada */
+    /* BORDA DOURADA REFORÇADA */
     border: 1px solid var(--color-gold-medium);
+    outline: 1px solid rgba(198, 163, 107, 0.3); /* Segunda borda sutil */
+    outline-offset: -4px; /* Borda interna */
     
-    /* Efeito de brilho externo sutil */
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-    
+    background-color: var(--color-black-deep);
     transition: all 0.4s ease;
     cursor: pointer;
 }
@@ -53,30 +66,40 @@
     height: 100%;
     object-fit: cover;
     transition: transform 0.6s ease;
-    filter: brightness(0.8); /* Levemente escurecida para destacar o ouro */
+    opacity: 0.85; /* Levemente apagada para destacar o ouro */
 }
 
-/* --- Efeitos de Hover (Passar o mouse) --- */
+/* --- Efeitos de Hover --- */
 .gold-framebox:hover {
-    /* O quadro brilha mais forte */
     border-color: var(--color-gold-light);
-    box-shadow: 0 0 20px rgba(198, 163, 107, 0.4);
+    box-shadow: 0 0 15px rgba(255, 210, 119, 0.3); /* Glow Dourado */
     transform: translateY(-5px);
+    z-index: 10;
 }
 
 .gold-framebox:hover img {
-    transform: scale(1.1); /* Zoom suave na foto */
-    filter: brightness(1); /* Foto acende */
+    transform: scale(1.1);
+    opacity: 1;
 }
 
-/* --- Responsividade (Mobile) --- */
-@media (max-width: 768px) {
-    .highlights-grid-wrapper {
-        flex-direction: column; /* Empilha "Sobre" em cima de "Galeria" */
-        gap: 60px;
+/* --- Responsividade --- */
+@media (max-width: 1024px) {
+    .gallery-5-cols {
+        grid-template-columns: repeat(4, 1fr); /* 4 colunas em tablets */
     }
-    
-    .gold-grid {
-        gap: 10px;
+}
+
+@media (max-width: 768px) {
+    .gallery-5-cols {
+        grid-template-columns: repeat(3, 1fr); /* 3 colunas em celulares grandes */
+    }
+    .about-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 480px) {
+    .gallery-5-cols {
+        grid-template-columns: repeat(2, 1fr); /* 2 colunas em celulares pequenos */
     }
 }
