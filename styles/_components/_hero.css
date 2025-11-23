@@ -1,11 +1,10 @@
 /*
  * COMPONENTE: Hero Section
- * Design: Logo Central, Título Glitter, Minimalista
+ * Design: Minimalista, Glitter e Centralizado
  */
 
 .hero-section {
     position: relative;
-    /* Altura: Ocupa pelo menos 80% da tela para dar destaque */
     min-height: 80vh; 
     
     display: flex;
@@ -14,27 +13,16 @@
     align-items: center;
     text-align: center;
     
-    /* Espaçamento extra em baixo para separar dos destaques */
     padding-bottom: var(--spacing-xl);
-}
-
-/* --- Logo Grande Central --- */
-.hero-logo {
-    margin-bottom: var(--spacing-md);
-    /* Animação suave de entrada */
-    animation: fadeInDown 1s ease-out;
-}
-
-.main-logo-img {
-    width: 140px; /* Tamanho generoso para a abelha */
-    height: auto;
-    filter: drop-shadow(0 0 10px rgba(198, 163, 107, 0.3)); /* Brilho dourado atrás da imagem */
+    /* Garante que o padding do menu fixo não atrapalhe */
+    padding-top: 100px; 
 }
 
 /* --- Título com Efeito Glitter --- */
 .hero-title {
     margin-bottom: var(--spacing-sm);
     letter-spacing: -1px;
+    line-height: 1.1;
 }
 
 /* O efeito mágico do texto dourado */
@@ -53,10 +41,10 @@
     -webkit-background-clip: text;
     background-clip: text;
     
-    animation: shine 4s linear infinite; /* Brilho automático e contínuo */
+    animation: shine 4s linear infinite;
 }
 
-/* --- Subtítulo --- */
+/* --- Subtítulo (Correção de Alinhamento) --- */
 .hero-subtitle {
     font-family: var(--font-sans);
     font-size: 1.1rem;
@@ -64,40 +52,27 @@
     font-weight: 300;
     letter-spacing: 1px;
     margin-bottom: var(--spacing-lg);
+    
+    /* Centralização forçada */
     max-width: 600px;
+    margin-left: auto;  /* Empurra da esquerda */
+    margin-right: auto; /* Empurra da direita */
 }
 
-/* --- Botão do Hero (Ajuste de margem) --- */
+/* --- Botão do Hero --- */
 .hero-btn {
     margin-top: var(--spacing-md);
-    /* A classe .Btn já vem do _uiverse-button.css, 
-       aqui só ajustamos o posicionamento se precisar */
 }
 
-/* --- Animações Keyframes --- */
+/* --- Animações --- */
 @keyframes shine {
     to {
         background-position: 200% center;
     }
 }
 
-@keyframes fadeInDown {
-    from {
-        opacity: 0;
-        transform: translateY(-20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
 /* --- Responsividade --- */
 @media (max-width: 768px) {
-    .main-logo-img {
-        width: 100px; /* Logo menor no celular */
-    }
-    
     .hero-subtitle {
         font-size: 0.95rem;
         padding: 0 var(--spacing-md);
