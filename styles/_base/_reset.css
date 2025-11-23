@@ -1,65 +1,41 @@
 /*
- * ARQUIVO DE RESET (CSS RESET)
- *
- * Remove estilos padrão do navegador para garantir
- * consistência e começar com uma "tela em branco".
+ * ARQUIVO DE RESET
+ * Limpeza padrão para garantir consistência.
  */
 
-/* 1. Remove margens e preenchimentos de tudo. */
-*,
-*::before,
-*::after {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box; /* Garante que padding e border não afetem o tamanho total */
-}
-
-/* 2. Define um comportamento de altura de linha mais natural. */
-html {
-  line-height: 1.5;
-  -webkit-font-smoothing: antialiased; /* Deixa fontes mais suaves no macOS/iOS */
-  -moz-osx-font-smoothing: grayscale; /* Deixa fontes mais suaves no Firefox */
-}
-
-/* 3. Remove estilos padrão de listas. */
-ul,
-ol {
-  list-style: none;
-}
-
-/* 4. Remove decoração de texto (sublinhado) de links. */
-a {
-  text-decoration: none;
-  color: inherit; /* Faz links herdarem a cor do texto pai */
-}
-
-/* 5. Simplifica o estilo de imagens e mídias. */
-img,
-picture,
-video,
-canvas,
-svg {
-  display: block;
-  max-width: 100%;
-}
-
-/* 6. Remove estilos padrão de botões e inputs. */
-input,
-button,
-textarea,
-select {
-  font: inherit; /* Faz com que herdem a fonte do pai */
-  border: none;
-  background: none;
-  color: inherit;
-}
-
-/* 7. Remove setas de inputs do tipo número */
-input[type="number"] {
-    -moz-appearance: textfield;
-}
-input[type="number"]::-webkit-outer-spin-button,
-input[type="number"]::-webkit-inner-spin-button {
-    -webkit-appearance: none;
+*, *::before, *::after {
     margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth; /* Rolagem suave nativa */
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+}
+
+body {
+    min-height: 100vh;
+    text-rendering: optimizeLegibility;
+}
+
+img, picture, video, canvas, svg {
+    display: block;
+    max-width: 100%;
+}
+
+input, button, textarea, select {
+    font: inherit;
+    border: none;
+    background: none;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+ul, ol {
+    list-style: none;
 }
