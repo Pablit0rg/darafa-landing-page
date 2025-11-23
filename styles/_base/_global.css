@@ -1,66 +1,88 @@
-/* 1. Habilita a rolagem suave */
-html {
-    scroll-behavior: smooth;
-}
-
-/* (O resto do seu código: body { ... } ) */
-body {
-    /* ... */
-
 /*
  * ARQUIVO DE ESTILOS GLOBAIS
- *
- * Define os estilos básicos do site que serão aplicados
- * em todas as páginas e seções (ex: body, containers, títulos).
+ * Configurações gerais do corpo e tipografia.
  */
 
-/* 1. Estilos do Corpo (Body) */
 body {
-    /* * Efeito de fundo "Smoke"
-     * Criamos um degradê radial muito sutil usando nossas cores
-     * de fundo mais escuras. Começa com um preto médio (#0E0E0E)
-     * e vai para um preto puro (#070707) nas bordas.
-     */
+    /* Fundo Luxuoso: Preto profundo com um leve gradiente central */
     background-color: var(--color-black-pure);
     background-image: radial-gradient(
-        circle at 50% 50%,
-        var(--color-black-medium),
-        var(--color-black-pure) 70%
+        circle at center top,
+        #151515,
+        var(--color-black-pure) 60%
     );
-
-    /* * Define a fonte principal (Poppins) e a cor de texto (branco suave)
-     * para todo o site.
-     */
-    font-family: var(--font-family-body);
-    font-size: var(--font-size-base); /* 16px */
-    font-weight: 300; /* Um peso mais leve para Poppins fica elegante */
-    color: var(--color-text-light);
+    background-attachment: fixed; /* O fundo fica parado ao rolar */
+    
+    font-family: var(--font-sans);
+    color: var(--color-text-main);
+    font-size: var(--font-size-base);
+    font-weight: 300; /* Poppins Light */
+    
+    /* Garante que a navbar fixa não cubra o topo */
+    padding-top: 80px;
 }
 
-/* 2. Definição dos Títulos (Headings) */
+/* Títulos (H1, H2, H3...) usam a fonte Serifada (Playfair) */
 h1, h2, h3, h4, h5, h6 {
-    /* * Aplica a fonte de título (Playfair Display) e a cor dourada
-     * média a todos os títulos.
-     */
-    font-family: var(--font-family-headings);
-    font-weight: 700;
+    font-family: var(--font-serif);
     color: var(--color-gold-medium);
+    font-weight: 400; /* Playfair já é elegante, não precisa de bold pesado */
     line-height: 1.2;
 }
 
-/* 3. Classe de Container Padrão */
-/* * Esta é uma classe "helper" que usaremos em todas as seções
- * para centralizar o conteúdo e limitar sua largura máxima.
- */
+/* Utilitário de Container */
 .container {
-    width: 90%; /* Funciona bem em mobile */
-    max-width: var(--container-width); /* Limita a 1140px em desktops */
-    margin: 0 auto; /* Centraliza o container */
+    width: 90%;
+    max-width: var(--container-width);
+    margin: 0 auto;
+    padding: 0 var(--spacing-md);
 }
 
-/* 4. Estilos de Links e Botões Globais (se houver) */
-/* (Vamos definir botões específicos nos componentes, 
- * mas podemos ter um estilo base aqui se quisermos) */
-a {
-    transition: color 0.3s ease, background-color 0.3s ease;
+/* Utilitário para Títulos de Seção */
+.section-title {
+    text-align: center;
+    font-size: var(--font-size-h2);
+    margin-bottom: var(--spacing-lg);
+    
+    /* Efeito sutil de degradê no texto dourado */
+    background: linear-gradient(to right, var(--color-gold-medium), var(--color-text-main), var(--color-gold-medium));
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+}
+
+/* Botão Voltar ao Topo */
+.back-to-top {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 45px;
+    height: 45px;
+    background: var(--color-black-deep);
+    border: 1px solid var(--color-gold-dark);
+    color: var(--color-gold-medium);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    cursor: pointer;
+    opacity: 0; /* Começa invisível */
+    pointer-events: none;
+    transition: all 0.3s ease;
+    z-index: 900;
+}
+
+/* Classe que o JS vai adicionar para mostrar o botão */
+.back-to-top.visible {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.back-to-top:hover {
+    background: var(--color-gold-dark);
+    color: var(--color-text-main);
+    transform: translateY(-3px);
 }
