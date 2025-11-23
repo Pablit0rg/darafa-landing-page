@@ -2,7 +2,6 @@
  * ARQUITETURA MODULAR CSS - DARAFA LUXURY
  *
  * Arquivo "Maestro": Importa todas as partes do sistema de design.
- * Não escreva CSS diretamente aqui.
  */
 
 /* =========================================
@@ -19,14 +18,16 @@
 
 /* Navegação e Topo */
 @import url('_components/_navbar.css');         /* Barra de navegação fixa */
-@import url('_components/_hero.css');           /* Seção principal (Logo e Título) */
+@import url('_components/_hero.css');           /* Seção principal */
 
 /* Elementos de UI */
-@import url('_components/_uiverse-button.css'); /* Botão animado (Dourado/Preto) */
+@import url('_components/_uiverse-button.css'); /* Botão animado */
 
-/* Seções de Conteúdo (Nova Estrutura) */
-@import url('_components/_highlights.css');     /* Grid duplo (Sobre + Galeria) */
-@import url('_components/_artist.css');         /* Seção destaque da artista */
+/* Layouts e Seções */
+@import url('_components/_zigzag.css');     /* NOVO: Layout de Cards Grandes (Z) */
+@import url('_components/_highlights.css'); /* Mantemos para os grids internos (joias/fotos) */
+
+/* (Nota: _artist.css foi removido pois agora usamos o _zigzag.css) */
 
 /* Rodapé */
 @import url('_components/_footer.css');         /* Rodapé final */
