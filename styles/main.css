@@ -24,10 +24,8 @@
 @import url('_components/_uiverse-button.css'); /* Botão animado */
 
 /* Layouts e Seções */
-@import url('_components/_zigzag.css');     /* NOVO: Layout de Cards Grandes (Z) */
-@import url('_components/_highlights.css'); /* Mantemos para os grids internos (joias/fotos) */
-
-/* (Nota: _artist.css foi removido pois agora usamos o _zigzag.css) */
+@import url('_components/_zigzag.css');     /* Layout Z (Card Porta + Texto + Modal) */
+@import url('_components/_highlights.css'); /* Grids internos (15 Joias e 4 Fotos) */
 
 /* Rodapé */
 @import url('_components/_footer.css');         /* Rodapé final */
