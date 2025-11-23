@@ -1,7 +1,10 @@
 /*
- * COMPONENTE: Layout Zig-Zag (Card Porta)
- * Estrutura: Texto de um lado, Card Grande do outro.
+ * COMPONENTE: Layout Zig-Zag e Modal de Expansão
+ * * Parte 1: Estrutura da Seção (Texto + Card Grande)
+ * Parte 2: O Modal (Overlay) que abre ao clicar
  */
+
+/* --- PARTE 1: ESTRUTURA ZIG-ZAG --- */
 
 .zig-zag-section {
     padding: var(--spacing-xl) 0;
@@ -18,7 +21,7 @@
     width: 100%;
 }
 
-/* --- Inverter a Ordem (para o "Z") --- */
+/* Inverter a Ordem (para o "Z") */
 /* Se a seção tiver a classe .section-reversed, inverte os lados */
 .section-reversed .zig-zag-container {
     flex-direction: row-reverse;
@@ -52,7 +55,7 @@
     max-width: 550px;
     aspect-ratio: 4 / 5; /* Formato Retrato */
     cursor: pointer;
-    perspective: 1000px; /* Prepara para efeitos 3D se quisermos */
+    perspective: 1000px; /* Prepara para efeitos 3D */
 }
 
 /* Capa do Card (Imagem visível) */
@@ -102,7 +105,7 @@
     transition: transform 0.3s ease;
 }
 
-/* --- Interações (Hover) --- */
+/* --- Interações (Hover no Card) --- */
 .big-card-wrapper:hover .card-cover {
     transform: translateY(-5px);
     box-shadow: 0 30px 60px rgba(198, 163, 107, 0.15); /* Glow dourado */
@@ -118,12 +121,6 @@
     transform: translateY(0); /* Barrinha desce */
 }
 
-/* --- Conteúdo Escondido (O que está dentro da caixa) --- */
-/* Por padrão, escondemos o grid de fotos. O JS vai mostrar isso depois. */
-.hidden-content {
-    display: none; 
-}
-
 /* Card que não expande (apenas visual, como o da seção "A Artista") */
 .big-card-wrapper.no-expand {
     cursor: default;
@@ -135,7 +132,79 @@
     display: none;
 }
 
-/* --- Responsividade (Mobile) --- */
+/* --- Conteúdo Escondido (O que está dentro da caixa) --- */
+/* Por padrão, escondemos o grid de fotos. O JS vai mostrar isso depois. */
+.hidden-content {
+    display: none; 
+}
+
+
+/* --- PARTE 2: O MODAL DE EXPANSÃO (A "Caixa Aberta") --- */
+/* (Adicionado dinamicamente via JavaScript quando clica no card) */
+
+/* O Fundo Escuro que cobre o site */
+.expansion-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2000; /* Acima da navbar */
+    
+    background-color: rgba(5, 5, 5, 0.98); /* Quase preto total */
+    backdrop-filter: blur(5px);
+    
+    opacity: 0; /* Começa invisível */
+    visibility: hidden;
+    transition: all 0.4s ease;
+    
+    overflow-y: auto; /* Permite rolar se tiver muitas joias */
+    display: flex;
+    justify-content: center;
+    padding: 80px 0; /* Espaço para não colar no topo */
+}
+
+/* Quando ativo (classe adicionada via JS) */
+.expansion-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* O Container do Conteúdo dentro do Modal */
+.expansion-content {
+    width: 90%;
+    max-width: 1200px;
+    margin: auto;
+    position: relative;
+    transform: translateY(30px); /* Efeito de subida */
+    transition: transform 0.4s ease;
+}
+
+.expansion-overlay.active .expansion-content {
+    transform: translateY(0);
+}
+
+/* Botão Fechar (X) */
+.close-expansion {
+    position: fixed;
+    top: 20px;
+    right: 30px;
+    background: none;
+    border: none;
+    color: var(--color-gold-light);
+    font-size: 3rem;
+    cursor: pointer;
+    z-index: 2001;
+    transition: transform 0.3s ease;
+}
+
+.close-expansion:hover {
+    transform: rotate(90deg) scale(1.1);
+    color: #fff;
+}
+
+
+/* --- RESPONSIVIDADE (Mobile) --- */
 @media (max-width: 900px) {
     .zig-zag-container {
         flex-direction: column !important; /* Força empilhamento vertical */
@@ -145,7 +214,8 @@
 
     .text-content {
         max-width: 100%;
-        order: 1; /* Texto vem primeiro no mobile? Ou imagem? Vamos deixar padrão */
+        /* No mobile, imagem em cima, texto embaixo? 
+           Geralmente Texto primeiro ajuda o contexto. Vamos manter padrão. */
     }
 
     .section-title {
@@ -159,7 +229,6 @@
     .big-card-wrapper {
         width: 100%;
         max-width: 100%;
-        order: 2;
     }
     
     /* No mobile, a barrinha fica sempre visível para saber que é clicável */
