@@ -1,105 +1,90 @@
 /*
- * COMPONENTE: Destaques e Galeria
- * Design: Molduras Douradas e Grid de 5 Colunas
+ * COMPONENTE: Grids Internos (Highlights)
+ * Controla apenas o layout dos cards pequenos (Joias e Processo)
+ * que aparecem dentro do Modal de Expansão.
  */
 
-.highlights-section {
-    padding: var(--spacing-xl) 0;
-}
-
-/* --- Títulos das Seções Internas --- */
-.highlights-title {
-    text-align: center;
-    font-family: var(--font-serif);
-    font-size: var(--font-size-h2);
-    color: var(--color-gold-medium);
-    margin-bottom: var(--spacing-lg);
-}
-
-/* --- Parte 1: Sobre a Artista (Grid Simples) --- */
-.about-preview-container {
-    max-width: 800px;
-    margin: 0 auto; /* Centraliza */
-    margin-bottom: 80px; /* Espaço antes da galeria */
-    text-align: center;
-}
-
-.about-grid {
+/* --- Grid de 5 Colunas (Para a Galeria Virtual) --- */
+.gallery-5-cols {
     display: grid;
-    grid-template-columns: repeat(3, 1fr); /* 3 fotos de destaque */
-    gap: var(--spacing-md);
-    margin-top: var(--spacing-md);
-}
-
-/* --- Parte 2: Galeria Virtual (Grid de 5 Colunas) --- */
-.gallery-full-container {
+    grid-template-columns: repeat(5, 1fr); /* 5 colunas lado a lado */
+    gap: var(--spacing-md); /* 16px de espaço */
     width: 100%;
 }
 
-.gallery-5-cols {
+/* --- Grid do Sobre (Para as fotos de processo) --- */
+.about-grid {
     display: grid;
-    /* O SEGREDO: 5 frações iguais */
-    grid-template-columns: repeat(5, 1fr); 
-    gap: var(--spacing-md); /* Espacinho entre eles */
+    grid-template-columns: repeat(4, 1fr); /* 4 colunas */
+    gap: var(--spacing-md);
+    width: 100%;
 }
 
-/* --- A Moldura Dourada (O Item do Card) --- */
+/* --- O Card Pequeno (Moldura Dourada) --- */
 .gold-framebox {
     position: relative;
     width: 100%;
-    aspect-ratio: 3 / 4; /* Formato retrato (vertical) */
+    aspect-ratio: 3 / 4; /* Formato Retrato */
     overflow: hidden;
     
-    /* BORDA DOURADA REFORÇADA */
+    /* Borda Dourada */
     border: 1px solid var(--color-gold-medium);
-    outline: 1px solid rgba(198, 163, 107, 0.3); /* Segunda borda sutil */
-    outline-offset: -4px; /* Borda interna */
     
+    /* Fundo escuro caso a imagem demore a carregar */
     background-color: var(--color-black-deep);
-    transition: all 0.4s ease;
+    
+    transition: all 0.3s ease;
     cursor: pointer;
 }
 
-/* Imagem dentro do quadro */
+/* A Imagem dentro do card */
 .gold-framebox img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform 0.6s ease;
-    opacity: 0.85; /* Levemente apagada para destacar o ouro */
+    transition: transform 0.5s ease;
+    opacity: 0.9;
 }
 
-/* --- Efeitos de Hover --- */
+/* --- Efeitos de Hover nos Cards Pequenos --- */
 .gold-framebox:hover {
     border-color: var(--color-gold-light);
-    box-shadow: 0 0 15px rgba(255, 210, 119, 0.3); /* Glow Dourado */
+    box-shadow: 0 0 15px rgba(198, 163, 107, 0.4); /* Glow Dourado */
     transform: translateY(-5px);
-    z-index: 10;
+    z-index: 2;
 }
 
 .gold-framebox:hover img {
-    transform: scale(1.1);
+    transform: scale(1.1); /* Zoom na foto */
     opacity: 1;
 }
 
-/* --- Responsividade --- */
+/* --- Responsividade dos Grids Internos --- */
+
+/* Tablets (iPad) */
 @media (max-width: 1024px) {
     .gallery-5-cols {
-        grid-template-columns: repeat(4, 1fr); /* 4 colunas em tablets */
+        grid-template-columns: repeat(4, 1fr); /* Cai para 4 */
+    }
+    .about-grid {
+        grid-template-columns: repeat(2, 1fr); /* Cai para 2x2 */
     }
 }
 
+/* Celulares Grandes */
 @media (max-width: 768px) {
     .gallery-5-cols {
-        grid-template-columns: repeat(3, 1fr); /* 3 colunas em celulares grandes */
+        grid-template-columns: repeat(3, 1fr); /* Cai para 3 */
+    }
+}
+
+/* Celulares Pequenos */
+@media (max-width: 480px) {
+    .gallery-5-cols {
+        grid-template-columns: repeat(2, 1fr); /* Cai para 2 */
+        gap: 10px; /* Menos espaço */
     }
     .about-grid {
         grid-template-columns: repeat(2, 1fr);
-    }
-}
-
-@media (max-width: 480px) {
-    .gallery-5-cols {
-        grid-template-columns: repeat(2, 1fr); /* 2 colunas em celulares pequenos */
     }
 }
