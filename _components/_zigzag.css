@@ -1,0 +1,169 @@
+/*
+ * COMPONENTE: Layout Zig-Zag (Card Porta)
+ * Estrutura: Texto de um lado, Card Grande do outro.
+ */
+
+.zig-zag-section {
+    padding: var(--spacing-xl) 0;
+    min-height: 80vh; /* Ocupa boa parte da tela */
+    display: flex;
+    align-items: center;
+}
+
+.zig-zag-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 80px; /* Espaço entre texto e card */
+    width: 100%;
+}
+
+/* --- Inverter a Ordem (para o "Z") --- */
+/* Se a seção tiver a classe .section-reversed, inverte os lados */
+.section-reversed .zig-zag-container {
+    flex-direction: row-reverse;
+}
+
+/* --- Lado do Texto --- */
+.text-content {
+    flex: 1; /* Ocupa o espaço restante */
+    max-width: 500px;
+}
+
+.section-description {
+    font-family: var(--font-sans);
+    font-size: 1.1rem;
+    color: var(--color-text-muted);
+    line-height: 1.8;
+    margin-bottom: var(--spacing-lg);
+}
+
+.decorative-line {
+    width: 60px;
+    height: 2px;
+    background-color: var(--color-gold-medium);
+    margin-top: var(--spacing-lg);
+}
+
+/* --- Lado do Card Grande (O "Portal") --- */
+.big-card-wrapper {
+    flex: 1;
+    position: relative;
+    max-width: 550px;
+    aspect-ratio: 4 / 5; /* Formato Retrato */
+    cursor: pointer;
+    perspective: 1000px; /* Prepara para efeitos 3D se quisermos */
+}
+
+/* Capa do Card (Imagem visível) */
+.card-cover {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+    
+    /* Borda Dourada Dupla Luxuosa */
+    border: 1px solid var(--color-gold-medium);
+    outline: 1px solid var(--color-gold-dark);
+    outline-offset: 6px;
+    
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+    transition: transform 0.4s ease, box-shadow 0.4s ease;
+}
+
+.card-cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s ease;
+    filter: brightness(0.9);
+}
+
+/* A Barrinha "Clique para Expandir" */
+.click-bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 10px 0;
+    
+    background-color: rgba(198, 163, 107, 0.95); /* Gold Medium quase sólido */
+    color: var(--color-black-pure);
+    
+    text-align: center;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    font-weight: 500;
+    letter-spacing: 1px;
+    z-index: 10;
+    
+    /* Efeito de aparecer ao passar o mouse */
+    transform: translateY(-100%); /* Escondido pra cima */
+    transition: transform 0.3s ease;
+}
+
+/* --- Interações (Hover) --- */
+.big-card-wrapper:hover .card-cover {
+    transform: translateY(-5px);
+    box-shadow: 0 30px 60px rgba(198, 163, 107, 0.15); /* Glow dourado */
+    border-color: var(--color-gold-light);
+}
+
+.big-card-wrapper:hover .card-cover img {
+    transform: scale(1.05);
+    filter: brightness(1);
+}
+
+.big-card-wrapper:hover .click-bar {
+    transform: translateY(0); /* Barrinha desce */
+}
+
+/* --- Conteúdo Escondido (O que está dentro da caixa) --- */
+/* Por padrão, escondemos o grid de fotos. O JS vai mostrar isso depois. */
+.hidden-content {
+    display: none; 
+}
+
+/* Card que não expande (apenas visual, como o da seção "A Artista") */
+.big-card-wrapper.no-expand {
+    cursor: default;
+}
+.big-card-wrapper.no-expand:hover .card-cover {
+    transform: none;
+}
+.big-card-wrapper.no-expand .click-bar {
+    display: none;
+}
+
+/* --- Responsividade (Mobile) --- */
+@media (max-width: 900px) {
+    .zig-zag-container {
+        flex-direction: column !important; /* Força empilhamento vertical */
+        gap: 40px;
+        text-align: center;
+    }
+
+    .text-content {
+        max-width: 100%;
+        order: 1; /* Texto vem primeiro no mobile? Ou imagem? Vamos deixar padrão */
+    }
+
+    .section-title {
+        text-align: center !important; /* Força título centralizado no mobile */
+    }
+    
+    .decorative-line {
+        margin: 20px auto; /* Centraliza a linha */
+    }
+
+    .big-card-wrapper {
+        width: 100%;
+        max-width: 100%;
+        order: 2;
+    }
+    
+    /* No mobile, a barrinha fica sempre visível para saber que é clicável */
+    .click-bar {
+        transform: translateY(0); 
+    }
+}
