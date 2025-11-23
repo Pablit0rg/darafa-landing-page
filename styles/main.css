@@ -1,44 +1,32 @@
 /*
- * ARQUITETURA MODULAR CSS - DARAFA LANDING PAGE
+ * ARQUITETURA MODULAR CSS - DARAFA LUXURY
  *
- * ATENÇÃO:
- * Este arquivo (main.css) NÃO DEVE SER EDITADO DIRETAMENTE.
- * Ele serve apenas como o "maestro" que importa todos os 
- * componentes de estilo.
- *
- * Para editar estilos, modifique os arquivos individuais 
- * dentro das pastas _base/ ou _components/.
+ * Arquivo "Maestro": Importa todas as partes do sistema de design.
+ * Não escreva CSS diretamente aqui.
  */
 
-/* * 1. BASE
- * (Reset, Variáveis de Cor, Fontes e Estilos Globais)
- */
-@import url('_base/_reset.css');
-@import url('_base/_variables.css');
-@import url('_base/_global.css');
+/* =========================================
+   1. BASE (Fundação)
+   ========================================= */
+@import url('_base/_reset.css');      /* Zera os estilos do navegador */
+@import url('_base/_variables.css');  /* Cores, fontes e variáveis */
+@import url('_base/_global.css');     /* Estilos do body e tipografia base */
 
 
-/* * 2. COMPONENTES
- * (Estilos específicos para cada seção da página)
- */
-@import url('_components/_hero.css');
-@import url('_components/_about.css');
-@import url('_components/_gallery.css');
-@import url('_components/_cta.css');
-@import url('_components/_footer.css');
+/* =========================================
+   2. COMPONENTES (Blocos de Construção)
+   ========================================= */
 
-/* (Linhas existentes...) */
-@import url('_components/_cta.css');
-@import url('_components/_footer.css');
+/* Navegação e Topo */
+@import url('_components/_navbar.css');         /* Barra de navegação fixa */
+@import url('_components/_hero.css');           /* Seção principal (Logo e Título) */
 
-/* ADICIONE ESTA NOVA LINHA NO FIM */
-@import url('_components/_uiverse-button.css');
+/* Elementos de UI */
+@import url('_components/_uiverse-button.css'); /* Botão animado (Dourado/Preto) */
 
-/* * 2. COMPONENTES */
-/* (Linhas existentes...) */
-@import url('_components/_hero.css');
-/* ...etc... */
-@import url('_components/_uiverse-button.css');
+/* Seções de Conteúdo (Nova Estrutura) */
+@import url('_components/_highlights.css');     /* Grid duplo (Sobre + Galeria) */
+@import url('_components/_artist.css');         /* Seção destaque da artista */
 
-/* ADICIONE ESTA NOVA LINHA */
-@import url('_components/_navbar.css');
+/* Rodapé */
+@import url('_components/_footer.css');         /* Rodapé final */
