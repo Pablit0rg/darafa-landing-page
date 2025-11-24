@@ -1,60 +1,138 @@
 /*
  * COMPONENTE: Highlights (Cards Internos)
+ * Controla apenas o layout dos cards pequenos (Joias e Processo)
+ * que aparecem dentro do Modal de Expansão.
  */
 
-/* Grids */
+/* --- Grid de 5 Colunas (Para a Galeria Virtual) --- */
 .gallery-5-cols {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: var(--spacing-md);
+    grid-template-columns: repeat(5, 1fr); /* 5 colunas lado a lado */
+    gap: var(--spacing-md); /* 16px de espaço */
     width: 100%;
 }
 
+/* --- Grid do Sobre (Para as fotos de processo) --- */
 .about-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(4, 1fr); /* 4 colunas */
     gap: var(--spacing-md);
     width: 100%;
 }
 
-/* Card Pequeno */
+/* --- O Card Pequeno (Moldura Dourada) --- */
 .gold-framebox {
     position: relative;
     width: 100%;
-    aspect-ratio: 3 / 4;
+    aspect-ratio: 3 / 4; /* Formato Retrato */
     overflow: hidden;
+    
+    /* Borda Dourada */
     border: 1px solid var(--color-gold-medium);
+    
+    /* Fundo escuro caso a imagem demore a carregar */
     background-color: var(--color-black-deep);
+    
     transition: all 0.3s ease;
+    cursor: pointer;
 }
 
+/* A Imagem dentro do card */
 .gold-framebox img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    opacity: 0.9;
     transition: transform 0.5s ease;
+    opacity: 0.9;
 }
 
+/* --- BARRA DE INFORMAÇÕES (NOVO!) --- */
+.card-info-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 12px 8px; /* Espaçamento interno */
+    
+    /* Fundo degradê preto para o texto ficar legível sobre a foto */
+    background: linear-gradient(to top, rgba(0,0,0,0.95) 10%, rgba(0,0,0,0.6));
+    
+    z-index: 5; /* Fica acima da imagem */
+    border-top: 1px solid rgba(198, 163, 107, 0.3); /* Linha dourada sutil no topo da barra */
+}
+
+/* Título da Joia (Nome) */
+.info-title {
+    font-family: var(--font-serif); /* Fonte elegante */
+    color: var(--color-gold-medium);
+    font-size: 0.95rem;
+    margin-bottom: 4px;
+    text-transform: capitalize;
+}
+
+/* Descrição Resumida (Material/Detalhe) */
+.info-desc {
+    font-family: var(--font-sans);
+    color: #dcdcdc; /* Cinza bem claro */
+    font-size: 0.75rem; /* Texto pequeno */
+    line-height: 1.3;
+    font-weight: 300;
+    
+    /* Limita a 2 linhas de texto para não quebrar o layout */
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* --- Efeitos de Hover nos Cards Pequenos --- */
 .gold-framebox:hover {
     border-color: var(--color-gold-light);
+    box-shadow: 0 0 15px rgba(198, 163, 107, 0.4); /* Glow Dourado */
     transform: translateY(-5px);
-    box-shadow: 0 0 15px rgba(198, 163, 107, 0.4);
+    z-index: 2;
 }
 
 .gold-framebox:hover img {
-    transform: scale(1.1);
+    transform: scale(1.1); /* Zoom na foto */
     opacity: 1;
 }
 
-/* Responsividade */
+/* Ao passar o mouse, a barra fica um pouco mais escura para leitura */
+.gold-framebox:hover .card-info-bar {
+    background: linear-gradient(to top, rgba(0,0,0,1) 20%, rgba(0,0,0,0.7));
+}
+
+/* --- Responsividade dos Grids Internos --- */
+
+/* Tablets (iPad) */
 @media (max-width: 1024px) {
-    .gallery-5-cols { grid-template-columns: repeat(4, 1fr); }
-    .about-grid { grid-template-columns: repeat(2, 1fr); }
+    .gallery-5-cols {
+        grid-template-columns: repeat(4, 1fr); /* Cai para 4 */
+    }
+    .about-grid {
+        grid-template-columns: repeat(2, 1fr); /* Cai para 2x2 */
+    }
 }
+
+/* Celulares Grandes */
 @media (max-width: 768px) {
-    .gallery-5-cols { grid-template-columns: repeat(3, 1fr); }
+    .gallery-5-cols {
+        grid-template-columns: repeat(3, 1fr); /* Cai para 3 */
+    }
 }
+
+/* Celulares Pequenos */
 @media (max-width: 480px) {
-    .gallery-5-cols { grid-template-columns: repeat(2, 1fr); }
+    .gallery-5-cols {
+        grid-template-columns: repeat(2, 1fr); /* Cai para 2 */
+        gap: 10px; /* Menos espaço */
+    }
+    .about-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    /* Ajuste de texto no mobile */
+    .info-title { font-size: 0.85rem; }
+    .info-desc { font-size: 0.65rem; }
 }
