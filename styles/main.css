@@ -1,31 +1,20 @@
 /*
  * ARQUITETURA MODULAR CSS - DARAFA LUXURY
- *
- * Arquivo "Maestro": Importa todas as partes do sistema de design.
+ * Maestro Verificado
  */
 
-/* =========================================
-   1. BASE (Fundação)
-   ========================================= */
-@import url('_base/_reset.css');      /* Zera os estilos do navegador */
-@import url('_base/_variables.css');  /* Cores, fontes e variáveis */
-@import url('_base/_global.css');     /* Estilos do body e tipografia base */
+/* 1. BASE */
+@import url('_base/_reset.css');
+@import url('_base/_variables.css');
+@import url('_base/_global.css');
 
+/* 2. COMPONENTES */
+@import url('_components/_navbar.css');
+@import url('_components/_hero.css');
+@import url('_components/_uiverse-button.css');
 
-/* =========================================
-   2. COMPONENTES (Blocos de Construção)
-   ========================================= */
+/* A ordem aqui é crucial: Zigzag (estrutura) antes de Highlights (conteúdo) */
+@import url('_components/_zigzag.css');
+@import url('_components/_highlights.css');
 
-/* Navegação e Topo */
-@import url('_components/_navbar.css');         /* Barra de navegação fixa */
-@import url('_components/_hero.css');           /* Seção principal */
-
-/* Elementos de UI */
-@import url('_components/_uiverse-button.css'); /* Botão animado */
-
-/* Layouts e Seções */
-@import url('_components/_zigzag.css');     /* Layout Z (Card Porta + Texto + Modal) */
-@import url('_components/_highlights.css'); /* Grids internos (15 Joias e 4 Fotos) */
-
-/* Rodapé */
-@import url('_components/_footer.css');         /* Rodapé final */
+@import url('_components/_footer.css');
