@@ -134,3 +134,40 @@
         color: var(--color-gold-medium);
     }
 }
+
+/* --- Controles da Navbar (Agrupa Menu + Botão Tema) --- */
+.nav-controls {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+/* Botão de Tema (Sol/Lua) */
+#theme-toggle {
+    background: none;
+    border: 1px solid var(--color-gold-medium);
+    color: var(--color-gold-medium);
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+#theme-toggle:hover {
+    background-color: var(--color-gold-medium);
+    color: var(--color-black-pure); /* Muda a cor do ícone no hover */
+    transform: rotate(15deg);
+}
+
+/* Ajuste Mobile */
+@media (max-width: 768px) {
+    .nav-controls {
+        gap: 15px;
+    }
+    /* No mobile, o menu some, mas o botão de tema fica visível ao lado do hambúrguer */
+}
