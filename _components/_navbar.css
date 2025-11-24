@@ -152,3 +152,31 @@ CSS
 
 /* ADICIONE ESTA NOVA LINHA */
 @import url('_components/_navbar.css');
+
+/* --- Estilos da Logo (Imagem) --- */
+
+/* O container do link da logo */
+.navbar-brand-logo {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+}
+
+/* A imagem da logo em si */
+.nav-logo-img {
+    height: 60px; /* Altura fixa para não quebrar a navbar */
+    width: auto;  /* Largura automática para manter a proporção */
+    transition: transform 0.3s ease;
+}
+
+/* Efeito sutil ao passar o mouse na logo */
+.navbar-brand-logo:hover .nav-logo-img {
+    transform: scale(1.05);
+}
+
+/* Ajuste para Mobile (opcional, se achar que 60px ficou grande no celular) */
+@media (max-width: 768px) {
+    .nav-logo-img {
+        height: 50px;
+    }
+}
