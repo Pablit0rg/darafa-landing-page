@@ -1,6 +1,6 @@
 /*
  * COMPONENTE: Hero Section
- * Design: Logo com SUPER GLOW
+ * Design: Logo com Brilho Expansivo Interativo
  */
 
 .hero-section {
@@ -13,6 +13,8 @@
     text-align: center;
     padding-bottom: var(--spacing-xl);
     padding-top: 100px; 
+    /* Garante que o brilho não vaze para fora da seção hero */
+    overflow: hidden; 
 }
 
 .hero-container {
@@ -20,9 +22,11 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    position: relative; /* Para o z-index funcionar */
+    z-index: 2; /* Garante que o conteúdo fique acima do brilho extremo */
 }
 
-/* --- Logo Grande Central (Com Efeito de Luz) --- */
+/* --- Logo Grande Central --- */
 .hero-main-logo {
     display: block;
     margin-left: auto;
@@ -31,36 +35,37 @@
     width: 90%;
     margin-bottom: 20px;
     
-    /* A Mágica do Brilho: Animação Infinita */
-    animation: goldenGlow 3s infinite alternate;
+    /* --- ESTADO PADRÃO: BRILHO FIXO E FRACO --- */
+    /* Duas camadas sutis para um brilho "parado" e elegante */
+    filter: drop-shadow(0 0 10px rgba(198, 163, 107, 0.4))
+            drop-shadow(0 0 20px rgba(198, 163, 107, 0.1));
     
-    /* Transição suave se passar o mouse */
-    transition: transform 0.3s ease;
+    /* TRANSITION: O segredo da expansão gradual */
+    /* 0.8s ease-out faz o brilho crescer suavemente */
+    transition: filter 0.8s ease-out, transform 0.3s ease;
+    
+    /* Otimização de performance para o navegador */
+    will-change: filter;
 }
 
-/* Efeito extra ao passar o mouse na logo */
+/* --- ESTADO HOVER: EXPANSÃO MÁXIMA GRADUAL --- */
 .hero-main-logo:hover {
-    transform: scale(1.05);
-    /* Brilho explode ao passar o mouse */
-    filter: drop-shadow(0 0 10px var(--color-gold-light))
-            drop-shadow(0 0 40px var(--color-gold-medium))
-            drop-shadow(0 0 80px var(--color-gold-dark));
+    transform: scale(1.03); /* Leve zoom para dar impacto */
+
+    /* Cria o efeito de "explosão de luz" usando múltiplas sombras 
+       com raios de desfoque (blur) cada vez maiores.
+    */
+    filter: 
+        /* Camada 1: Núcleo Brilhante (Ouro Claro) */
+        drop-shadow(0 0 20px var(--color-gold-light))
+        /* Camada 2: Aura Média (Ouro Médio) */
+        drop-shadow(0 0 60px var(--color-gold-medium))
+        /* Camada 3: Expansão Grande (Ouro mais transparente) */
+        drop-shadow(0 0 120px rgba(255, 210, 119, 0.5))
+        /* Camada 4: Expansão Máxima para o fundo (Bem difusa) */
+        drop-shadow(0 0 250px rgba(198, 163, 107, 0.3));
 }
 
-/* --- A Animação do Brilho (Keyframes) --- */
-@keyframes goldenGlow {
-    0% {
-        /* Brilho "Baixo" */
-        filter: drop-shadow(0 0 5px rgba(198, 163, 107, 0.3))
-                drop-shadow(0 0 10px rgba(198, 163, 107, 0.1));
-    }
-    100% {
-        /* Brilho "Forte" (Pico de Luz) */
-        filter: drop-shadow(0 0 10px var(--color-gold-light)) 
-                drop-shadow(0 0 30px var(--color-gold-medium))
-                drop-shadow(0 0 50px rgba(198, 163, 107, 0.6));
-    }
-}
 
 /* --- Subtítulo --- */
 .hero-subtitle {
@@ -82,6 +87,14 @@
 
 /* --- Responsividade --- */
 @media (max-width: 768px) {
-    .hero-main-logo { max-width: 250px; }
+    .hero-main-logo { 
+        max-width: 250px; 
+        /* No mobile, o brilho máximo é um pouco menor para não travar */
+    }
+    .hero-main-logo:hover {
+        filter: drop-shadow(0 0 20px var(--color-gold-light))
+                drop-shadow(0 0 80px var(--color-gold-medium));
+    }
+    
     .hero-subtitle { font-size: 0.95rem; padding: 0 var(--spacing-md); }
 }
