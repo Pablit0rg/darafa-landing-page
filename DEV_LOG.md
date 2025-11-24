@@ -1,22 +1,24 @@
 ---
 
-### 24 de novembro de 2025: Implementação da Lógica "Portal" e Experiência Interativa
+### 24 de novembro de 2025 (Parte 2): Refinamento Visual e Identidade de Marca
 
-**Status:** Fase 2 (Interatividade Avançada) Concluída.
+**Status:** Fase 3 (Identidade & Polimento) Concluída.
 
 **O que foi feito hoje:**
-* **Reestruturação de Layout (Zig-Zag):** Alteramos o fluxo da página para um padrão "Z" (Texto/Imagem alternados) para melhorar o ritmo de leitura e a estética visual.
-* **Conceito "Card Porta":** Implementada a lógica onde os Cards Grandes da página inicial funcionam como "portas" que, ao serem clicadas, expandem um Modal de tela cheia revelando o conteúdo oculto.
-* **Níveis de Interação (Deep Dive):**
-    * **Nível 1 (Expansão):** O Card Grande abre a galeria interna.
-    * **Nível 2 (Galeria):** Clicar em uma joia abre um *Lightbox* (Zoom) para ver detalhes.
-    * **Nível 2 (Sobre):** Clicar em uma foto de processo abre o *Modo Revista* (Story Mode), uma janela dividida com foto e texto descritivo detalhado.
-* **Micro-interações de UX:**
-    * Adicionadas "Barras de Informação" (Info Bars) nos cards de joias para exibir Nome e Descrição curta.
-    * Adicionados "Badges" (Etiquetas) nos cards de processo indicando "Ler História".
-* **JavaScript:** Centralizado no `main.js` para controlar Menu Mobile, Scroll, Modais, Lightbox e detecção de conteúdo (História vs. Imagem).
+* **Identidade Visual (Logo 3D):**
+    * Criada e implementada nova logo "Golden Bee" em 3D com estética de artefato de luxo.
+    * Substituição do título em texto no Hero pela imagem da logo centralizada.
+* **Revisão de Nomenclatura (Copywriting):**
+    * Alterado "Galeria Virtual" para **"Catálogo"** (mais comercial).
+    * Alterado "Sobre a Artista" para **"O Atelier"** (mais sofisticado).
+* **Aprimoramento de UX (Cards):**
+    * **Catálogo:** Adicionada barra inferior (`.card-info-bar`) nos mini-cards com Nome e Descrição Curta da joia.
+    * **O Atelier:** Implementado o **"Story Mode"** (Modo Revista). Cards agora possuem dados estruturados (`data-title`, `data-description`) que abrem um modal de leitura confortável.
+* **Decisão de Design (Limpeza):**
+    * Testamos um tema "Light/Street" (Amarelo e Preto), mas optamos por manter a exclusividade da identidade "Ouro na Noite" (Fundo Preto).
+    * **Limpeza de Código:** Removida toda a lógica de troca de tema (botão, CSS e JS) para manter o projeto leve e focado na identidade principal.
 
 **Próximos Passos (Next Steps):**
-* [ ] **Identidade Visual:** Recriar a logo da "Abelha" do zero com efeito dourado/neon para combinar com o site.
-* [ ] **Assets:** Substituir os placeholders pelas fotos reais da cliente.
-* [ ] **Deploy:** Verificar a build final na Vercel.
+* [ ] **Conteúdo Real:** Substituir os placeholders pelas fotos oficiais das joias da Rafa.
+* [ ] **Textos Finais:** Preencher os títulos e descrições reais das peças no HTML.
+* [ ] **Deploy Final:** Publicação da versão oficial.
