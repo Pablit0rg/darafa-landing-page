@@ -1,43 +1,157 @@
 /*
- * --- MODAL DE EXPANSÃO (A "Caixa Aberta") ---
- * Adicionado via JavaScript quando clica no card.
+ * COMPONENTE: Layout Zig-Zag e Modal
+ * CORRIGIDO: Força o ocultamento do conteúdo interno
  */
 
-/* O Fundo Escuro que cobre o site */
+/* --- ESTRUTURA ZIG-ZAG --- */
+.zig-zag-section {
+    padding: var(--spacing-xl) 0;
+    min-height: 80vh;
+    display: flex;
+    align-items: center;
+}
+
+.zig-zag-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 80px;
+    width: 100%;
+}
+
+.section-reversed .zig-zag-container {
+    flex-direction: row-reverse;
+}
+
+/* --- Lado do Texto --- */
+.text-content {
+    flex: 1;
+    max-width: 500px;
+}
+
+.section-description {
+    font-family: var(--font-sans);
+    font-size: 1.1rem;
+    color: var(--color-text-muted);
+    line-height: 1.8;
+    margin-bottom: var(--spacing-lg);
+}
+
+.decorative-line {
+    width: 60px;
+    height: 2px;
+    background-color: var(--color-gold-medium);
+    margin-top: var(--spacing-lg);
+}
+
+/* --- Lado do Card Grande (PORTA) --- */
+.big-card-wrapper {
+    flex: 1;
+    position: relative;
+    max-width: 550px;
+    aspect-ratio: 4 / 5;
+    cursor: pointer;
+    z-index: 10;
+}
+
+/* A Capa Visível */
+.card-cover {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid var(--color-gold-medium);
+    outline: 1px solid var(--color-gold-dark);
+    outline-offset: 6px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+    transition: transform 0.4s ease;
+    background-color: var(--color-black-deep); /* Fundo de segurança */
+}
+
+.card-cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s ease;
+}
+
+/* Barrinha de Clique */
+.click-bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 10px 0;
+    background-color: rgba(198, 163, 107, 0.95);
+    color: var(--color-black-pure);
+    text-align: center;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    font-weight: 500;
+    z-index: 20;
+    transform: translateY(-100%);
+    transition: transform 0.3s ease;
+}
+
+/* Hover */
+.big-card-wrapper:hover .card-cover {
+    transform: translateY(-5px);
+    border-color: var(--color-gold-light);
+}
+.big-card-wrapper:hover .card-cover img {
+    transform: scale(1.05);
+}
+.big-card-wrapper:hover .click-bar {
+    transform: translateY(0);
+}
+
+/* !!! CRÍTICO: ESCONDER O CONTEÚDO INTERNO !!! */
+.hidden-content {
+    display: none !important; /* Força bruta para garantir que suma */
+    visibility: hidden;
+    opacity: 0;
+    height: 0;
+    overflow: hidden;
+}
+
+/* Card não clicável (Artista) */
+.big-card-wrapper.no-expand {
+    cursor: default;
+}
+.big-card-wrapper.no-expand .click-bar {
+    display: none;
+}
+
+/* --- MODAL (OVERLAY) --- */
 .expansion-overlay {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    z-index: 2000; /* Acima da navbar */
-    
-    background-color: rgba(5, 5, 5, 0.98); /* Quase preto total */
+    z-index: 2000;
+    background-color: rgba(5, 5, 5, 0.98);
     backdrop-filter: blur(5px);
-    
-    opacity: 0; /* Começa invisível */
+    opacity: 0;
     visibility: hidden;
     transition: all 0.4s ease;
-    
-    overflow-y: auto; /* Permite rolar se tiver muitas joias */
+    overflow-y: auto;
     display: flex;
     justify-content: center;
-    padding: 80px 0; /* Espaço para não colar no topo */
+    padding: 80px 0;
 }
 
-/* Quando ativo (classe adicionada via JS) */
 .expansion-overlay.active {
     opacity: 1;
     visibility: visible;
 }
 
-/* O Container do Conteúdo */
 .expansion-content {
     width: 90%;
     max-width: 1200px;
     margin: auto;
     position: relative;
-    transform: translateY(30px); /* Efeito de subida */
+    transform: translateY(30px);
     transition: transform 0.4s ease;
 }
 
@@ -45,7 +159,6 @@
     transform: translateY(0);
 }
 
-/* Botão Fechar (X) */
 .close-expansion {
     position: fixed;
     top: 20px;
@@ -56,19 +169,19 @@
     font-size: 3rem;
     cursor: pointer;
     z-index: 2001;
-    transition: transform 0.3s ease;
 }
 
-.close-expansion:hover {
-    transform: rotate(90deg) scale(1.1);
-    color: #fff;
-}
-
-/* Título dentro do Modal (opcional, para dar contexto) */
-.expansion-title {
-    text-align: center;
-    font-family: var(--font-serif);
-    font-size: 2rem;
-    color: var(--color-gold-medium);
-    margin-bottom: 40px;
+/* Mobile */
+@media (max-width: 900px) {
+    .zig-zag-container {
+        flex-direction: column !important;
+        gap: 40px;
+        text-align: center;
+    }
+    .big-card-wrapper {
+        width: 100%;
+    }
+    .click-bar {
+        transform: translateY(0); /* Sempre visível no mobile */
+    }
 }
