@@ -1,65 +1,48 @@
 /*
  * ARQUIVO DE VARIÁVEIS
- * Design: DaRafa Yellow (Amarelo #FFE300 & Preto #151313)
+ * Design: DaRafa Luxury (Suporte a Dark/Light Mode)
  */
 
 :root {
-    /* --- 1. Paleta de Cores (TEMA PADRÃO: AMARELO) --- */
-
-    /* Neste tema, o "Dourado" dos detalhes vira PRETO 
-       para contrastar com o fundo Amarelo.
-    */
-    --color-gold-light: #333333;   /* Cinza escuro */
-    --color-gold-medium: #151313;  /* Preto (Cor do Texto e Bordas) */
-    --color-gold-dark: #000000;    /* Preto Puro */
+    /* --- DEFINIÇÕES PADRÃO (DARK MODE) --- */
+    --color-gold-light: #ffd277;
+    --color-gold-medium: #C6A36B;  /* Dourado Clássico */
+    --color-gold-dark: #77530a;
     
-    /* O "Preto" do fundo vira AMARELO 
-    */
-    --color-black-pure: #FFE300;   /* Fundo Principal (Amarelo Logo) */
-    --color-black-deep: #FFEA4D;   /* Fundo dos Cards (Um pouco mais claro) */
-    --color-gray-dark: #E6CC00;    /* Detalhes/Linhas (Amarelo mais escuro) */
+    --color-black-pure: #050505;   /* Fundo Principal */
+    --color-black-deep: #0e0e0e;   /* Fundo dos Cards */
+    --color-gray-dark: #1a1a1a;
 
-    /* Texto */
-    --color-text-main: #151313;    /* Preto para leitura */
-    --color-text-muted: #444444;   /* Cinza escuro para subtítulos */
+    --color-text-main: #f0f0f0;    /* Texto Claro */
+    --color-text-muted: #a0a0a0;
 
-
-    /* --- 2. Tipografia (Mantida) --- */
+    /* --- TIPOGRAFIA & LAYOUT (Não muda com o tema) --- */
     --font-serif: 'Playfair Display', serif;
     --font-sans: 'Poppins', sans-serif;
-
-    /* Tamanhos Base */
     --font-size-base: 16px;
     --font-size-h1: 3.5rem;
     --font-size-h2: 2.2rem;
-    --font-size-p: 1rem;
-
-    /* --- 3. Layout e Espaçamento --- */
     --container-width: 1200px;
-    --spacing-sm: 8px;
     --spacing-md: 16px;
     --spacing-lg: 32px;
     --spacing-xl: 80px;
-
-    /* --- 4. Bordas e Efeitos --- */
-    --border-radius-sm: 4px;
     --border-radius-pill: 50px;
-    /* Sombra preta suave em vez de dourada */
-    --shadow-gold: 0 0 15px rgba(0, 0, 0, 0.15); 
 }
 
-/* --- TEMA ESCURO (OPCIONAL) --- 
-   Se o usuário clicar na Lua, volta para o Preto/Dourado antigo.
-*/
-body.dark-theme {
-    --color-gold-light: #ffd277;
-    --color-gold-medium: #C6A36B;
-    --color-gold-dark: #77530a;
-    
-    --color-black-pure: #050505;
-    --color-black-deep: #0e0e0e;
-    --color-gray-dark: #1a1a1a;
+/* --- TEMA CLARO (LIGHT MODE) --- */
+/* Quando a classe .light-theme é adicionada ao body, estas cores assumem */
+body.light-theme {
+    /* O Amarelo #FFE300 Substitui o Dourado */
+    --color-gold-light: #fff066;
+    --color-gold-medium: #FFE300;  /* AMARELO PEDIDO */
+    --color-gold-dark: #b3a000;    /* Amarelo mais escuro para bordas */
 
-    --color-text-main: #f0f0f0;
-    --color-text-muted: #a0a0a0;
+    /* Fundos Claros */
+    --color-black-pure: #ffffff;   /* Fundo Branco */
+    --color-black-deep: #f4f4f4;   /* Cards Cinza Claríssimo */
+    --color-gray-dark: #e0e0e0;    /* Linhas divisórias */
+
+    /* Textos Escuros */
+    --color-text-main: #151313;    /* PRETO PEDIDO */
+    --color-text-muted: #555555;   /* Cinza escuro */
 }
