@@ -1,48 +1,44 @@
 /*
  * ARQUIVO DE VARIÁVEIS
- * Design: DaRafa Luxury (Suporte a Dark/Light Mode)
+ * Design: DaRafa Luxury (Padrão Escuro - Ouro na Noite)
  */
 
 :root {
-    /* --- DEFINIÇÕES PADRÃO (DARK MODE) --- */
+    /* --- 1. Paleta de Cores --- */
+
+    /* Tons de Dourado */
     --color-gold-light: #ffd277;
     --color-gold-medium: #C6A36B;  /* Dourado Clássico */
     --color-gold-dark: #77530a;
     
+    /* Tons de Fundo */
     --color-black-pure: #050505;   /* Fundo Principal */
     --color-black-deep: #0e0e0e;   /* Fundo dos Cards */
     --color-gray-dark: #1a1a1a;
 
+    /* Texto */
     --color-text-main: #f0f0f0;    /* Texto Claro */
     --color-text-muted: #a0a0a0;
 
-    /* --- TIPOGRAFIA & LAYOUT (Não muda com o tema) --- */
+    /* --- 2. Tipografia --- */
     --font-serif: 'Playfair Display', serif;
     --font-sans: 'Poppins', sans-serif;
+
+    /* Tamanhos Base */
     --font-size-base: 16px;
     --font-size-h1: 3.5rem;
     --font-size-h2: 2.2rem;
+    --font-size-p: 1rem;
+
+    /* --- 3. Layout e Espaçamento --- */
     --container-width: 1200px;
+    --spacing-sm: 8px;
     --spacing-md: 16px;
     --spacing-lg: 32px;
     --spacing-xl: 80px;
+
+    /* --- 4. Bordas e Efeitos --- */
+    --border-radius-sm: 4px;
     --border-radius-pill: 50px;
-}
-
-/* --- TEMA CLARO (LIGHT MODE) --- */
-/* Quando a classe .light-theme é adicionada ao body, estas cores assumem */
-body.light-theme {
-    /* O Amarelo #FFE300 Substitui o Dourado */
-    --color-gold-light: #fff066;
-    --color-gold-medium: #FFE300;  /* AMARELO PEDIDO */
-    --color-gold-dark: #b3a000;    /* Amarelo mais escuro para bordas */
-
-    /* Fundos Claros */
-    --color-black-pure: #ffffff;   /* Fundo Branco */
-    --color-black-deep: #f4f4f4;   /* Cards Cinza Claríssimo */
-    --color-gray-dark: #e0e0e0;    /* Linhas divisórias */
-
-    /* Textos Escuros */
-    --color-text-main: #151313;    /* PRETO PEDIDO */
-    --color-text-muted: #555555;   /* Cinza escuro */
+    --shadow-gold: 0 0 15px rgba(198, 163, 107, 0.2);
 }
