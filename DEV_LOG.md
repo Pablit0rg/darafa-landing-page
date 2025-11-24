@@ -1,18 +1,22 @@
 ---
 
-### 15 de novembro de 2025 (Parte 2): Conclusão da Estrutura CSS Modular
+### 24 de novembro de 2025: Implementação da Lógica "Portal" e Experiência Interativa
 
-**Status:** 🟡 Fase 1 (CSS) Concluída. Layout em Teste.
+**Status:** Fase 2 (Interatividade Avançada) Concluída.
 
 **O que foi feito hoje:**
-* **CSS Modular:** Criados todos os arquivos de componentes individuais na pasta `styles/_components/` (`_hero.css`, `_about.css`, `_gallery.css`, `_cta.css`, `_footer.css`).
-* **Estrutura Base:** Finalizada toda a pasta `styles/_base/` (`_reset.css`, `_variables.css`, `_global.css`), incluindo a paleta de cores "Ouro na Noite" (efeito smoke e dourado).
-* **Limpeza:** Removido o arquivo `style.css` obsoleto da raiz do projeto, mantendo a arquitetura modular limpa.
-* **Teste de Layout:** Identificamos que a ausência de imagens estava "achatando" os cards da galeria.
-* **Simulação:** Atualizamos o `index.html` para usar imagens de *placeholder* (via `placehold.co`) para simular o layout final. O CSS Grid (`_gallery.css`) e o Flexbox (`_about.css`) estão respondendo como esperado.
+* **Reestruturação de Layout (Zig-Zag):** Alteramos o fluxo da página para um padrão "Z" (Texto/Imagem alternados) para melhorar o ritmo de leitura e a estética visual.
+* **Conceito "Card Porta":** Implementada a lógica onde os Cards Grandes da página inicial funcionam como "portas" que, ao serem clicadas, expandem um Modal de tela cheia revelando o conteúdo oculto.
+* **Níveis de Interação (Deep Dive):**
+    * **Nível 1 (Expansão):** O Card Grande abre a galeria interna.
+    * **Nível 2 (Galeria):** Clicar em uma joia abre um *Lightbox* (Zoom) para ver detalhes.
+    * **Nível 2 (Sobre):** Clicar em uma foto de processo abre o *Modo Revista* (Story Mode), uma janela dividida com foto e texto descritivo detalhado.
+* **Micro-interações de UX:**
+    * Adicionadas "Barras de Informação" (Info Bars) nos cards de joias para exibir Nome e Descrição curta.
+    * Adicionados "Badges" (Etiquetas) nos cards de processo indicando "Ler História".
+* **JavaScript:** Centralizado no `main.js` para controlar Menu Mobile, Scroll, Modais, Lightbox e detecção de conteúdo (História vs. Imagem).
 
 **Próximos Passos (Next Steps):**
-* [ ] Adicionar logo da cliente ao Hero.
-* [ ] (PENDENTE) Substituir as imagens de simulação (`placehold.co`) pelas fotos reais da cliente (requer upload para a pasta `assets/images/` e atualização do `index.html`).
-* [ ] Adicionar o ícone do Instagram ao botão `.cta-button-instagram`.
-* [ ] Revisão final de responsividade.
+* [ ] **Identidade Visual:** Recriar a logo da "Abelha" do zero com efeito dourado/neon para combinar com o site.
+* [ ] **Assets:** Substituir os placeholders pelas fotos reais da cliente.
+* [ ] **Deploy:** Verificar a build final na Vercel.
