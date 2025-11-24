@@ -136,3 +136,97 @@
     .info-title { font-size: 0.85rem; }
     .info-desc { font-size: 0.65rem; }
 }
+
+/* --- BADGE DE HISTÓRIA (Etiqueta no Card) --- */
+.story-badge {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    background-color: rgba(0, 0, 0, 0.8);
+    border: 1px solid var(--color-gold-medium);
+    color: var(--color-gold-light);
+    padding: 5px 10px;
+    font-size: 0.75rem;
+    border-radius: 20px;
+    text-transform: uppercase;
+    opacity: 0.8;
+    transition: all 0.3s ease;
+    z-index: 5;
+}
+
+.gold-framebox:hover .story-badge {
+    background-color: var(--color-gold-medium);
+    color: var(--color-black-pure);
+    opacity: 1;
+}
+
+/* --- MODAL DE HISTÓRIA (ESTILO REVISTA) --- 
+ * Este é o visual da janela que abrirá com Texto + Foto
+ */
+.story-viewer-content {
+    display: flex;
+    width: 90%;
+    max-width: 900px;
+    background-color: var(--color-black-pure);
+    border: 1px solid var(--color-gold-dark);
+    box-shadow: 0 0 50px rgba(0,0,0,0.9);
+    overflow: hidden; /* Para a imagem não vazar */
+    border-radius: 4px;
+    position: relative; /* Para o botão fechar */
+}
+
+/* Lado da Imagem */
+.story-image-col {
+    flex: 1; /* 50% da largura */
+    min-height: 400px;
+}
+.story-image-col img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Lado do Texto */
+.story-text-col {
+    flex: 1; /* 50% da largura */
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: left;
+}
+
+.story-title {
+    font-family: var(--font-serif);
+    font-size: 2rem;
+    color: var(--color-gold-medium);
+    margin-bottom: 20px;
+    border-bottom: 1px solid var(--color-gray-dark);
+    padding-bottom: 10px;
+}
+
+.story-desc {
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    color: var(--color-text-main);
+    line-height: 1.8;
+}
+
+/* Responsividade do Modal de História */
+@media (max-width: 768px) {
+    .story-viewer-content {
+        flex-direction: column; /* Imagem em cima, texto embaixo */
+        max-height: 85vh; /* Limita altura */
+        overflow-y: auto; /* Permite rolar */
+    }
+    .story-image-col {
+        min-height: 250px;
+        flex: none; /* Altura fixa */
+    }
+    .story-text-col {
+        padding: 20px;
+    }
+    .story-title {
+        font-size: 1.5rem;
+    }
+}
