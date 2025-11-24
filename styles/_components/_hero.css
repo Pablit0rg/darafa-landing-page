@@ -6,47 +6,41 @@
 .hero-section {
     position: relative;
     min-height: 80vh; 
-    
-    /* Centralização Vertical e Horizontal do Container */
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center; 
     text-align: center;
-    
     padding-bottom: var(--spacing-xl);
     padding-top: 100px; 
 }
 
-/* --- Container Interno --- */
 .hero-container {
     width: 100%;
     display: flex;
     flex-direction: column;
-    align-items: center; /* Garante que tudo dentro fique no centro */
+    align-items: center;
 }
 
-/* --- Logo Grande Central (Ajuste Fino) --- */
+/* --- Logo Grande Central (3D) --- */
 .hero-main-logo {
-    display: block; /* Comporta-se como bloco para aceitar margens */
-    margin-left: auto;  /* Empurra da esquerda */
-    margin-right: auto; /* Empurra da direita */
-    
-    /* Tamanho */
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
     max-width: 350px;
-    width: 90%; /* Responsivo em telas pequenas */
-    
-    /* Espaçamento */
+    width: 90%;
     margin-bottom: 20px;
     
-    /* Brilho Dourado na Imagem */
-    filter: drop-shadow(0 0 15px rgba(198, 163, 107, 0.3));
+    /* DESATIVADO PARA O TESTE 3D:
+       Como a nova imagem já tem luz e sombra próprias, 
+       removemos o filtro CSS para não "sujar" o visual.
+       Se precisar voltar, descomente a linha abaixo:
+    */
+    /* filter: drop-shadow(0 0 15px rgba(198, 163, 107, 0.3)); */
     
-    /* Animação de entrada */
     animation: fadeInDown 1s ease-out;
 }
 
-/* --- Subtítulo --- */
 .hero-subtitle {
     font-family: var(--font-sans);
     font-size: 1.1rem;
@@ -54,37 +48,21 @@
     font-weight: 300;
     letter-spacing: 1px;
     margin-bottom: var(--spacing-lg);
-    
     max-width: 600px;
     margin-left: auto;
     margin-right: auto;
 }
 
-/* --- Botão do Hero --- */
 .hero-btn {
     margin-top: var(--spacing-md);
 }
 
-/* --- Animações --- */
 @keyframes fadeInDown {
-    from {
-        opacity: 0;
-        transform: translateY(-20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
-/* --- Responsividade --- */
 @media (max-width: 768px) {
-    .hero-main-logo {
-        max-width: 250px; /* Menor no celular */
-    }
-    
-    .hero-subtitle {
-        font-size: 0.95rem;
-        padding: 0 var(--spacing-md);
-    }
+    .hero-main-logo { max-width: 250px; }
+    .hero-subtitle { font-size: 0.95rem; padding: 0 var(--spacing-md); }
 }
