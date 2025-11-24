@@ -1,90 +1,60 @@
 /*
- * COMPONENTE: Grids Internos (Highlights)
- * Controla apenas o layout dos cards pequenos (Joias e Processo)
- * que aparecem dentro do Modal de Expansão.
+ * COMPONENTE: Highlights (Cards Internos)
  */
 
-/* --- Grid de 5 Colunas (Para a Galeria Virtual) --- */
+/* Grids */
 .gallery-5-cols {
     display: grid;
-    grid-template-columns: repeat(5, 1fr); /* 5 colunas lado a lado */
-    gap: var(--spacing-md); /* 16px de espaço */
-    width: 100%;
-}
-
-/* --- Grid do Sobre (Para as fotos de processo) --- */
-.about-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr); /* 4 colunas */
+    grid-template-columns: repeat(5, 1fr);
     gap: var(--spacing-md);
     width: 100%;
 }
 
-/* --- O Card Pequeno (Moldura Dourada) --- */
+.about-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--spacing-md);
+    width: 100%;
+}
+
+/* Card Pequeno */
 .gold-framebox {
     position: relative;
     width: 100%;
-    aspect-ratio: 3 / 4; /* Formato Retrato */
+    aspect-ratio: 3 / 4;
     overflow: hidden;
-    
-    /* Borda Dourada */
     border: 1px solid var(--color-gold-medium);
-    
-    /* Fundo escuro caso a imagem demore a carregar */
     background-color: var(--color-black-deep);
-    
     transition: all 0.3s ease;
-    cursor: pointer;
 }
 
-/* A Imagem dentro do card */
 .gold-framebox img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform 0.5s ease;
     opacity: 0.9;
+    transition: transform 0.5s ease;
 }
 
-/* --- Efeitos de Hover nos Cards Pequenos --- */
 .gold-framebox:hover {
     border-color: var(--color-gold-light);
-    box-shadow: 0 0 15px rgba(198, 163, 107, 0.4); /* Glow Dourado */
     transform: translateY(-5px);
-    z-index: 2;
+    box-shadow: 0 0 15px rgba(198, 163, 107, 0.4);
 }
 
 .gold-framebox:hover img {
-    transform: scale(1.1); /* Zoom na foto */
+    transform: scale(1.1);
     opacity: 1;
 }
 
-/* --- Responsividade dos Grids Internos --- */
-
-/* Tablets (iPad) */
+/* Responsividade */
 @media (max-width: 1024px) {
-    .gallery-5-cols {
-        grid-template-columns: repeat(4, 1fr); /* Cai para 4 */
-    }
-    .about-grid {
-        grid-template-columns: repeat(2, 1fr); /* Cai para 2x2 */
-    }
+    .gallery-5-cols { grid-template-columns: repeat(4, 1fr); }
+    .about-grid { grid-template-columns: repeat(2, 1fr); }
 }
-
-/* Celulares Grandes */
 @media (max-width: 768px) {
-    .gallery-5-cols {
-        grid-template-columns: repeat(3, 1fr); /* Cai para 3 */
-    }
+    .gallery-5-cols { grid-template-columns: repeat(3, 1fr); }
 }
-
-/* Celulares Pequenos */
 @media (max-width: 480px) {
-    .gallery-5-cols {
-        grid-template-columns: repeat(2, 1fr); /* Cai para 2 */
-        gap: 10px; /* Menos espaço */
-    }
-    .about-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
+    .gallery-5-cols { grid-template-columns: repeat(2, 1fr); }
 }
