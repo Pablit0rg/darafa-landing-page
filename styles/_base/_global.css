@@ -4,14 +4,21 @@
  */
 
 body {
-    /* Fundo Luxuoso: Preto profundo com um leve gradiente central */
+    /* --- FUNDO HONEYCOMB (FAVO DE MEL) --- */
+    /* Base preta profunda */
     background-color: var(--color-black-pure);
-    background-image: radial-gradient(
-        circle at center top,
-        #151515,
-        var(--color-black-pure) 60%
-    );
-    background-attachment: fixed; /* O fundo fica parado ao rolar */
+    
+    /* Padrão geométrico de pontos dourados sutis que simulam colmeia */
+    background-image:  
+        radial-gradient(var(--color-gold-dark) 1.5px, transparent 1.5px), 
+        radial-gradient(var(--color-gold-dark) 1.5px, var(--color-black-pure) 1.5px);
+    
+    /* Tamanho e posição para criar o ritmo visual */
+    background-size: 40px 40px;
+    background-position: 0 0, 20px 20px;
+    
+    /* O fundo fica fixo enquanto o site rola */
+    background-attachment: fixed;
     
     font-family: var(--font-sans);
     color: var(--color-text-main);
