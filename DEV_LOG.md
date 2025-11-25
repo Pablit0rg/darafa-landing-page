@@ -1,52 +1,18 @@
 ---
 
-### 25 de novembro de 2025: Refinamento de Luxo e Preparação para o Lançamento
+### 25 de novembro de 2025 (Parte 3): Refinamento de UI e Botões
 
-**Status:** Fase 3 Concluída. Iniciando Reta Final (Conteúdo).
+**Status:** 🟢 Fase 4 (Polimento) Concluída. Código Estável.
 
-**O que foi feito hoje (Polimento Visual e UX):**
-* **Identidade Visual Definitiva:**
-    * Implementada a logo oficial 3D com fundo transparente (`logo-darafa-oficial.png`).
-    * Criado efeito CSS `goldenGlow` (Brilho Pulsante) no Hero: a logo brilha suavemente em repouso e "explode" em luz dourada ao passar o mouse.
-    * **Decisão de Design:** Removida a funcionalidade "Light Mode" (Amarelo) para manter a integridade da marca "Ouro na Noite" (All Black).
-* **Expansão da Seção "A Artista":**
-    * Transformado o card da artista em um "Portal de Bio".
-    * Criado layout exclusivo `.artist-bio-layout`: ao clicar, abre um modal com foto vertical grande e biografia completa, diferente dos grids de produtos.
-* **Refinamento dos Modais:**
-    * Ajuste de fundos para transparência "Vidro Fumê" nos cards grandes e modais, eliminando fundos cinzas sólidos.
-    * Implementada lógica inteligente no JS para distinguir entre:
-        1.  **Zoom Simples:** Para joias (Galeria).
-        2.  **Modo Revista:** Para processos (Atelier).
-        3.  **Bio Expandida:** Para a artista.
+**O que foi feito hoje:**
+* **Correção de UI (Botões):**
+    * **Botão "Voltar ao Topo":** Redesenhado completamente no `_global.css`. Agora segue a mesma identidade luxuosa dos botões principais (Gradiente Dourado, Redondo, Seta Escura), garantindo visibilidade e consistência.
+    * **Botão Instagram:** Corrigido o bug de sobreposição de texto no `_uiverse-button.css`. A classe `.artist-btn` agora exibe corretamente "SEGUIR NO INSTAGRAM" sobrescrevendo o conteúdo padrão.
+* **Consolidação do Código:**
+    * Revertida a tentativa de "Light Mode" (Amarelo) para manter o foco total na identidade premium escura.
+    * Todos os arquivos CSS (`_global.css`, `_uiverse-button.css`, etc.) foram revisados e travados na versão estável atual.
 
-**PRÓXIMOS PASSOS - O GRANDE PLANO (Reta Final):**
-
-**1. Injeção de Conteúdo Real (A Grande Mudança)**
-* [ ] **Galeria:** Substituir os 15 placeholders pelas fotos reais das joias.
-* [ ] **Dados:** Preencher Nome e Descrição Técnica real nas 15 `card-info-bar`.
-* [ ] **Atelier:** Substituir as 4 fotos de processo e escrever os textos reais das histórias (`data-description`).
-* [ ] **Artista:** Inserir a foto oficial da Rafa e o texto final da biografia.
-
-**2. Otimização e SEO (Técnico)**
-* [ ] **Meta Tags:** Configurar título, descrição e imagem de compartilhamento (OG Tags) para ficar bonito no WhatsApp/Instagram.
-* [ ] **Favicon:** Criar o ícone da abelha para a aba do navegador.
-* [ ] **Performance:** Verificar se as imagens estão leves para carregar rápido no 4G.
-
-**3. Validação Final (QA)**
-* [ ] Testar clique e scroll em iPhone e Android.
-* [ ] Verificar ortografia de todos os textos.
-
-**4. Deploy Oficial**
-* [ ] Commit final na Vercel e entrega do link.
-
-### 25 de novembro de 2025 (Parte 2): Planejamento de Integração e Expansão
-
-**Novas Funcionalidades Solicitadas:**
-* **Assinatura do Desenvolvedor:** Adicionar crédito `@Pablit0rg` no rodapé.
-* **Automação de Feed (Instagram):**
-    * **Requisito:** O site deve atualizar automaticamente (ou exibir) as novas postagens do Instagram da Rafa para manter o conteúdo fresco.
-    * **Estratégia Técnica:** Avaliar uso da *Instagram Basic Display API* ou Widgets profissionais (como Elfsight ou SnapWidget) para a entrega final.
-* **Plano Futuro (Pós-Entrega):**
-    * **Migração de Conteúdo:** Criar uma estratégia para migrar o acervo massivo (20 destaques/carrosséis) do Instagram para o site, criando galerias temáticas independentes, reduzindo a dependência da plataforma social.
-
----
+**Próximos Passos (Reta Final):**
+* [ ] **Conteúdo:** Inserir as fotos reais e textos finais.
+* [ ] **Integração:** Planejar a automação do feed do Instagram (Futuro).
+* [ ] **Deploy:** Publicação final.
