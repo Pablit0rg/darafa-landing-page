@@ -1,34 +1,52 @@
 /*
  * COMPONENTE: Footer Section
- *
- * Estilos para o rodapé final do site.
  */
 
 .footer-section {
-    padding: var(--spacing-lg) 0; /* 32px em cima/baixo */
-    
-    /* * Usamos o tom de preto mais profundo para
-     * encerrar a página.
-     */
-    background-color: var(--color-black-pure); /* #070707 */
-    
-    /* * Borda superior sutil para separar o rodapé
-     * do resto do conteúdo.
-     */
-    border-top: 1px solid var(--color-gray-dark); /* #181818 */
-    
+    padding: var(--spacing-lg) 0;
+    background-color: var(--color-black-pure);
+    border-top: 1px solid var(--color-gray-dark);
     text-align: center;
+    margin-top: auto; /* Garante que fique no fundo */
 }
 
-.footer-section p {
-    font-size: var(--font-size-sm); /* 14px */
-    color: var(--color-text-medium); /* Cinza claro */
-    line-height: 1.6;
+.footer-content {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
 }
 
-/* * Estiliza o segundo parágrafo (créditos) se houver */
-.footer-section p + p {
-    margin-top: var(--spacing-xs); /* 4px */
-    font-size: 0.8rem; /* 12.8px */
-    color: var(--color-gray-medium); /* Cinza mais escuro */
+.footer-tagline {
+    font-family: var(--font-serif);
+    color: var(--color-gold-medium);
+    font-size: 1.1rem;
+    letter-spacing: 1px;
+}
+
+.footer-copyright {
+    font-family: var(--font-sans);
+    font-size: 0.85rem;
+    color: var(--color-text-muted);
+    opacity: 0.8;
+}
+
+/* --- Assinatura do Dev --- */
+.footer-dev {
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    color: #666;
+    margin-top: 5px;
+}
+
+.footer-dev a {
+    color: var(--color-text-muted);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.footer-dev a:hover {
+    color: var(--color-gold-light); /* Brilha dourado ao passar o mouse */
+    text-decoration: underline;
 }
