@@ -1,18 +1,17 @@
 ---
 
-### 25 de novembro de 2025 (Parte 3): Refinamento de UI e Botões
+### 25 de novembro de 2025 (Parte 4): Textura de Fundo e Finalização Estética
 
-**Status:** 🟢 Fase 4 (Polimento) Concluída. Código Estável.
+**Status:** 🟢 Fase 5 (Identidade Final) Concluída.
 
 **O que foi feito hoje:**
-* **Correção de UI (Botões):**
-    * **Botão "Voltar ao Topo":** Redesenhado completamente no `_global.css`. Agora segue a mesma identidade luxuosa dos botões principais (Gradiente Dourado, Redondo, Seta Escura), garantindo visibilidade e consistência.
-    * **Botão Instagram:** Corrigido o bug de sobreposição de texto no `_uiverse-button.css`. A classe `.artist-btn` agora exibe corretamente "SEGUIR NO INSTAGRAM" sobrescrevendo o conteúdo padrão.
-* **Consolidação do Código:**
-    * Revertida a tentativa de "Light Mode" (Amarelo) para manter o foco total na identidade premium escura.
-    * Todos os arquivos CSS (`_global.css`, `_uiverse-button.css`, etc.) foram revisados e travados na versão estável atual.
+* **Implementação de Textura de Fundo:**
+    * Adicionada a imagem `honeycomb-background2.jpg` como background do corpo do site.
+    * **Técnica de Fixação:** Utilizamos `background-attachment: fixed` para que a textura fique parada enquanto o conteúdo rola, criando um efeito de profundidade e evitando desconforto visual.
+    * **Filtro de Escurecimento (Overlay):** Aplicamos um `linear-gradient` preto com 93% de opacidade sobre a imagem da colmeia. Isso garante que a textura seja visível apenas como um detalhe sutil e luxuoso, sem comprometer o contraste do texto dourado/branco.
+* **Consolidação Geral:**
+    * Todos os arquivos principais (`index.html`, `main.js` e os CSS modulares) foram revisados e estão sincronizados com a identidade visual "Ouro na Noite".
 
-**Próximos Passos (Reta Final):**
-* [ ] **Conteúdo:** Inserir as fotos reais e textos finais.
-* [ ] **Integração:** Planejar a automação do feed do Instagram (Futuro).
-* [ ] **Deploy:** Publicação final.
+**Próximos Passos (Pós-Lançamento):**
+* [ ] **Conteúdo:** Inserção final de textos e fotos reais.
+* [ ] **Integrações:** Planejamento da API do Instagram.
