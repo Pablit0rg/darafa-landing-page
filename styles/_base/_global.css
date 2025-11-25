@@ -4,26 +4,29 @@
  */
 
 body {
-    /* Fundo Principal */
+    /* Fundo Luxuoso: Preto profundo com um leve gradiente central */
     background-color: var(--color-black-pure);
-    background-image: none; 
+    background-image: radial-gradient(
+        circle at center top,
+        #151515,
+        var(--color-black-pure) 60%
+    );
+    background-attachment: fixed; /* O fundo fica parado ao rolar */
     
     font-family: var(--font-sans);
     color: var(--color-text-main);
     font-size: var(--font-size-base);
-    font-weight: 400;
+    font-weight: 300; /* Poppins Light */
     
     /* Garante que a navbar fixa não cubra o topo */
     padding-top: 80px;
-    
-    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* Títulos (H1, H2, H3...) */
+/* Títulos (H1, H2, H3...) usam a fonte Serifada (Playfair) */
 h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-serif);
-    color: var(--color-gold-medium); 
-    font-weight: 600;
+    color: var(--color-gold-medium);
+    font-weight: 400; /* Playfair já é elegante, não precisa de bold pesado */
     line-height: 1.2;
 }
 
@@ -40,53 +43,46 @@ h1, h2, h3, h4, h5, h6 {
     text-align: center;
     font-size: var(--font-size-h2);
     margin-bottom: var(--spacing-lg);
-    color: var(--color-gold-medium);
+    
+    /* Efeito sutil de degradê no texto dourado */
+    background: linear-gradient(to right, var(--color-gold-medium), var(--color-text-main), var(--color-gold-medium));
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
 }
 
-/* --- BOTÃO VOLTAR AO TOPO (ATUALIZADO: ESTILO LUXO) --- */
+/* Botão Voltar ao Topo */
 .back-to-top {
     position: fixed;
     bottom: 30px;
     right: 30px;
-    width: 50px;  /* Um pouco maior */
-    height: 50px;
-    
-    /* O mesmo gradiente dourado dos botões principais */
-    background-image: linear-gradient(
-        145deg,
-        var(--color-gold-bright),
-        var(--color-gold-medium) 50%,
-        var(--color-gold-dark) 90%
-    );
-    
-    /* Texto/Ícone Preto para contraste */
-    color: var(--color-black-pure);
-    
-    border: none;
-    border-radius: 50%; /* Redondo */
+    width: 45px;
+    height: 45px;
+    background: var(--color-black-deep);
+    border: 1px solid var(--color-gold-dark);
+    color: var(--color-gold-medium);
+    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.5rem; /* Seta maior */
+    font-size: 1.2rem;
     cursor: pointer;
-    
-    /* Começa invisível */
-    opacity: 0;
+    opacity: 0; /* Começa invisível */
     pointer-events: none;
-    
     transition: all 0.3s ease;
     z-index: 900;
-    
-    /* Sombra brilhante */
-    box-shadow: 0 4px 15px rgba(198, 163, 107, 0.4);
 }
 
+/* Classe que o JS vai adicionar para mostrar o botão */
 .back-to-top.visible {
     opacity: 1;
     pointer-events: all;
 }
 
 .back-to-top:hover {
-    transform: translateY(-5px) scale(1.1); /* Sobe e cresce */
-    box-shadow: 0 0 25px rgba(255, 210, 119, 0.6); /* Glow forte */
+    background: var(--color-gold-dark);
+    color: var(--color-text-main);
+    transform: translateY(-3px);
 }
