@@ -1,62 +1,56 @@
-/*
- * COMPONENTE: Botão Animado (Uiverse Híbrido)
- * Estilo Luxo Dourado
+/* * From Uiverse.io by vinodjangid07
+ * --- MODIFICADO (Híbrido) ---
  */
-
 .Btn {
-  /* TAMANHO PADRÃO */
+  /* TAMANHO: Aumentado para o novo texto */
   width: 220px;
   height: 50px;
   
   border: none;
-  border-radius: 50px; /* Pílula */
+  border-radius: 10px;
   
-  /* ESTILO: Gradiente Dourado */
+  /* ESTILO: Mantido 100% original */
   background: linear-gradient(to right,#77530a,#ffd277,#77530a,#77530a,#ffd277,#77530a);
   background-size: 250%;
   background-position: left;
   color: #ffd277;
   
   position: relative;
-  display: inline-flex;
+  
+  /* ALINHAMENTO: Corrigido para centralizar */
+  display: inline-flex; /* Era 'flex' */
+  
   align-items: center;
   justify-content: center;
   cursor: pointer;
   transition-duration: 1s;
   overflow: hidden;
-  text-decoration: none; /* Importante para links */
 }
 
 .Btn::before {
   position: absolute;
   
-  /* TEXTO PADRÃO (Para o Hero) */
+  /* TEXTO: Alterado */
   content: "CONHECER AS JOIAS";
+  font-size: 0.9rem; /* Ajuste para o novo texto */
   
-  font-size: 0.9rem;
-  font-weight: 600;
-  letter-spacing: 1px;
-  color: var(--color-black-pure); /* Texto preto */
-  
+  /* ESTILO: Mantido 100% original */
+  color: #ffd277;
   display: flex;
   align-items: center;
   justify-content: center;
   width: 97%;
-  height: 88%;
-  border-radius: 50px;
+  height: 90%;
+  border-radius: 8px;
   transition-duration: 1s;
-  
-  /* Fundo interno (Ouro Brilhante) */
-  background-color: var(--color-gold-bright); 
+  background-color: rgba(0, 0, 0, 0.842);
   background-size: 200%;
 }
 
-/* ANIMAÇÃO */
+/* ANIMAÇÃO: Mantida 100% original */
 .Btn:hover {
   background-position: right;
   transition-duration: 1s;
-  transform: scale(1.02);
-  box-shadow: 0 0 20px rgba(198, 163, 107, 0.5);
 }
 
 .Btn:hover::before {
@@ -66,18 +60,4 @@
 
 .Btn:active {
   transform: scale(0.95);
-}
-
-
-/* --- VARIAÇÃO: BOTÃO DO INSTAGRAM/ARTISTA --- */
-/* Esta classe (.artist-btn) sobrescreve o texto e tamanho padrão */
-
-.artist-btn {
-    width: 260px; /* Um pouco mais largo para caber o texto maior */
-    margin-top: 20px;
-}
-
-.artist-btn::before {
-    /* AQUI ESTÁ A CORREÇÃO: */
-    content: "SEGUIR NO INSTAGRAM"; 
 }
