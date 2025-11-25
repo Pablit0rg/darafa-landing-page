@@ -4,38 +4,29 @@
  */
 
 body {
-    /* --- FUNDO HONEYCOMB (Fixado e Escurecido) --- */
-    background-color: var(--color-black-pure); /* Cor de segurança */
-    
-    background-image: 
-        /* Camada 1: Um véu preto quase opaco (93%) para manter o tema "Noite" */
-        linear-gradient(rgba(5, 5, 5, 0.93), rgba(5, 5, 5, 0.93)),
-        /* Camada 2: A imagem da colmeia */
-        url('../../assets/images/honeycomb-background2.jpg');
-    
-    /* Configuração para deixar "Fixa Parada" */
-    background-attachment: fixed; /* O segredo: o fundo não se mexe ao rolar */
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover; /* Estica para cobrir a tela toda */
-    
+    /* Fundo Luxuoso: Preto profundo com um leve gradiente central */
+    background-color: var(--color-black-pure);
+    background-image: radial-gradient(
+        circle at center top,
+        #151515,
+        var(--color-black-pure) 60%
+    );
+    background-attachment: fixed; /* O fundo fica parado ao rolar */
     
     font-family: var(--font-sans);
     color: var(--color-text-main);
     font-size: var(--font-size-base);
-    font-weight: 400;
+    font-weight: 300; /* Poppins Light */
     
     /* Garante que a navbar fixa não cubra o topo */
     padding-top: 80px;
-    
-    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 /* Títulos (H1, H2, H3...) usam a fonte Serifada (Playfair) */
 h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-serif);
     color: var(--color-gold-medium);
-    font-weight: 600;
+    font-weight: 400; /* Playfair já é elegante, não precisa de bold pesado */
     line-height: 1.2;
 }
 
@@ -52,49 +43,46 @@ h1, h2, h3, h4, h5, h6 {
     text-align: center;
     font-size: var(--font-size-h2);
     margin-bottom: var(--spacing-lg);
-    color: var(--color-gold-medium);
+    
+    /* Efeito sutil de degradê no texto dourado */
+    background: linear-gradient(to right, var(--color-gold-medium), var(--color-text-main), var(--color-gold-medium));
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
 }
 
-/* --- BOTÃO VOLTAR AO TOPO (Estilo Luxo) --- */
+/* Botão Voltar ao Topo */
 .back-to-top {
     position: fixed;
     bottom: 30px;
     right: 30px;
-    width: 50px;
-    height: 50px;
-    
-    /* Gradiente Dourado */
-    background: linear-gradient(to right,#77530a,#ffd277,#77530a,#77530a,#ffd277,#77530a);
-    background-size: 250%;
-    background-position: left;
-    
-    /* Cor do Ícone */
-    color: #422d03; 
-    
-    border: none;
+    width: 45px;
+    height: 45px;
+    background: var(--color-black-deep);
+    border: 1px solid var(--color-gold-dark);
+    color: var(--color-gold-medium);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.5rem;
+    font-size: 1.2rem;
     cursor: pointer;
-    z-index: 900;
-    
-    opacity: 0;
+    opacity: 0; /* Começa invisível */
     pointer-events: none;
-    transition: all 0.5s ease;
-    
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+    transition: all 0.3s ease;
+    z-index: 900;
 }
 
+/* Classe que o JS vai adicionar para mostrar o botão */
 .back-to-top.visible {
     opacity: 1;
     pointer-events: all;
 }
 
 .back-to-top:hover {
-    background-position: right;
-    transform: translateY(-5px) scale(1.1);
-    box-shadow: 0 0 25px rgba(255, 210, 119, 0.6);
-    color: #000;
+    background: var(--color-gold-dark);
+    color: var(--color-text-main);
+    transform: translateY(-3px);
 }
