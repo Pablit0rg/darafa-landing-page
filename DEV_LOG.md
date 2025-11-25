@@ -38,3 +38,15 @@
 
 **4. Deploy Oficial**
 * [ ] Commit final na Vercel e entrega do link.
+
+### 25 de novembro de 2025 (Parte 2): Planejamento de Integração e Expansão
+
+**Novas Funcionalidades Solicitadas:**
+* **Assinatura do Desenvolvedor:** Adicionar crédito `@Pablit0rg` no rodapé.
+* **Automação de Feed (Instagram):**
+    * **Requisito:** O site deve atualizar automaticamente (ou exibir) as novas postagens do Instagram da Rafa para manter o conteúdo fresco.
+    * **Estratégia Técnica:** Avaliar uso da *Instagram Basic Display API* ou Widgets profissionais (como Elfsight ou SnapWidget) para a entrega final.
+* **Plano Futuro (Pós-Entrega):**
+    * **Migração de Conteúdo:** Criar uma estratégia para migrar o acervo massivo (20 destaques/carrosséis) do Instagram para o site, criando galerias temáticas independentes, reduzindo a dependência da plataforma social.
+
+---
