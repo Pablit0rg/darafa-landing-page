@@ -101,3 +101,30 @@ Para o Futuro (Pós-Entrega):
 [ ] Automação Instagram: Implementar uma API ou Widget para puxar posts do Instagram automaticamente.
 
 [ ] Visualizador 3D: Estudar a possibilidade de criar visualizações 3D reais das joias (giráveis).
+
+---
+
+### 26 de novembro de 2025 (Parte 3): Finalização Visual e Ajustes de UX
+
+**Status:** 🏁 Projeto Visualmente Polido e Estável.
+
+**O que foi feito hoje:**
+* **Identidade Visual (Refinamento Honey):**
+    * **Background:** Substituído o gradiente simples pela imagem de textura `honeycomb-background2.jpg`, aplicada com um filtro escuro (`overlay`) e fixação (`fixed`) para criar profundidade sem poluir a leitura.
+    * **Logo:** Substituída a versão antiga pela versão final `logo-darafa-oficial.png` (fundo transparente).
+    * **Interação Hero:** Removido o efeito excessivo de "glow" ao passar o mouse na logo, mantendo apenas um zoom sutil para um visual mais limpo e profissional.
+
+* **Melhorias de Navegação (Navbar):**
+    * **Estética:** A barra de navegação foi ajustada para ser **100% sólida e opaca**, copiando exatamente as cores do rodapé (Fundo Preto / Borda Cinza). Isso resolveu o problema de legibilidade sobre o fundo amarelo vibrante.
+    * **Hover:** Ajustado o comportamento dos links para ficarem brancos ao passar o mouse, garantindo contraste.
+
+* **Correções de Layout (Zig-Zag):**
+    * **Alinhamento:** Forçado o alinhamento **justificado** nos textos descritivos das seções, inclusive na versão mobile, para manter a elegância editorial.
+    * **Conteúdo Faltante:** Reinsuportado o parágrafo de descrição da seção "A Artista" que havia se perdido.
+
+**Estado Atual:**
+O site possui uma identidade visual forte, coesa e funcional. A navegação é clara, o contraste de leitura está otimizado e as interações (modais, zoom) funcionam perfeitamente.
+
+**Próximos Passos:**
+* [ ] **Conteúdo Final:** Substituir os placeholders restantes e textos de marcação pelos oficiais.
+* [ ] **Deploy:** Publicação da versão final.
