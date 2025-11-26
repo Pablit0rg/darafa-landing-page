@@ -1,63 +1,73 @@
-/* * From Uiverse.io by vinodjangid07
- * --- MODIFICADO (Híbrido) ---
+/*
+ * COMPONENTE: Botão Animado
+ * Estilo: Chocolate & Mel (Alto Contraste)
  */
+
 .Btn {
-  /* TAMANHO: Aumentado para o novo texto */
   width: 220px;
   height: 50px;
-  
   border: none;
-  border-radius: 10px;
+  border-radius: 50px;
   
-  /* ESTILO: Mantido 100% original */
-  background: linear-gradient(to right,#77530a,#ffd277,#77530a,#77530a,#ffd277,#77530a);
+  /* Fundo Gradiente Chocolate */
+  background: linear-gradient(to right, #241000, #4a2500, #241000, #241000, #4a2500, #241000);
   background-size: 250%;
   background-position: left;
-  color: #ffd277;
+  
+  color: #FDB90C; /* Texto Amarelo Mel */
   
   position: relative;
-  
-  /* ALINHAMENTO: Corrigido para centralizar */
-  display: inline-flex; /* Era 'flex' */
-  
+  display: inline-flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   transition-duration: 1s;
   overflow: hidden;
+  text-decoration: none;
+  box-shadow: 0 5px 15px rgba(36, 16, 0, 0.3);
 }
 
 .Btn::before {
   position: absolute;
-  
-  /* TEXTO: Alterado */
   content: "CONHECER AS JOIAS";
-  font-size: 0.9rem; /* Ajuste para o novo texto */
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: 1px;
+  color: #FDB90C; /* Texto Amarelo */
   
-  /* ESTILO: Mantido 100% original */
-  color: #ffd277;
   display: flex;
   align-items: center;
   justify-content: center;
   width: 97%;
-  height: 90%;
-  border-radius: 8px;
+  height: 88%;
+  border-radius: 50px;
   transition-duration: 1s;
-  background-color: rgba(0, 0, 0, 0.842);
+  
+  /* Fundo interno Chocolate Escuro */
+  background-color: #1a0900; 
   background-size: 200%;
 }
 
-/* ANIMAÇÃO: Mantida 100% original */
 .Btn:hover {
   background-position: right;
-  transition-duration: 1s;
+  transform: scale(1.02);
+  box-shadow: 0 8px 20px rgba(36, 16, 0, 0.5);
 }
 
 .Btn:hover::before {
   background-position: right;
-  transition-duration: 1s;
 }
 
 .Btn:active {
   transform: scale(0.95);
+}
+
+/* VARIAÇÃO: Botão do Instagram */
+.artist-btn {
+    width: 260px;
+    margin-top: 20px;
+}
+
+.artist-btn::before {
+    content: "SEGUIR NO INSTAGRAM"; 
 }
