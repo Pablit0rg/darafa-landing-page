@@ -1,6 +1,7 @@
 /*
  * COMPONENTE: Navbar
- * Design: Luxo, Fixo, Efeito Vidro
+ * Design: Honey Theme (Amarelo & Chocolate)
+ * Cores sincronizadas com o Rodapé
  */
 
 .navbar {
@@ -10,11 +11,19 @@
     top: 0;
     left: 0;
     z-index: 1000;
-    background-color: rgba(5, 5, 5, 0.85);
-    backdrop-filter: blur(12px);
-    border-bottom: 1px solid rgba(198, 163, 107, 0.1);
+    
+    /* --- CORREÇÃO DE CORES (Igual ao Footer) --- */
+    /* Fundo Amarelo Mel */
+    background-color: var(--color-black-pure);
+    
+    /* Borda inferior sutil (Laranja/Caramelo) */
+    border-bottom: 1px solid var(--color-gray-dark);
+    
     display: flex;
     align-items: center;
+    
+    /* Sombra leve para destacar a barra do resto do site */
+    box-shadow: 0 4px 20px rgba(36, 16, 0, 0.1);
 }
 
 .navbar-container {
@@ -35,13 +44,15 @@
     height: 60px;
     width: auto;
     transition: transform 0.3s ease;
+    /* Filtro para garantir que a logo se destaque no amarelo se necessário */
+    filter: drop-shadow(0 2px 5px rgba(36, 16, 0, 0.2));
 }
 
 .navbar-brand-logo:hover .nav-logo-img {
     transform: scale(1.05);
 }
 
-/* --- Controles da Navbar (Menu + Hambúrguer) --- */
+/* --- Controles da Navbar --- */
 .nav-controls {
     display: flex;
     align-items: center;
@@ -60,23 +71,30 @@
     font-size: 0.9rem;
     text-transform: uppercase;
     letter-spacing: 1px;
-    color: var(--color-text-muted);
-    font-weight: 400;
+    font-weight: 600; /* Mais peso para ler bem no amarelo */
+    
+    /* COR DO TEXTO: Chocolate (Igual ao Rodapé) */
+    color: var(--color-gold-medium); 
+    
     position: relative;
+    text-decoration: none;
     transition: color 0.3s ease;
 }
 
 .navbar-link:hover {
-    color: var(--color-gold-light);
+    /* Hover: Fica mais claro ou branco para contraste */
+    color: #fff; 
+    text-shadow: 0 0 5px rgba(36, 16, 0, 0.2);
 }
 
 .navbar-link::after {
     content: '';
     position: absolute;
     width: 0;
-    height: 1px;
+    height: 2px;
     bottom: -4px;
     left: 0;
+    /* Linha do hover: Chocolate */
     background-color: var(--color-gold-medium);
     transition: width 0.3s ease;
 }
@@ -99,20 +117,22 @@
 
 .toggler-icon {
     width: 30px;
-    height: 2px;
+    height: 3px; /* Um pouco mais grosso */
+    /* Cor do ícone: Chocolate */
     background-color: var(--color-gold-medium);
+    border-radius: 2px;
     transition: all 0.3s ease;
 }
 
 /* Animação do X */
 .navbar-toggler.is-active .toggler-icon:nth-child(1) {
-    transform: rotate(45deg) translate(5px, 5px);
+    transform: rotate(45deg) translate(6px, 6px);
 }
 .navbar-toggler.is-active .toggler-icon:nth-child(2) {
     opacity: 0;
 }
 .navbar-toggler.is-active .toggler-icon:nth-child(3) {
-    transform: rotate(-45deg) translate(7px, -7px);
+    transform: rotate(-45deg) translate(6px, -7px);
 }
 
 /* --- Responsividade Mobile --- */
@@ -127,14 +147,18 @@
         right: -100%;
         width: 70%;
         height: 100vh;
+        
+        /* Fundo do Menu Mobile: Amarelo Mel */
         background-color: var(--color-black-pure);
-        border-left: 1px solid var(--color-gold-dark);
+        border-left: 1px solid var(--color-gray-dark);
+        
         flex-direction: column;
         justify-content: center;
         align-items: center;
         gap: var(--spacing-xl);
+        
         transition: right 0.4s cubic-bezier(0.77, 0, 0.175, 1);
-        box-shadow: -10px 0 30px rgba(0,0,0,0.8);
+        box-shadow: -10px 0 30px rgba(36, 16, 0, 0.3);
     }
 
     .navbar-menu.active {
@@ -142,7 +166,8 @@
     }
 
     .navbar-link {
-        font-size: 1.2rem;
+        font-size: 1.3rem;
+        /* Links Mobile: Chocolate */
         color: var(--color-gold-medium);
     }
     
