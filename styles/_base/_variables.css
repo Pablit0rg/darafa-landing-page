@@ -1,24 +1,32 @@
 /*
  * ARQUIVO DE VARIÁVEIS
- * Design: DaRafa Luxury (Padrão Escuro - Ouro na Noite)
+ * Design: DaRafa Honey (Mel Líquido & Chocolate)
  */
 
 :root {
-    /* --- 1. Paleta de Cores --- */
+    /* --- 1. Paleta de Cores "Mel & Chocolate" --- */
 
-    /* Tons de Dourado */
-    --color-gold-light: #ffd277;
-    --color-gold-medium: #C6A36B;  /* Dourado Clássico */
-    --color-gold-dark: #77530a;
+    /* COR DE DESTAQUE (Texto, Bordas, Títulos) 
+       Usamos um Marrom Café quase preto para contraste máximo sobre o mel.
+    */
+    --color-gold-medium: #241000;  /* Chocolate Amargo */
     
-    /* Tons de Fundo */
-    --color-black-pure: #050505;   /* Fundo Principal */
-    --color-black-deep: #0e0e0e;   /* Fundo dos Cards */
-    --color-gray-dark: #1a1a1a;
+    /* COR DE BRILHO (Detalhes acesos) */
+    --color-gold-light: #FFFF12;   /* O amarelo mais forte da sua lista */
+    --color-gold-dark: #CD4A00;    /* O tom mais avermelhado da sua lista */
+    
+    /* COR DE FUNDO BASE (Fallback) */
+    --color-black-pure: #FDB90C;   /* O tom principal do mel */
+    
+    /* COR DOS CARDS (Fundo semi-transparente para leitura) */
+    --color-black-deep: rgba(255, 255, 255, 0.2); /* Vidro claro sutil */
+    
+    --color-gray-dark: #BB6302;    /* Detalhes secundários */
 
-    /* Texto */
-    --color-text-main: #f0f0f0;    /* Texto Claro */
-    --color-text-muted: #a0a0a0;
+    /* TEXTOS */
+    --color-text-main: #241000;    /* Texto Principal Escuro */
+    --color-text-muted: #4a2500;   /* Texto Secundário (Caramelo escuro) */
+
 
     /* --- 2. Tipografia --- */
     --font-serif: 'Playfair Display', serif;
@@ -30,7 +38,7 @@
     --font-size-h2: 2.2rem;
     --font-size-p: 1rem;
 
-    /* --- 3. Layout e Espaçamento --- */
+    /* --- 3. Layout --- */
     --container-width: 1200px;
     --spacing-sm: 8px;
     --spacing-md: 16px;
@@ -40,5 +48,6 @@
     /* --- 4. Bordas e Efeitos --- */
     --border-radius-sm: 4px;
     --border-radius-pill: 50px;
-    --shadow-gold: 0 0 15px rgba(198, 163, 107, 0.2);
+    /* Sombra quente para combinar com o mel */
+    --shadow-gold: 0 5px 20px rgba(205, 74, 0, 0.4); 
 }
