@@ -4,40 +4,41 @@
  */
 
 body {
-    /* --- FUNDO MEL LÍQUIDO (LIQUID HONEY) --- */
+    /* --- FUNDO MEL ESPARRAMADO (HONEY SPREAD) --- */
     background-color: #FDB90C;
     
-    /* Degradê rico simulando a viscosidade e brilho do mel */
-    background-image: linear-gradient(
-        160deg, 
-        #FFFF12 0%,   /* Brilho do topo */
-        #FDB90C 20%,  /* Mel Claro */
-        #F2A007 50%,  /* Mel Puro */
-        #E57B02 80%,  /* Caramelo */
-        #CD4A00 100%  /* Âmbar Profundo (Base) */
-    );
+    background-image: 
+        /* Camada 1: O Brilho Central (Amarelo Vivo) */
+        radial-gradient(circle at 50% 30%, rgba(255, 255, 18, 0.4) 0%, transparent 50%),
+        
+        /* Camada 2: Mancha Caramelo Superior Esquerda */
+        radial-gradient(circle at 0% 0%, rgba(205, 74, 0, 0.6) 0%, transparent 40%),
+        
+        /* Camada 3: Mancha Caramelo Inferior Direita */
+        radial-gradient(circle at 100% 100%, rgba(187, 99, 2, 0.7) 0%, transparent 50%),
+        
+        /* Camada Base: O Degradê Linear que já tínhamos */
+        linear-gradient(160deg, #FDB90C 0%, #F2A007 40%, #E57B02 80%, #CD4A00 100%);
     
-    background-attachment: fixed; /* O fundo fica parado, dando profundidade */
+    background-attachment: fixed;
     background-size: cover;
     min-height: 100vh;
     
     font-family: var(--font-sans);
     color: var(--color-text-main);
     font-size: var(--font-size-base);
-    font-weight: 500; /* Um pouco mais de peso para leitura no fundo colorido */
+    font-weight: 500;
     
     padding-top: 80px;
-    
     transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* Títulos (H1, H2...) agora são Chocolate Escuro */
+/* Títulos (H1, H2...) */
 h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-serif);
     color: var(--color-gold-medium);
     font-weight: 700;
     line-height: 1.2;
-    /* Sombra sutil clara para destacar do fundo */
     text-shadow: 0 1px 0 rgba(255,255,255,0.4);
 }
 
@@ -64,11 +65,8 @@ h1, h2, h3, h4, h5, h6 {
     right: 30px;
     width: 50px;
     height: 50px;
-    
-    /* Fundo Chocolate */
     background: var(--color-gold-medium);
-    color: #FDB90C; /* Seta Amarela */
-    
+    color: #FDB90C;
     border: 1px solid rgba(255,255,255,0.2);
     border-radius: 50%;
     display: flex;
@@ -77,7 +75,6 @@ h1, h2, h3, h4, h5, h6 {
     font-size: 1.5rem;
     cursor: pointer;
     z-index: 900;
-    
     opacity: 0;
     pointer-events: none;
     transition: all 0.3s ease;
@@ -91,6 +88,6 @@ h1, h2, h3, h4, h5, h6 {
 
 .back-to-top:hover {
     transform: translateY(-5px) scale(1.1);
-    background: #42200B; /* Chocolate mais escuro */
+    background: #42200B;
     color: #FFFF12;
 }
