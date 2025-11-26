@@ -1,6 +1,6 @@
 /*
  * COMPONENTE: Navbar
- * Design: Transparente / Minimalista (Apenas Texto)
+ * Design: Sólido (Cores idênticas ao Rodapé)
  */
 
 .navbar {
@@ -11,11 +11,15 @@
     left: 0;
     z-index: 1000;
     
-    /* --- LIMPEZA TOTAL: NAVBAR INVISÍVEL --- */
-    background-color: transparent; /* Sem cor de fundo */
-    border: none;                  /* Sem bordas */
-    box-shadow: none;              /* Sem sombras */
-    backdrop-filter: none;         /* Sem efeito de vidro */
+    /* --- CORES DO RODAPÉ --- */
+    /* Fundo Preto Sólido (Igual ao Footer) */
+    background-color: var(--color-black-pure);
+    
+    /* Borda inferior sutil (Igual à borda superior do Footer) */
+    border-bottom: 1px solid var(--color-gray-dark);
+    
+    /* Removemos efeitos de vidro/transparência */
+    backdrop-filter: none;
     
     display: flex;
     align-items: center;
@@ -64,10 +68,10 @@
     font-size: 0.9rem;
     text-transform: uppercase;
     letter-spacing: 1px;
-    font-weight: 600;
+    font-weight: 400;
     
-    /* Mantemos o Chocolate para leitura sobre o fundo amarelo */
-    color: var(--color-gold-medium); 
+    /* Cor do texto: Cinza Muted (Igual ao copyright do footer) */
+    color: var(--color-text-muted);
     
     position: relative;
     text-decoration: none;
@@ -75,15 +79,15 @@
 }
 
 .navbar-link:hover {
-    /* Hover simples */
-    color: #fff; 
+    /* Hover: Dourado Claro (Igual aos links do footer) */
+    color: var(--color-gold-light);
 }
 
 .navbar-link::after {
     content: '';
     position: absolute;
     width: 0;
-    height: 2px;
+    height: 1px;
     bottom: -4px;
     left: 0;
     background-color: var(--color-gold-medium);
@@ -108,21 +112,20 @@
 
 .toggler-icon {
     width: 30px;
-    height: 3px;
+    height: 2px;
     background-color: var(--color-gold-medium);
-    border-radius: 2px;
     transition: all 0.3s ease;
 }
 
 /* Animação do X */
 .navbar-toggler.is-active .toggler-icon:nth-child(1) {
-    transform: rotate(45deg) translate(6px, 6px);
+    transform: rotate(45deg) translate(5px, 5px);
 }
 .navbar-toggler.is-active .toggler-icon:nth-child(2) {
     opacity: 0;
 }
 .navbar-toggler.is-active .toggler-icon:nth-child(3) {
-    transform: rotate(-45deg) translate(6px, -7px);
+    transform: rotate(-45deg) translate(7px, -7px);
 }
 
 /* --- Responsividade Mobile --- */
@@ -138,9 +141,8 @@
         width: 70%;
         height: 100vh;
         
-        /* No mobile, precisamos de fundo para ler o menu, 
-           mas mantemos a cor sólida do tema */
-        background-color: var(--color-black-pure); /* Amarelo */
+        /* Fundo Sólido (Preto Puro) */
+        background-color: var(--color-black-pure);
         border-left: 1px solid var(--color-gray-dark);
         
         flex-direction: column;
@@ -149,7 +151,7 @@
         gap: var(--spacing-xl);
         
         transition: right 0.4s cubic-bezier(0.77, 0, 0.175, 1);
-        box-shadow: -10px 0 30px rgba(0,0,0,0.1);
+        box-shadow: -10px 0 30px rgba(0,0,0,0.5);
     }
 
     .navbar-menu.active {
@@ -157,7 +159,7 @@
     }
 
     .navbar-link {
-        font-size: 1.3rem;
+        font-size: 1.2rem;
         color: var(--color-gold-medium);
     }
     
