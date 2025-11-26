@@ -1,7 +1,6 @@
 /*
  * COMPONENTE: Navbar
- * Design: Honey Theme (Amarelo & Chocolate)
- * Cores sincronizadas com o Rodapé
+ * Design: Honey Theme com Efeito Gooey (Gota que Segue)
  */
 
 .navbar {
@@ -11,19 +10,11 @@
     top: 0;
     left: 0;
     z-index: 1000;
-    
-    /* --- CORREÇÃO DE CORES (Igual ao Footer) --- */
-    /* Fundo Amarelo Mel */
-    background-color: var(--color-black-pure);
-    
-    /* Borda inferior sutil (Laranja/Caramelo) */
+    background-color: var(--color-black-pure); /* Fundo Amarelo */
     border-bottom: 1px solid var(--color-gray-dark);
-    
+    box-shadow: 0 4px 10px rgba(66, 32, 11, 0.1);
     display: flex;
     align-items: center;
-    
-    /* Sombra leve para destacar a barra do resto do site */
-    box-shadow: 0 4px 20px rgba(36, 16, 0, 0.1);
 }
 
 .navbar-container {
@@ -33,37 +24,55 @@
     width: 100%;
 }
 
-/* --- Logo da Navbar --- */
+/* --- Logo --- */
 .navbar-brand-logo {
     display: flex;
     align-items: center;
     text-decoration: none;
 }
-
 .nav-logo-img {
     height: 60px;
     width: auto;
     transition: transform 0.3s ease;
-    /* Filtro para garantir que a logo se destaque no amarelo se necessário */
-    filter: drop-shadow(0 2px 5px rgba(36, 16, 0, 0.2));
 }
-
 .navbar-brand-logo:hover .nav-logo-img {
     transform: scale(1.05);
 }
 
-/* --- Controles da Navbar --- */
+/* --- Controles --- */
 .nav-controls {
     display: flex;
     align-items: center;
     gap: 20px;
 }
 
-/* --- Menu Desktop --- */
+/* --- Menu Desktop (Com Efeito Mel) --- */
 .navbar-menu {
     display: flex;
-    gap: var(--spacing-lg);
+    gap: 5px; /* Pequeno espaço entre itens */
     list-style: none;
+    position: relative; /* Necessário para a gota absoluta */
+    padding: 5px;
+}
+
+/* A Gota de Mel que se move */
+.honey-blob {
+    position: absolute;
+    top: 50%; /* Centraliza verticalmente */
+    left: 0;
+    height: 40px; /* Altura da gota */
+    border-radius: 30px; /* Bem arredondado */
+    
+    /* Cor da Gota: Chocolate Escuro */
+    background-color: var(--color-gold-medium); 
+    
+    /* A Mágica da Viscosidade: Transição lenta e elástica */
+    transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+    
+    transform: translateY(-50%); /* Ajuste fino da centralização */
+    opacity: 0; /* Começa invisível */
+    pointer-events: none; /* Não atrapalha o clique */
+    z-index: 0; /* Fica atrás do texto */
 }
 
 .navbar-link {
@@ -71,39 +80,27 @@
     font-size: 0.9rem;
     text-transform: uppercase;
     letter-spacing: 1px;
-    font-weight: 600; /* Mais peso para ler bem no amarelo */
-    
-    /* COR DO TEXTO: Chocolate (Igual ao Rodapé) */
-    color: var(--color-gold-medium); 
+    font-weight: 600;
+    color: var(--color-gold-medium); /* Texto Chocolate */
     
     position: relative;
     text-decoration: none;
+    padding: 10px 15px; /* Área clicável maior */
+    z-index: 1; /* Fica na frente da gota */
     transition: color 0.3s ease;
 }
 
+/* Quando o mouse está em cima (ou a gota está atrás), o texto vira Amarelo/Branco */
 .navbar-link:hover {
-    /* Hover: Fica mais claro ou branco para contraste */
-    color: #fff; 
-    text-shadow: 0 0 5px rgba(36, 16, 0, 0.2);
+    color: #FDB90C; 
 }
 
+/* Removemos a linha antiga (after) pois agora temos a gota */
 .navbar-link::after {
-    content: '';
-    position: absolute;
-    width: 0;
-    height: 2px;
-    bottom: -4px;
-    left: 0;
-    /* Linha do hover: Chocolate */
-    background-color: var(--color-gold-medium);
-    transition: width 0.3s ease;
+    display: none;
 }
 
-.navbar-link:hover::after {
-    width: 100%;
-}
-
-/* --- Botão Hambúrguer (Mobile) --- */
+/* --- Botão Hambúrguer --- */
 .navbar-toggler {
     display: none;
     background: none;
@@ -114,64 +111,45 @@
     padding: 10px;
     z-index: 1001;
 }
-
 .toggler-icon {
     width: 30px;
-    height: 3px; /* Um pouco mais grosso */
-    /* Cor do ícone: Chocolate */
+    height: 3px;
     background-color: var(--color-gold-medium);
     border-radius: 2px;
     transition: all 0.3s ease;
 }
-
-/* Animação do X */
 .navbar-toggler.is-active .toggler-icon:nth-child(1) {
     transform: rotate(45deg) translate(6px, 6px);
 }
-.navbar-toggler.is-active .toggler-icon:nth-child(2) {
-    opacity: 0;
-}
+.navbar-toggler.is-active .toggler-icon:nth-child(2) { opacity: 0; }
 .navbar-toggler.is-active .toggler-icon:nth-child(3) {
     transform: rotate(-45deg) translate(6px, -7px);
 }
 
-/* --- Responsividade Mobile --- */
+/* --- Mobile --- */
 @media (max-width: 768px) {
-    .navbar-toggler {
-        display: flex;
-    }
+    .navbar-toggler { display: flex; }
+    
+    .honey-blob { display: none; /* Sem efeito gota no mobile */ }
 
     .navbar-menu {
         position: fixed;
-        top: 0;
-        right: -100%;
-        width: 70%;
-        height: 100vh;
-        
-        /* Fundo do Menu Mobile: Amarelo Mel */
+        top: 0; right: -100%;
+        width: 70%; height: 100vh;
         background-color: var(--color-black-pure);
         border-left: 1px solid var(--color-gray-dark);
-        
         flex-direction: column;
         justify-content: center;
         align-items: center;
         gap: var(--spacing-xl);
-        
         transition: right 0.4s cubic-bezier(0.77, 0, 0.175, 1);
-        box-shadow: -10px 0 30px rgba(36, 16, 0, 0.3);
+        box-shadow: -10px 0 30px rgba(0,0,0,0.2);
+        padding: 0;
     }
-
-    .navbar-menu.active {
-        right: 0;
-    }
-
+    .navbar-menu.active { right: 0; }
     .navbar-link {
         font-size: 1.3rem;
-        /* Links Mobile: Chocolate */
         color: var(--color-gold-medium);
     }
-    
-    .nav-logo-img {
-        height: 50px;
-    }
+    .nav-logo-img { height: 50px; }
 }
