@@ -1,9 +1,9 @@
 /*
- * COMPONENTE: Highlights (Cards Internos e Modais)
- * Atualizado: Fundo Amarelo Sólido para TODOS os Modais de História
+ * COMPONENTE: Highlights (Cards Internos)
+ * Atualizado: Barra de Informação Amarela Sólida
  */
 
-/* --- Grids (Mantidos) --- */
+/* --- Grids --- */
 .gallery-5-cols {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
@@ -18,7 +18,7 @@
     width: 100%;
 }
 
-/* --- O Card Pequeno (Moldura Dourada) --- */
+/* --- O Card Pequeno --- */
 .gold-framebox {
     position: relative;
     width: 100%;
@@ -50,50 +50,60 @@
     transform: scale(1.08);
 }
 
-
-/* --- BARRA DE INFORMAÇÕES --- */
+/* --- BARRA DE INFORMAÇÕES (ATUALIZADA: AMARELO) --- */
 .card-info-bar {
     position: absolute;
     bottom: 0;
     left: 0;
     width: 100%;
     padding: 12px 10px;
-    background: linear-gradient(to top, rgba(0,0,0,0.9) 20%, rgba(0,0,0,0.5));
+    
+    /* MUDANÇA AQUI: Fundo Amarelo Mel Sólido (Igual ao Footer) */
+    background-color: var(--color-black-pure); 
+    
+    /* Borda superior sutil para separar da foto */
+    border-top: 1px solid var(--color-gray-dark);
+    
     z-index: 5;
-    border-top: 1px solid rgba(198, 163, 107, 0.2);
     transition: all 0.3s ease;
 }
 
 .info-title {
     font-family: var(--font-serif);
+    
+    /* Texto Chocolate (Preto) para ler no amarelo */
     color: var(--color-gold-medium);
+    
     font-size: 0.95rem;
     margin-bottom: 4px;
     text-transform: capitalize;
-    font-weight: 500;
+    font-weight: 600; /* Mais peso para destaque */
 }
 
 .info-desc {
     font-family: var(--font-sans);
-    color: #e0e0e0;
+    
+    /* Texto Chocolate um pouco mais claro */
+    color: var(--color-text-muted);
+    
     font-size: 0.75rem;
     line-height: 1.3;
-    font-weight: 300;
+    font-weight: 400;
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
 }
 
-
 /* --- BADGE DE HISTÓRIA --- */
 .story-badge {
     position: absolute;
     bottom: 10px;
     right: 10px;
-    background-color: rgba(0, 0, 0, 0.7);
-    border: 1px solid var(--color-gold-medium);
-    color: var(--color-gold-light);
+    /* Fundo Chocolate para contraste */
+    background-color: var(--color-gold-medium);
+    color: var(--color-black-pure); /* Texto Amarelo */
+    border: none;
     padding: 6px 12px;
     font-size: 0.7rem;
     border-radius: 30px;
@@ -101,25 +111,20 @@
     letter-spacing: 1px;
     transition: all 0.3s ease;
     z-index: 5;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 }
 
 .gold-framebox:hover .story-badge {
-    background-color: var(--color-gold-medium);
-    color: var(--color-black-pure);
+    transform: scale(1.05);
+    background-color: #000; /* Fica preto puro no hover */
 }
 
-
-/* --- MODAL DE HISTÓRIA (Modo Revista - O Atelier) --- 
-   ATUALIZADO: Agora segue o mesmo padrão Amarelo do card da Artista.
-*/
+/* --- MODAL DE HISTÓRIA (O Atelier) --- */
 .story-viewer-content {
     display: flex;
     width: 90%;
     max-width: 900px;
-    
-    /* MUDANÇA: Fundo Amarelo Mel Sólido (Igual ao Card Artista) */
     background-color: #FDB90C; 
-    
     border: 1px solid var(--color-gold-medium);
     box-shadow: 0 20px 50px rgba(0,0,0,0.8);
     overflow: hidden;
@@ -127,12 +132,10 @@
     position: relative;
 }
 
-/* Lado da Imagem */
 .story-image-col {
     flex: 1.2;
     min-height: 400px;
     position: relative;
-    /* LINHA DIVISÓRIA FINA (Direita) */
     border-right: 1px solid var(--color-gold-dark);
 }
 .story-image-col img {
@@ -141,7 +144,6 @@
     object-fit: cover;
 }
 
-/* Lado do Texto */
 .story-text-col {
     flex: 1;
     padding: 50px;
@@ -158,7 +160,6 @@
     margin-bottom: 25px;
     padding-bottom: 15px;
     position: relative;
-    /* Linha decorativa abaixo do título */
     border-bottom: 2px solid var(--color-gold-dark);
     display: inline-block;
 }
@@ -166,16 +167,12 @@
 .story-desc {
     font-family: var(--font-sans);
     font-size: 1rem;
-    
-    /* MUDANÇA: Texto Chocolate para ler no fundo amarelo */
-    color: var(--color-text-main); 
-    
+    color: var(--color-text-main);
     line-height: 1.8;
     font-weight: 500;
 }
 
-
-/* --- LAYOUT ESPECIAL: BIO DA ARTISTA (NOVO) --- */
+/* --- BIO DA ARTISTA --- */
 .artist-bio-layout {
     display: flex;
     width: 100%;
@@ -191,7 +188,6 @@
 .artist-bio-image {
     flex: 1;
     position: relative;
-    /* LINHA DIVISÓRIA FINA (Direita) */
     border-right: 1px solid var(--color-gold-dark);
 }
 
@@ -222,7 +218,7 @@
 .artist-bio-subtitle {
     font-family: var(--font-sans);
     font-size: 1.1rem;
-    color: var(--color-gold-light); /* Cinza escuro neste tema */
+    color: var(--color-gold-light); 
     margin-bottom: 30px;
     text-transform: uppercase;
     letter-spacing: 2px;
@@ -237,33 +233,28 @@
     font-weight: 500;
 }
 
-
-/* --- Responsividade --- */
+/* Responsividade */
 @media (max-width: 1024px) {
     .gallery-5-cols { grid-template-columns: repeat(4, 1fr); }
     .about-grid { grid-template-columns: repeat(2, 1fr); }
 }
 @media (max-width: 768px) {
     .gallery-5-cols { grid-template-columns: repeat(3, 1fr); }
-    
-    /* Ajuste Mobile do Modal História */
     .story-viewer-content { flex-direction: column; max-height: 85vh; overflow-y: auto; }
     .story-image-col { 
         min-height: 250px; 
         flex: none;
         border-right: none; 
-        border-bottom: 1px solid var(--color-gold-dark); /* Linha passa para baixo */
+        border-bottom: 1px solid var(--color-gold-dark);
     }
     .story-text-col { padding: 30px; }
-    .story-title { font-size: 1.5rem; }
 }
 @media (max-width: 900px) {
-    /* Ajuste Mobile da Bio Artista */
     .artist-bio-layout { flex-direction: column; height: auto; }
     .artist-bio-image { 
         height: 400px; 
         border-right: none; 
-        border-bottom: 1px solid var(--color-gold-dark); /* Linha passa para baixo */
+        border-bottom: 1px solid var(--color-gold-dark);
     }
     .artist-bio-text { padding: 30px; }
     .artist-bio-title { font-size: 2.2rem; }
