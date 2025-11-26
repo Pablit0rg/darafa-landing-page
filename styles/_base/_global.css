@@ -4,33 +4,43 @@
  */
 
 body {
-    /* Fundo Luxuoso: Preto profundo com um leve gradiente central */
-    background-color: var(--color-black-pure);
-    background-image: radial-gradient(
-        circle at center top,
-        #151515,
-        var(--color-black-pure) 60%
+    /* --- FUNDO MEL LÍQUIDO (LIQUID HONEY) --- */
+    background-color: #FDB90C;
+    
+    /* Degradê rico simulando a viscosidade e brilho do mel */
+    background-image: linear-gradient(
+        160deg, 
+        #FFFF12 0%,   /* Brilho do topo */
+        #FDB90C 20%,  /* Mel Claro */
+        #F2A007 50%,  /* Mel Puro */
+        #E57B02 80%,  /* Caramelo */
+        #CD4A00 100%  /* Âmbar Profundo (Base) */
     );
-    background-attachment: fixed; /* O fundo fica parado ao rolar */
+    
+    background-attachment: fixed; /* O fundo fica parado, dando profundidade */
+    background-size: cover;
+    min-height: 100vh;
     
     font-family: var(--font-sans);
     color: var(--color-text-main);
     font-size: var(--font-size-base);
-    font-weight: 300; /* Poppins Light */
+    font-weight: 500; /* Um pouco mais de peso para leitura no fundo colorido */
     
-    /* Garante que a navbar fixa não cubra o topo */
     padding-top: 80px;
+    
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* Títulos (H1, H2, H3...) usam a fonte Serifada (Playfair) */
+/* Títulos (H1, H2...) agora são Chocolate Escuro */
 h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-serif);
     color: var(--color-gold-medium);
-    font-weight: 400; /* Playfair já é elegante, não precisa de bold pesado */
+    font-weight: 700;
     line-height: 1.2;
+    /* Sombra sutil clara para destacar do fundo */
+    text-shadow: 0 1px 0 rgba(255,255,255,0.4);
 }
 
-/* Utilitário de Container */
 .container {
     width: 90%;
     max-width: var(--container-width);
@@ -38,51 +48,49 @@ h1, h2, h3, h4, h5, h6 {
     padding: 0 var(--spacing-md);
 }
 
-/* Utilitário para Títulos de Seção */
 .section-title {
     text-align: center;
     font-size: var(--font-size-h2);
     margin-bottom: var(--spacing-lg);
-    
-    /* Efeito sutil de degradê no texto dourado */
-    background: linear-gradient(to right, var(--color-gold-medium), var(--color-text-main), var(--color-gold-medium));
-    background-size: 200% auto;
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    color: transparent;
+    color: var(--color-gold-medium);
+    background: none;
+    -webkit-text-fill-color: initial;
 }
 
-/* Botão Voltar ao Topo */
+/* --- Botão Voltar ao Topo (Chocolate) --- */
 .back-to-top {
     position: fixed;
     bottom: 30px;
     right: 30px;
-    width: 45px;
-    height: 45px;
-    background: var(--color-black-deep);
-    border: 1px solid var(--color-gold-dark);
-    color: var(--color-gold-medium);
+    width: 50px;
+    height: 50px;
+    
+    /* Fundo Chocolate */
+    background: var(--color-gold-medium);
+    color: #FDB90C; /* Seta Amarela */
+    
+    border: 1px solid rgba(255,255,255,0.2);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.2rem;
+    font-size: 1.5rem;
     cursor: pointer;
-    opacity: 0; /* Começa invisível */
+    z-index: 900;
+    
+    opacity: 0;
     pointer-events: none;
     transition: all 0.3s ease;
-    z-index: 900;
+    box-shadow: 0 4px 15px rgba(66, 32, 11, 0.4);
 }
 
-/* Classe que o JS vai adicionar para mostrar o botão */
 .back-to-top.visible {
     opacity: 1;
     pointer-events: all;
 }
 
 .back-to-top:hover {
-    background: var(--color-gold-dark);
-    color: var(--color-text-main);
-    transform: translateY(-3px);
+    transform: translateY(-5px) scale(1.1);
+    background: #42200B; /* Chocolate mais escuro */
+    color: #FFFF12;
 }
