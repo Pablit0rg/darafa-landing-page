@@ -1,6 +1,6 @@
 /*
  * COMPONENTE: Layout Zig-Zag e Modal
- * CORRIGIDO: Força o ocultamento do conteúdo interno
+ * CORRIGIDO: Texto Justificado
  */
 
 /* --- ESTRUTURA ZIG-ZAG --- */
@@ -35,6 +35,11 @@
     color: var(--color-text-muted);
     line-height: 1.8;
     margin-bottom: var(--spacing-lg);
+    font-weight: 300;
+    
+    /* MUDANÇA AQUI: Alinhamento Justificado */
+    text-align: justify; 
+    text-justify: inter-word; /* Melhora o espaçamento entre palavras */
 }
 
 .decorative-line {
@@ -183,6 +188,11 @@
     }
     .click-bar {
         transform: translateY(0); /* Sempre visível no mobile */
+    }
+    /* No mobile, justificado as vezes cria buracos feios, 
+       então voltamos para esquerda ou centro se preferir */
+    .section-description {
+        text-align: left; 
     }
 }
 
