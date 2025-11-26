@@ -1,6 +1,7 @@
 /*
  * COMPONENTE: Navbar
- * Design: Transparente (Clean) com Texto Escuro para Contraste
+ * Design: Honey Theme (Amarelo & Chocolate)
+ * Cores sincronizadas com o Rodapé
  */
 
 .navbar {
@@ -11,19 +12,19 @@
     left: 0;
     z-index: 1000;
     
-    /* Navbar Invisível (Fundo transparente) */
-    background-color: transparent; 
-    border: none;
-    box-shadow: none;
-    backdrop-filter: none;
+    /* --- CORREÇÃO DE CORES (Igual ao Footer) --- */
+    /* Fundo Amarelo Mel */
+    background-color: var(--color-black-pure);
+    
+    /* Borda inferior sutil (Laranja/Caramelo) */
+    border-bottom: 1px solid var(--color-gray-dark);
     
     display: flex;
     align-items: center;
-    transition: background-color 0.3s ease;
+    
+    /* Sombra leve para destacar a barra do resto do site */
+    box-shadow: 0 4px 20px rgba(36, 16, 0, 0.1);
 }
-
-/* Opcional: Se rolar a página, pode colocar um fundinho suave 
-   (Adicione JS depois se quiser esse efeito, por enquanto deixamos clean) */
 
 .navbar-container {
     display: flex;
@@ -43,8 +44,8 @@
     height: 60px;
     width: auto;
     transition: transform 0.3s ease;
-    /* Sombra escura suave para garantir que a logo apareça bem */
-    filter: drop-shadow(0 2px 3px rgba(0,0,0,0.2));
+    /* Filtro para garantir que a logo se destaque no amarelo se necessário */
+    filter: drop-shadow(0 2px 5px rgba(36, 16, 0, 0.2));
 }
 
 .navbar-brand-logo:hover .nav-logo-img {
@@ -70,23 +71,20 @@
     font-size: 0.9rem;
     text-transform: uppercase;
     letter-spacing: 1px;
-    font-weight: 700; /* Negrito para ler bem no amarelo */
+    font-weight: 600; /* Mais peso para ler bem no amarelo */
     
-    /* COR PADRÃO: Chocolate (Preto da marca) */
+    /* COR DO TEXTO: Chocolate (Igual ao Rodapé) */
     color: var(--color-gold-medium); 
     
     position: relative;
     text-decoration: none;
-    transition: color 0.3s ease, transform 0.3s ease;
+    transition: color 0.3s ease;
 }
 
-/* --- CORREÇÃO DO HOVER (O Pulo do Gato) --- */
 .navbar-link:hover {
-    /* Antes era Branco (sumia). Agora é Preto Puro */
-    color: #000000; 
-    transform: translateY(-2px); /* Leve subidinha */
-    /* Sombra no texto para destacar do fundo */
-    text-shadow: 0 2px 5px rgba(255, 230, 0, 0.5); 
+    /* Hover: Fica mais claro ou branco para contraste */
+    color: #fff; 
+    text-shadow: 0 0 5px rgba(36, 16, 0, 0.2);
 }
 
 .navbar-link::after {
@@ -96,7 +94,7 @@
     height: 2px;
     bottom: -4px;
     left: 0;
-    /* Linha de destaque: Chocolate/Preto */
+    /* Linha do hover: Chocolate */
     background-color: var(--color-gold-medium);
     transition: width 0.3s ease;
 }
@@ -119,8 +117,8 @@
 
 .toggler-icon {
     width: 30px;
-    height: 3px;
-    /* Ícone escuro para ver no amarelo */
+    height: 3px; /* Um pouco mais grosso */
+    /* Cor do ícone: Chocolate */
     background-color: var(--color-gold-medium);
     border-radius: 2px;
     transition: all 0.3s ease;
@@ -150,9 +148,9 @@
         width: 70%;
         height: 100vh;
         
-        /* No mobile, o fundo precisa ser SÓLIDO para ler os links */
-        background-color: #FDB90C; /* Amarelo Mel Sólido */
-        border-left: 1px solid var(--color-gold-medium);
+        /* Fundo do Menu Mobile: Amarelo Mel */
+        background-color: var(--color-black-pure);
+        border-left: 1px solid var(--color-gray-dark);
         
         flex-direction: column;
         justify-content: center;
@@ -160,7 +158,7 @@
         gap: var(--spacing-xl);
         
         transition: right 0.4s cubic-bezier(0.77, 0, 0.175, 1);
-        box-shadow: -10px 0 30px rgba(0,0,0,0.3);
+        box-shadow: -10px 0 30px rgba(36, 16, 0, 0.3);
     }
 
     .navbar-menu.active {
@@ -169,7 +167,7 @@
 
     .navbar-link {
         font-size: 1.3rem;
-        /* Links escuros no mobile também */
+        /* Links Mobile: Chocolate */
         color: var(--color-gold-medium);
     }
     
