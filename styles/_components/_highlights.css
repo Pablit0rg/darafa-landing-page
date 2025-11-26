@@ -1,301 +1,88 @@
-/*
- * COMPONENTE: Highlights (Cards Internos)
- * Controla apenas o layout dos cards pequenos (Joias e Processo)
- * que aparecem dentro do Modal de Expansão.
- */
-
-/* --- Grid de 5 Colunas (Para a Galeria Virtual) --- */
-.gallery-5-cols {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr); /* 5 colunas lado a lado */
-    gap: var(--spacing-md); /* 16px de espaço */
-    width: 100%;
-}
-
-/* --- Grid do Sobre (Para as fotos de processo) --- */
-.about-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr); /* 4 colunas */
-    gap: var(--spacing-md);
-    width: 100%;
-}
-
-/* --- O Card Pequeno (Moldura Dourada) --- */
-.gold-framebox {
-    position: relative;
-    width: 100%;
-    aspect-ratio: 3 / 4; /* Formato Retrato */
-    overflow: hidden;
-    
-    /* Borda Dourada */
-    border: 1px solid var(--color-gold-medium);
-    
-    /* Fundo escuro caso a imagem demore a carregar */
-    background-color: var(--color-black-deep);
-    
-    transition: all 0.3s ease;
-    cursor: pointer;
-}
-
-/* A Imagem dentro do card */
-.gold-framebox img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 0.5s ease;
-    opacity: 0.9;
-}
-
-/* --- BARRA DE INFORMAÇÕES (NOVO!) --- */
-.card-info-bar {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    padding: 12px 8px; /* Espaçamento interno */
-    
-    /* Fundo degradê preto para o texto ficar legível sobre a foto */
-    background: linear-gradient(to top, rgba(0,0,0,0.95) 10%, rgba(0,0,0,0.6));
-    
-    z-index: 5; /* Fica acima da imagem */
-    border-top: 1px solid rgba(198, 163, 107, 0.3); /* Linha dourada sutil no topo da barra */
-}
-
-/* Título da Joia (Nome) */
-.info-title {
-    font-family: var(--font-serif); /* Fonte elegante */
-    color: var(--color-gold-medium);
-    font-size: 0.95rem;
-    margin-bottom: 4px;
-    text-transform: capitalize;
-}
-
-/* Descrição Resumida (Material/Detalhe) */
-.info-desc {
-    font-family: var(--font-sans);
-    color: #dcdcdc; /* Cinza bem claro */
-    font-size: 0.75rem; /* Texto pequeno */
-    line-height: 1.3;
-    font-weight: 300;
-    
-    /* Limita a 2 linhas de texto para não quebrar o layout */
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-}
-
-/* --- Efeitos de Hover nos Cards Pequenos --- */
-.gold-framebox:hover {
-    border-color: var(--color-gold-light);
-    box-shadow: 0 0 15px rgba(198, 163, 107, 0.4); /* Glow Dourado */
-    transform: translateY(-5px);
-    z-index: 2;
-}
-
-.gold-framebox:hover img {
-    transform: scale(1.1); /* Zoom na foto */
-    opacity: 1;
-}
-
-/* Ao passar o mouse, a barra fica um pouco mais escura para leitura */
-.gold-framebox:hover .card-info-bar {
-    background: linear-gradient(to top, rgba(0,0,0,1) 20%, rgba(0,0,0,0.7));
-}
-
-/* --- Responsividade dos Grids Internos --- */
-
-/* Tablets (iPad) */
-@media (max-width: 1024px) {
-    .gallery-5-cols {
-        grid-template-columns: repeat(4, 1fr); /* Cai para 4 */
-    }
-    .about-grid {
-        grid-template-columns: repeat(2, 1fr); /* Cai para 2x2 */
-    }
-}
-
-/* Celulares Grandes */
-@media (max-width: 768px) {
-    .gallery-5-cols {
-        grid-template-columns: repeat(3, 1fr); /* Cai para 3 */
-    }
-}
-
-/* Celulares Pequenos */
-@media (max-width: 480px) {
-    .gallery-5-cols {
-        grid-template-columns: repeat(2, 1fr); /* Cai para 2 */
-        gap: 10px; /* Menos espaço */
-    }
-    .about-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-    
-    /* Ajuste de texto no mobile */
-    .info-title { font-size: 0.85rem; }
-    .info-desc { font-size: 0.65rem; }
-}
-
-/* --- BADGE DE HISTÓRIA (Etiqueta no Card) --- */
-.story-badge {
-    position: absolute;
-    bottom: 10px;
-    right: 10px;
-    background-color: rgba(0, 0, 0, 0.8);
-    border: 1px solid var(--color-gold-medium);
-    color: var(--color-gold-light);
-    padding: 5px 10px;
-    font-size: 0.75rem;
-    border-radius: 20px;
-    text-transform: uppercase;
-    opacity: 0.8;
-    transition: all 0.3s ease;
-    z-index: 5;
-}
-
-.gold-framebox:hover .story-badge {
-    background-color: var(--color-gold-medium);
-    color: var(--color-black-pure);
-    opacity: 1;
-}
-
-/* --- MODAL DE HISTÓRIA (ESTILO REVISTA) --- 
- * Este é o visual da janela que abrirá com Texto + Foto
- */
-.story-viewer-content {
-    display: flex;
-    width: 90%;
-    max-width: 900px;
-    background-color: var(--color-black-pure);
-    border: 1px solid var(--color-gold-dark);
-    box-shadow: 0 0 50px rgba(0,0,0,0.9);
-    overflow: hidden; /* Para a imagem não vazar */
-    border-radius: 4px;
-    position: relative; /* Para o botão fechar */
-}
-
-/* Lado da Imagem */
-.story-image-col {
-    flex: 1; /* 50% da largura */
-    min-height: 400px;
-}
-.story-image-col img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-/* Lado do Texto */
-.story-text-col {
-    flex: 1; /* 50% da largura */
-    padding: 40px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    text-align: left;
-}
-
-.story-title {
-    font-family: var(--font-serif);
-    font-size: 2rem;
-    color: var(--color-gold-medium);
-    margin-bottom: 20px;
-    border-bottom: 1px solid var(--color-gray-dark);
-    padding-bottom: 10px;
-}
-
-.story-desc {
-    font-family: var(--font-sans);
-    font-size: 1rem;
-    color: var(--color-text-main);
-    line-height: 1.8;
-}
-
-/* Responsividade do Modal de História */
-@media (max-width: 768px) {
-    .story-viewer-content {
-        flex-direction: column; /* Imagem em cima, texto embaixo */
-        max-height: 85vh; /* Limita altura */
-        overflow-y: auto; /* Permite rolar */
-    }
-    .story-image-col {
-        min-height: 250px;
-        flex: none; /* Altura fixa */
-    }
-    .story-text-col {
-        padding: 20px;
-    }
-    .story-title {
-        font-size: 1.5rem;
-    }
-}
-
-/* --- LAYOUT ESPECIAL: BIO DA ARTISTA (NOVO) --- 
- * Usado quando clica no card "A Artista".
- * É uma versão maior e mais alta do modo revista.
+/* --- LAYOUT ESPECIAL: BIO DA ARTISTA --- 
+ * Local: styles/_components/_highlights.css
+ * Alteração: Fundo Mel e Texto Chocolate
  */
 
 .artist-bio-layout {
     display: flex;
     width: 100%;
     height: 100%;
-    min-height: 600px; /* Garante altura para foto de retrato */
-    background-color: rgba(10, 10, 10, 0.95);
+    min-height: 600px;
+    
+    /* --- MUDANÇA 1: O FUNDO MEL (Cópia exata do Body) --- */
+    background-color: #FDB90C;
+    background-image: 
+        radial-gradient(circle at 50% 30%, rgba(255, 255, 18, 0.4) 0%, transparent 50%),
+        radial-gradient(circle at 0% 0%, rgba(205, 74, 0, 0.6) 0%, transparent 40%),
+        radial-gradient(circle at 100% 100%, rgba(187, 99, 2, 0.7) 0%, transparent 50%),
+        linear-gradient(160deg, #FDB90C 0%, #F2A007 40%, #E57B02 80%, #CD4A00 100%);
+    
+    /* Borda e Sombra */
     border: 1px solid var(--color-gold-medium);
-    box-shadow: 0 0 60px rgba(0,0,0,0.9);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5); /* Sombra mais suave */
     border-radius: 8px;
     overflow: hidden;
 }
 
-/* Coluna da Foto (Grande e Vertical) */
+/* Coluna da Foto */
 .artist-bio-image {
-    flex: 1; /* Metade da tela */
+    flex: 1; 
     position: relative;
 }
 
 .artist-bio-image img {
     width: 100%;
     height: 100%;
-    object-fit: cover; /* Preenche tudo sem distorcer */
-    object-position: top center; /* Foca no rosto (parte de cima) */
-    border-right: 1px solid var(--color-gold-dark);
+    object-fit: cover;
+    object-position: top center;
+    /* Removemos a borda lateral ou mantemos sutil */
+    border-right: 1px solid rgba(36, 16, 0, 0.1); 
 }
 
-/* Coluna do Texto (História Completa) */
+/* Coluna do Texto */
 .artist-bio-text {
-    flex: 1; /* A outra metade */
+    flex: 1;
     padding: 60px;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: flex-start;
-    overflow-y: auto; /* Se o texto for muito longo, rola só o texto */
+    overflow-y: auto;
 }
 
 .artist-bio-title {
     font-family: var(--font-serif);
-    font-size: 3rem; /* Título bem grande */
-    color: var(--color-gold-medium);
+    font-size: 3rem;
+    /* Mantemos Chocolate escuro para o título */
+    color: var(--color-gold-medium); 
     margin-bottom: 10px;
+    text-shadow: none; /* Remove sombra de texto se houver */
 }
 
 .artist-bio-subtitle {
     font-family: var(--font-sans);
     font-size: 1.1rem;
-    color: var(--color-gold-light);
+    
+    /* --- MUDANÇA 2: Cor do Subtítulo --- */
+    /* Era amarelo claro, agora usamos um Laranja Escuro/Tijolo para destacar no amarelo */
+    color: var(--color-gold-dark); 
+    
     margin-bottom: 30px;
     text-transform: uppercase;
     letter-spacing: 2px;
+    font-weight: 700;
 }
 
 .artist-bio-desc {
     font-family: var(--font-sans);
     font-size: 1.1rem;
-    color: #e0e0e0;
     line-height: 1.9;
     margin-bottom: 20px;
-    font-weight: 300;
+    font-weight: 500; /* Um pouco mais grosso para ler bem */
+    
+    /* --- MUDANÇA 3: Cor do Texto Corrido --- */
+    /* Era cinza claro, agora é Chocolate Escuro */
+    color: #4a2500; 
 }
 
 /* Responsividade da Bio */
@@ -305,9 +92,9 @@
         height: auto;
     }
     .artist-bio-image {
-        height: 400px; /* Altura fixa no celular */
+        height: 400px;
         border-right: none;
-        border-bottom: 1px solid var(--color-gold-dark);
+        border-bottom: 1px solid var(--color-gold-medium);
     }
     .artist-bio-text {
         padding: 30px;
