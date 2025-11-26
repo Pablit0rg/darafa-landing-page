@@ -1,12 +1,45 @@
 /**
- * DaRafa Acessórios - Main Script (Limpo)
- * Controla: Menu, Scroll, Expansão e Modais de Detalhe
+ * DaRafa Acessórios - Main Script
+ * Controla: Menu, Scroll, Expansão e Efeito Gota (Navbar)
  */
 
 document.addEventListener('DOMContentLoaded', () => {
     
     // =========================================================
-    // 1. MENU MOBILE (Hambúrguer)
+    // 0. EFEITO GOTA DE MEL (NAVBAR GOOEY)
+    // =========================================================
+    const navContainer = document.getElementById('navbar-menu');
+    const blob = document.querySelector('.honey-blob');
+    const navLinksDesktop = document.querySelectorAll('.navbar-menu .navbar-link');
+
+    // Só ativa se a gota existir (modo Desktop)
+    if (blob && navContainer) {
+        navLinksDesktop.forEach(link => {
+            link.addEventListener('mouseenter', (e) => {
+                // Pega a posição e tamanho do link onde o mouse está
+                const rect = e.target.getBoundingClientRect();
+                const containerRect = navContainer.getBoundingClientRect();
+                
+                // Calcula onde a gota deve ir (relativo ao menu)
+                const leftPosition = rect.left - containerRect.left;
+                const width = rect.width;
+
+                // Aplica os valores na gota
+                blob.style.width = `${width}px`;
+                blob.style.left = `${leftPosition}px`;
+                blob.style.opacity = '1'; // Mostra a gota
+            });
+        });
+
+        // Quando o mouse sai do menu inteiro, a gota desaparece
+        navContainer.addEventListener('mouseleave', () => {
+            blob.style.opacity = '0';
+        });
+    }
+
+
+    // =========================================================
+    // 1. MENU MOBILE
     // =========================================================
     const navbarToggler = document.getElementById('navbar-toggler');
     const navbarMenu = document.getElementById('navbar-menu');
@@ -24,14 +57,12 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Fecha o menu ao clicar num link
     navLinks.forEach(link => {
         link.addEventListener('click', () => {
             if (navbarMenu.classList.contains('active')) toggleMenu();
         });
     });
 
-    // Fecha ao clicar fora
     document.addEventListener('click', (e) => {
         if (navbarMenu && navbarMenu.classList.contains('active') && 
             !navbarMenu.contains(e.target) && 
@@ -55,7 +86,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     // =========================================================
-    // 3. A MÁGICA: EXPANSÃO DOS CARDS (NÍVEL 1 - PORTAL)
+    // 3. A MÁGICA: EXPANSÃO DOS CARDS (NÍVEL 1)
     // =========================================================
     const doors = document.querySelectorAll('.big-card-wrapper:not(.no-expand)');
     const body = document.body;
@@ -91,7 +122,6 @@ document.addEventListener('DOMContentLoaded', () => {
         miniCards.forEach(card => {
             card.addEventListener('click', (e) => {
                 e.stopPropagation();
-                
                 const img = card.querySelector('img');
                 
                 if (card.dataset.description) {
@@ -130,7 +160,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // =========================================================
     // 4. MODAIS DE DETALHE (NÍVEL 2)
     // =========================================================
-
     function openImageViewer(imageSrc) {
         const content = `<img src="${imageSrc}" class="image-viewer-content" style="max-height:90vh; max-width:90%; border:1px solid var(--color-gold-dark); box-shadow: 0 0 30px rgba(0,0,0,0.8);">`;
         createViewerOverlay(content);
@@ -154,16 +183,13 @@ document.addEventListener('DOMContentLoaded', () => {
     function createViewerOverlay(innerContent) {
         const viewer = document.createElement('div');
         viewer.className = 'image-viewer-overlay';
-        
         viewer.innerHTML = `
             <button class="close-viewer" aria-label="Fechar" style="position:absolute; top:20px; right:30px; color:#fff; font-size:2rem; background:none; border:none; cursor:pointer; z-index:3001;">
                 &times;
             </button>
             ${innerContent}
         `;
-        
         body.appendChild(viewer);
-        
         requestAnimationFrame(() => viewer.classList.add('active'));
 
         const closeViewer = () => {
@@ -175,11 +201,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const closeBtn = viewer.querySelector('.close-viewer');
         if(closeBtn) closeBtn.addEventListener('click', closeViewer);
-        
         viewer.addEventListener('click', (e) => { 
             if(e.target === viewer) closeViewer(); 
         });
-        
         const closeViewerOnEsc = (e) => {
             if (e.key === 'Escape') {
                 closeViewer();
@@ -189,5 +213,4 @@ document.addEventListener('DOMContentLoaded', () => {
         };
         document.addEventListener('keydown', closeViewerOnEsc);
     }
-
 });
