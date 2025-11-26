@@ -1,26 +1,103 @@
----
+DEV_LOG_JORNADA_COMPLETA.md
 
-### 26 de novembro de 2025 (Parte 2): Pivô de Identidade - O Tema "Mel Vibrante"
+DaRafa Acessórios - O Dossiê Completo do Projeto
+Resumo Executivo: Este documento narra a evolução completa do desenvolvimento da Landing Page para "DaRafa Acessórios". O projeto saiu de um conceito monolítico simples para uma aplicação modular, interativa e com uma identidade visual proprietária ("Honey Theme").
 
-**Status:** 🟡 Nova Identidade Visual Definida (Amarelo Sólido).
+1. A Filosofia Inicial: Modularização
+O Problema: Projetos anteriores cresciam demais e se tornavam difíceis de manter (arquivos de 1000+ linhas). A Solução: Adotamos uma Arquitetura CSS Modular.
 
-**O que foi feito hoje (Redesign Completo):**
-* **Mudança de Background:**
-    * Alterado o fundo do site de Preto Profundo para **Amarelo Mel (#FDB90C)**.
-    * Removida a textura de imagem para um visual mais *clean* e moderno, usando degradês sutis de amarelo/laranja.
-* **Ajustes de Contraste (Legibilidade):**
-    * Todos os textos (Títulos, Links, Parágrafos) foram alterados para **Chocolate Escuro/Preto** para garantir leitura perfeita sobre o fundo amarelo.
-* **Refinamento da Navbar:**
-    * Transformada em **100% Transparente (Invisível)** para integrar com o fundo.
-    * Links do menu ajustados para escuros com efeito de hover sutil (sem sumir).
-* **Interações:**
-    * **Logo Hero:** Removido o efeito de brilho/glow externo ao passar o mouse, mantendo apenas o zoom suave para um visual mais limpo.
-    * **Botões:** Atualizados para a paleta Chocolate/Amarelo.
+Não existe um "style.css" gigante.
 
-**Estado Atual do Projeto:**
-O site agora possui uma identidade visual solar, proprietária e de alto impacto, mantendo todas as funcionalidades interativas (Modais, Zig-Zag, Expansão) funcionando perfeitamente.
+Existe um "Maestro" (styles/main.css) que apenas importa pequenos arquivos específicos.
 
-**Próximos Passos:**
-* [ ] Inserção dos textos finais da marca (Copywriting).
-* [ ] Substituição final das fotos de placeholder pelas fotos reais da Rafa.
-* [ ] Validação final do contraste em telas de celular sob luz do sol.
+Estrutura de Pastas:
+
+_base/: Configurações globais (Reset, Variáveis, Tipografia).
+
+_components/: Cada pedaço do site tem seu arquivo (_navbar.css, _hero.css, etc.).
+
+2. Evolução Visual (Do Escuro ao Mel)
+Fase 1: "Ouro na Noite" (Gold in the Night)
+Conceito: Fundo preto profundo (#050505) com detalhes em Dourado Metálico.
+
+Objetivo: Passar luxo e exclusividade, como uma joalheria noturna.
+
+Elementos: Fontes com serifa (Playfair Display), botões com gradiente dourado e sombras brilhantes (Glow).
+
+Fase 2: O Pivô para "Honey Theme" (O Tema Atual)
+A Mudança: Decidimos que o site precisava de mais personalidade e conexão com a marca (Abelha).
+
+Ação: Invertemos completamente a paleta.
+
+Novo Fundo: Amarelo Mel Vibrante (#FDB90C).
+
+Novo Contraste: Textos e elementos gráficos em Chocolate/Preto (#241000) para leitura perfeita.
+
+Textura: Implementamos um background de "Favo de Mel" (Honeycomb) fixo (background-attachment: fixed) com um filtro escuro para não brigar com o conteúdo.
+
+3. Evolução Estrutural (Layout e UX)
+De "Blocos Simples" para "Zig-Zag Interativo"
+Inicialmente, as seções eram empilhadas. Mudamos para um layout Zig-Zag (Texto à Esquerda/Imagem à Direita, alternando) para melhorar o ritmo de leitura.
+
+A Lógica dos "Cards Porta" (Feature Principal)
+Decidimos não mostrar todas as fotos de uma vez. Criamos uma experiência de descoberta:
+
+A Capa: O usuário vê um Card Grande (uma "Porta") com uma foto de capa.
+
+A Ação: Ao clicar, o card expande (via JavaScript) para um Modal de Tela Cheia.
+
+O Conteúdo Oculto: Só então o usuário vê o grid completo de joias ou fotos de bastidores.
+
+Níveis de Profundidade (Deep Dive)
+O JavaScript foi programado para lidar com dois tipos de conteúdo dentro dos modais:
+
+Tipo 1 (Galeria): Ao clicar numa joia pequena, abre um Lightbox (Zoom na foto).
+
+Tipo 2 (Atelier/História): Ao clicar numa foto de processo, abre o Modo Revista (Uma janela dividida com Foto Grande + Texto Explicativo).
+
+4. Mapa Técnico dos Arquivos (O Código Atual)
+Se precisar editar algo, vá direto ao arquivo responsável:
+
+styles/_base/
+_variables.css: Define a paleta "Mel & Chocolate" e fontes.
+
+_global.css: Define o background de colmeia, o botão "Voltar ao Topo" e tipografia base.
+
+_reset.css: Limpeza padrão de navegador.
+
+styles/_components/
+_navbar.css: Barra de navegação fixa. Atualmente configurada com as mesmas cores do rodapé (Sólida) para leitura clara.
+
+_hero.css: Seção inicial. Contém a Logo 3D centralizada e animações de entrada. Removemos o brilho (glow) excessivo para limpar o visual.
+
+_zigzag.css: (ARQUIVO CRÍTICO) Controla o layout das seções principais e o estilo do Modal de Expansão.
+
+_highlights.css: Controla os grids internos (os mini-cards de joias) e a Barra de Informação (Nome/Descrição) que aparece sobre as fotos.
+
+_uiverse-button.css: Botões com gradiente e animação de brilho.
+
+_footer.css: Rodapé com assinatura e copyright.
+
+js/
+main.js: Cérebro único do site. Controla:
+
+Menu Mobile.
+
+Botão "Voltar ao Topo".
+
+Lógica de abrir/fechar Modais.
+
+Detecção inteligente de conteúdo (se é para abrir Zoom ou Modo Revista).
+
+5. Pendências e Futuro (To-Do List)
+Para o Lançamento:
+
+[ ] Conteúdo Real: Substituir os placeholders (placehold.co) pelas fotos reais das joias e da Rafa.
+
+[ ] Copywriting: Escrever os nomes e descrições reais de cada peça no HTML.
+
+Para o Futuro (Pós-Entrega):
+
+[ ] Automação Instagram: Implementar uma API ou Widget para puxar posts do Instagram automaticamente.
+
+[ ] Visualizador 3D: Estudar a possibilidade de criar visualizações 3D reais das joias (giráveis).
