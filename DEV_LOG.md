@@ -1,26 +1,26 @@
 ---
 
-### 26 de novembro de 2025: Pivô de Identidade e Finalização "Honey"
+### 26 de novembro de 2025 (Parte 2): Pivô de Identidade - O Tema "Mel Vibrante"
 
-**Status:** 🏁 Projeto Visualmente Finalizado.
+**Status:** 🟡 Nova Identidade Visual Definida (Amarelo Sólido).
 
-**O que foi feito hoje (A Grande Mudança):**
-* **Pivô de Identidade Visual (DaRafa Honey):**
-    * Alteramos a base do design de "Ouro na Noite" (Fundo Preto) para **"Mel & Chocolate"** (Fundo Amarelo #FDB90C).
-    * **Motivo:** Criar uma estética mais vibrante, "viscosa" e proprietária, simulando a textura do mel.
-* **Implementação de Textura CSS (Sem Imagens):**
-    * Criado um fundo complexo usando apenas CSS Gradients (`radial-gradient` + `linear-gradient`) para simular mel líquido.
-    * **Efeito "Honey Spread" (Vinheta):** Adicionadas camadas de sombra caramelo nos cantos da tela para criar profundidade e a sensação de que o mel está se espalhando pelas bordas.
-* **Ajustes de Contraste e Leitura:**
-    * Textos e Títulos alterados para **Chocolate Amargo/Preto** para garantir legibilidade sobre o fundo amarelo.
-    * Botões atualizados para o tema Chocolate com texto Dourado.
-* **Refinamento de Layout:**
-    * Aplicado alinhamento **Justificado** nos textos descritivos das seções para um visual mais editorial e organizado.
+**O que foi feito hoje (Redesign Completo):**
+* **Mudança de Background:**
+    * Alterado o fundo do site de Preto Profundo para **Amarelo Mel (#FDB90C)**.
+    * Removida a textura de imagem para um visual mais *clean* e moderno, usando degradês sutis de amarelo/laranja.
+* **Ajustes de Contraste (Legibilidade):**
+    * Todos os textos (Títulos, Links, Parágrafos) foram alterados para **Chocolate Escuro/Preto** para garantir leitura perfeita sobre o fundo amarelo.
+* **Refinamento da Navbar:**
+    * Transformada em **100% Transparente (Invisível)** para integrar com o fundo.
+    * Links do menu ajustados para escuros com efeito de hover sutil (sem sumir).
+* **Interações:**
+    * **Logo Hero:** Removido o efeito de brilho/glow externo ao passar o mouse, mantendo apenas o zoom suave para um visual mais limpo.
+    * **Botões:** Atualizados para a paleta Chocolate/Amarelo.
 
-**Status do Projeto:**
-O site está com a estrutura (HTML), estilo (CSS) e comportamento (JS) completos. A identidade visual está definida e aprovada.
+**Estado Atual do Projeto:**
+O site agora possui uma identidade visual solar, proprietária e de alto impacto, mantendo todas as funcionalidades interativas (Modais, Zig-Zag, Expansão) funcionando perfeitamente.
 
-**Próximos Passos (Conteúdo & Deploy):**
-* [ ] Substituir os textos de marcação (Lorem Ipsum) pelos textos finais da marca.
-* [ ] Substituir as imagens de placeholder pelas fotos reais das joias e da Rafa.
-* [ ] Publicação final.
+**Próximos Passos:**
+* [ ] Inserção dos textos finais da marca (Copywriting).
+* [ ] Substituição final das fotos de placeholder pelas fotos reais da Rafa.
+* [ ] Validação final do contraste em telas de celular sob luz do sol.
