@@ -1,6 +1,6 @@
 /*
  * COMPONENTE: Navbar
- * Design: Honey Theme (Amarelo Sólido - Igual ao Rodapé)
+ * Design: Transparente / Minimalista (Apenas Texto)
  */
 
 .navbar {
@@ -11,21 +11,14 @@
     left: 0;
     z-index: 1000;
     
-    /* --- CORREÇÃO FINAL: CORES IDÊNTICAS AO RODAPÉ --- */
-    /* Fundo Amarelo Sólido (Sem transparência escura) */
-    background-color: var(--color-black-pure); 
-    
-    /* Removemos o backdrop-filter para a cor ficar pura */
-    backdrop-filter: none;
-    
-    /* Borda inferior sutil (Igual à borda superior do footer) */
-    border-bottom: 1px solid var(--color-gray-dark);
+    /* --- LIMPEZA TOTAL: NAVBAR INVISÍVEL --- */
+    background-color: transparent; /* Sem cor de fundo */
+    border: none;                  /* Sem bordas */
+    box-shadow: none;              /* Sem sombras */
+    backdrop-filter: none;         /* Sem efeito de vidro */
     
     display: flex;
     align-items: center;
-    
-    /* Sombra leve amarelada/marrom para não sujar o amarelo */
-    box-shadow: 0 4px 10px rgba(66, 32, 11, 0.1);
 }
 
 .navbar-container {
@@ -73,7 +66,7 @@
     letter-spacing: 1px;
     font-weight: 600;
     
-    /* COR DO TEXTO: Chocolate (Preto) - Para aparecer no amarelo */
+    /* Mantemos o Chocolate para leitura sobre o fundo amarelo */
     color: var(--color-gold-medium); 
     
     position: relative;
@@ -82,9 +75,8 @@
 }
 
 .navbar-link:hover {
-    /* Hover: Chocolate mais claro ou Branco */
+    /* Hover simples */
     color: #fff; 
-    text-shadow: 0 0 5px rgba(0,0,0,0.2);
 }
 
 .navbar-link::after {
@@ -117,7 +109,6 @@
 .toggler-icon {
     width: 30px;
     height: 3px;
-    /* Cor do ícone: Chocolate */
     background-color: var(--color-gold-medium);
     border-radius: 2px;
     transition: all 0.3s ease;
@@ -147,8 +138,9 @@
         width: 70%;
         height: 100vh;
         
-        /* Fundo do Menu Mobile: Amarelo Mel Sólido */
-        background-color: var(--color-black-pure);
+        /* No mobile, precisamos de fundo para ler o menu, 
+           mas mantemos a cor sólida do tema */
+        background-color: var(--color-black-pure); /* Amarelo */
         border-left: 1px solid var(--color-gray-dark);
         
         flex-direction: column;
@@ -157,7 +149,7 @@
         gap: var(--spacing-xl);
         
         transition: right 0.4s cubic-bezier(0.77, 0, 0.175, 1);
-        box-shadow: -10px 0 30px rgba(0,0,0,0.2);
+        box-shadow: -10px 0 30px rgba(0,0,0,0.1);
     }
 
     .navbar-menu.active {
