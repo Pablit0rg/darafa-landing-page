@@ -1,12 +1,14 @@
 /*
- * COMPONENTE: Layout Zig-Zag e Modal
- * CORRIGIDO: Texto Justificado
+ * COMPONENTE: Layout Zig-Zag e Modal de Expansão
+ * * Parte 1: Estrutura da Seção (Texto + Card Grande)
+ * Parte 2: O Modal (Overlay) que abre ao clicar
  */
 
-/* --- ESTRUTURA ZIG-ZAG --- */
+/* --- PARTE 1: ESTRUTURA ZIG-ZAG --- */
+
 .zig-zag-section {
     padding: var(--spacing-xl) 0;
-    min-height: 80vh;
+    min-height: 80vh; /* Ocupa boa parte da tela */
     display: flex;
     align-items: center;
 }
@@ -15,17 +17,19 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 80px;
+    gap: 80px; /* Espaço entre texto e card */
     width: 100%;
 }
 
+/* Inverter a Ordem (para o "Z") */
+/* Se a seção tiver a classe .section-reversed, inverte os lados */
 .section-reversed .zig-zag-container {
     flex-direction: row-reverse;
 }
 
 /* --- Lado do Texto --- */
 .text-content {
-    flex: 1;
+    flex: 1; /* Ocupa o espaço restante */
     max-width: 500px;
 }
 
@@ -49,28 +53,34 @@
     margin-top: var(--spacing-lg);
 }
 
-/* --- Lado do Card Grande (PORTA) --- */
+/* --- Lado do Card Grande (O "Portal") --- */
 .big-card-wrapper {
     flex: 1;
     position: relative;
     max-width: 550px;
-    aspect-ratio: 4 / 5;
+    aspect-ratio: 4 / 5; /* Formato Retrato */
     cursor: pointer;
-    z-index: 10;
+    perspective: 1000px; /* Prepara para efeitos 3D */
 }
 
-/* A Capa Visível */
+/* Capa do Card (Imagem visível) */
 .card-cover {
     width: 100%;
     height: 100%;
     position: relative;
     overflow: hidden;
+    
+    /* Borda Dourada Dupla Luxuosa */
     border: 1px solid var(--color-gold-medium);
     outline: 1px solid var(--color-gold-dark);
     outline-offset: 6px;
+    
     box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
-    transition: transform 0.4s ease;
-    background-color: var(--color-black-deep); /* Fundo de segurança */
+    transition: transform 0.4s ease, box-shadow 0.4s ease;
+    
+    /* Fundo transparente */
+    background-color: transparent;
+    border-radius: 4px;
 }
 
 .card-cover img {
@@ -78,137 +88,144 @@
     height: 100%;
     object-fit: cover;
     transition: transform 0.6s ease;
+    filter: brightness(0.9);
 }
 
-/* Barrinha de Clique */
+/* A Barrinha "Clique para Expandir" */
 .click-bar {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
-    padding: 10px 0;
-    background-color: rgba(198, 163, 107, 0.95);
+    padding: 12px 0;
+    
+    background-color: rgba(198, 163, 107, 0.9); /* Gold Medium quase sólido */
+    backdrop-filter: blur(5px);
     color: var(--color-black-pure);
+    
     text-align: center;
     font-size: 0.85rem;
     text-transform: uppercase;
-    font-weight: 500;
+    font-weight: 600;
+    letter-spacing: 1px;
     z-index: 20;
-    transform: translateY(-100%);
+    
+    /* Efeito de aparecer ao passar o mouse */
+    transform: translateY(-100%); /* Escondido pra cima */
     transition: transform 0.3s ease;
 }
 
-/* Hover */
+/* --- Interações (Hover no Card) --- */
 .big-card-wrapper:hover .card-cover {
-    transform: translateY(-5px);
+    transform: translateY(-8px) scale(1.01);
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6);
     border-color: var(--color-gold-light);
-}
-.big-card-wrapper:hover .card-cover img {
-    transform: scale(1.05);
-}
-.big-card-wrapper:hover .click-bar {
-    transform: translateY(0);
+    outline-color: var(--color-gold-medium);
 }
 
-/* !!! CRÍTICO: ESCONDER O CONTEÚDO INTERNO !!! */
+.big-card-wrapper:hover .card-cover img {
+    transform: scale(1.08);
+}
+
+.big-card-wrapper:hover .click-bar {
+    transform: translateY(0); /* Barrinha desce */
+}
+
+/* Card que não expande (apenas visual, como o da seção "A Artista") */
+.big-card-wrapper.no-expand {
+    cursor: default;
+}
+.big-card-wrapper.no-expand:hover .card-cover {
+    transform: none;
+}
+.big-card-wrapper.no-expand .click-bar {
+    display: none;
+}
+
+/* --- Conteúdo Escondido (O que está dentro da caixa) --- */
 .hidden-content {
-    display: none !important; /* Força bruta para garantir que suma */
+    display: none !important;
     visibility: hidden;
     opacity: 0;
     height: 0;
     overflow: hidden;
 }
 
-/* Card não clicável (Artista) */
-.big-card-wrapper.no-expand {
-    cursor: default;
-}
-.big-card-wrapper.no-expand .click-bar {
-    display: none;
-}
 
-/* --- MODAL (OVERLAY) --- */
+/* --- PARTE 2: O MODAL DE EXPANSÃO (A "Caixa Aberta") --- */
+/* (Adicionado dinamicamente via JavaScript quando clica no card) */
+
+/* O Fundo Escuro que cobre o site */
 .expansion-overlay {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    z-index: 2000;
-    background-color: rgba(5, 5, 5, 0.98);
-    backdrop-filter: blur(5px);
-    opacity: 0;
+    z-index: 2000; /* Acima da navbar */
+    
+    background-color: rgba(2, 2, 2, 0.97); /* Quase preto total */
+    backdrop-filter: blur(15px);
+    
+    opacity: 0; /* Começa invisível */
     visibility: hidden;
     transition: all 0.4s ease;
-    overflow-y: auto;
+    
+    overflow-y: auto; /* Permite rolar se tiver muitas joias */
     display: flex;
     justify-content: center;
-    padding: 80px 0;
+    padding: 80px 0; /* Espaço para não colar no topo */
 }
 
+/* Quando ativo (classe adicionada via JS) */
 .expansion-overlay.active {
     opacity: 1;
     visibility: visible;
 }
 
+/* O Container do Conteúdo dentro do Modal */
 .expansion-content {
     width: 90%;
     max-width: 1200px;
     margin: auto;
     position: relative;
-    transform: translateY(30px);
-    transition: transform 0.4s ease;
+    transform: translateY(30px) scale(0.98); /* Efeito de subida */
+    transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 .expansion-overlay.active .expansion-content {
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
 }
 
+/* Botão Fechar (X) */
 .close-expansion {
     position: fixed;
-    top: 20px;
-    right: 30px;
+    top: 25px;
+    right: 35px;
     background: none;
     border: none;
-    color: var(--color-gold-light);
-    font-size: 3rem;
+    color: var(--color-gold-medium);
+    font-size: 2.5rem;
     cursor: pointer;
     z-index: 2001;
+    transition: transform 0.3s ease, color 0.3s ease;
 }
 
-/* Mobile */
-@media (max-width: 900px) {
-    .zig-zag-container {
-        flex-direction: column !important;
-        gap: 40px;
-        text-align: center;
-    }
-    .big-card-wrapper {
-        width: 100%;
-    }
-    .click-bar {
-        transform: translateY(0); /* Sempre visível no mobile */
-    }
-    /* No mobile, justificado as vezes cria buracos feios, 
-       então voltamos para esquerda ou centro se preferir */
-    .section-description {
-        text-align: left; 
-    }
+.close-expansion:hover {
+    transform: rotate(90deg);
+    color: var(--color-gold-light);
 }
 
-/* * --- VISUALIZADOR DE IMAGEM (LIGHTBOX - NÍVEL 2) ---
- * Abre quando clica numa joia pequena dentro da expansão.
- */
-
+/* --- VISUALIZADOR DE IMAGEM (LIGHTBOX - NÍVEL 2) --- */
 .image-viewer-overlay {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    z-index: 3000; /* Acima de tudo, até da expansão */
+    z-index: 3000;
     
-    background-color: rgba(0, 0, 0, 0.95); /* Preto total */
+    background-color: rgba(0, 0, 0, 0.98); /* Preto total */
     
     display: flex;
     justify-content: center;
@@ -230,7 +247,7 @@
     max-height: 90vh;
     box-shadow: 0 0 30px rgba(0,0,0,0.8);
     border: 1px solid var(--color-gold-dark);
-    transform: scale(0.9);
+    transform: scale(0.95);
     transition: transform 0.3s ease;
 }
 
@@ -248,4 +265,44 @@
     background: none;
     border: none;
     cursor: pointer;
+}
+
+
+/* --- RESPONSIVIDADE (Mobile) --- */
+@media (max-width: 900px) {
+    .zig-zag-container {
+        flex-direction: column !important; /* Força empilhamento vertical */
+        gap: 40px;
+        text-align: center;
+    }
+
+    .text-content {
+        max-width: 100%;
+    }
+
+    .section-title {
+        text-align: center !important; /* Força título centralizado no mobile */
+    }
+    
+    .decorative-line {
+        margin: 20px auto; /* Centraliza a linha */
+    }
+
+    .big-card-wrapper {
+        width: 100%;
+        max-width: 100%;
+        aspect-ratio: 3/4; /* Um pouco mais alto no mobile */
+    }
+    
+    /* No mobile, a barrinha fica sempre visível para saber que é clicável */
+    .big-card-wrapper:not(.no-expand) .click-bar {
+        transform: translateY(0);
+        background-color: rgba(198, 163, 107, 0.8);
+    }
+
+    /* CORREÇÃO DE ALINHAMENTO NO MOBILE */
+    .section-description {
+        text-align: justify !important; /* Força o justificado */
+        padding: 0 10px; /* Um pouco de respiro nas laterais */
+    }
 }
