@@ -1,6 +1,6 @@
 /*
  * COMPONENTE: Highlights (Cards Internos)
- * Atualizado: Bordas Vermelhas e Texto da Bio Limpo
+ * Atualizado: Texto Justificado nas Histórias e Bordas Vermelhas
  */
 
 /* --- Grids --- */
@@ -54,7 +54,7 @@
 }
 
 
-/* --- BARRA DE INFORMAÇÕES --- */
+/* --- BARRA DE INFORMAÇÕES (Chocolate/Amarelo) --- */
 .card-info-bar {
     position: absolute;
     bottom: 0;
@@ -183,6 +183,10 @@
     color: var(--color-text-main);
     line-height: 1.8;
     font-weight: 500;
+    
+    /* --- ALINHAMENTO JUSTIFICADO --- */
+    text-align: justify;
+    text-justify: inter-word;
 }
 
 /* --- BIO DA ARTISTA --- */
