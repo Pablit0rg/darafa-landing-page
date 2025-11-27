@@ -1,6 +1,6 @@
 /*
  * COMPONENTE: Highlights (Cards Internos)
- * Atualizado: Barra de Informação Chocolate (Alto Contraste)
+ * Atualizado: BORDAS VERMELHAS FIXAS nos mini-cards
  */
 
 /* --- Grids --- */
@@ -24,7 +24,11 @@
     width: 100%;
     aspect-ratio: 3 / 4;
     overflow: hidden;
-    border: 1px solid var(--color-gold-medium);
+    
+    /* --- MUDANÇA PRINCIPAL AQUI --- */
+    /* Borda Vermelha Fina e Permanente (Sempre visível) */
+    border: 1px solid #ff0000; 
+    
     background-color: transparent;
     transition: all 0.3s ease;
     cursor: pointer;
@@ -40,8 +44,10 @@
 }
 
 .gold-framebox:hover {
-    border-color: var(--color-gold-light);
-    box-shadow: 0 5px 15px rgba(198, 163, 107, 0.3); 
+    /* REMOVIDO: border-color. A borda continua vermelha. */
+    
+    /* Adicionada uma sombra avermelhada suave no hover para destaque */
+    box-shadow: 0 5px 15px rgba(255, 0, 0, 0.3); 
     transform: translateY(-5px);
     z-index: 2;
 }
@@ -51,19 +57,17 @@
 }
 
 
-/* --- BARRA DE INFORMAÇÕES (ATUALIZADA: CHOCOLATE) --- */
+/* --- BARRA DE INFORMAÇÕES (Chocolate/Amarelo) --- */
 .card-info-bar {
     position: absolute;
     bottom: 0;
     left: 0;
     width: 100%;
     padding: 12px 10px;
-    
-    /* MUDANÇA AQUI: Fundo Marrom Chocolate (Igual ao Botão) */
     background: linear-gradient(to right, #241000, #4a2500);
     
-    /* Borda superior para acabamento */
-    border-top: 1px solid var(--color-gold-light);
+    /* Borda superior vermelha para combinar com o card */
+    border-top: 1px solid #ff0000;
     
     z-index: 5;
     transition: all 0.3s ease;
@@ -71,10 +75,7 @@
 
 .info-title {
     font-family: var(--font-serif);
-    
-    /* Texto Amarelo Mel (Contraste no Marrom) */
-    color: #FDB90C;
-    
+    color: #FDB90C; /* Texto Amarelo */
     font-size: 0.95rem;
     margin-bottom: 4px;
     text-transform: capitalize;
@@ -83,10 +84,7 @@
 
 .info-desc {
     font-family: var(--font-sans);
-    
-    /* Texto Claro/Dourado Suave */
-    color: #e0d0a0; 
-    
+    color: #e0d0a0; /* Texto Claro/Dourado Suave */
     font-size: 0.75rem;
     line-height: 1.3;
     font-weight: 300;
@@ -102,9 +100,8 @@
     position: absolute;
     bottom: 10px;
     right: 10px;
-    /* Fundo Chocolate */
     background-color: var(--color-gold-medium);
-    color: #FDB90C; /* Texto Amarelo */
+    color: #FDB90C;
     border: none;
     padding: 6px 12px;
     font-size: 0.7rem;
