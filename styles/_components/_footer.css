@@ -7,7 +7,7 @@
     background-color: var(--color-black-pure);
     border-top: 1px solid var(--color-gray-dark);
     text-align: center;
-    margin-top: auto; /* Garante que fique no fundo */
+    margin-top: auto; 
 }
 
 .footer-content {
@@ -46,30 +46,25 @@
     transition: color 0.3s ease;
     display: inline-flex;
     align-items: center;
-    gap: 5px; /* Espaço entre o nome e o ícone */
+    gap: 5px; 
 }
 
 .footer-dev a:hover {
-    color: var(--color-gold-light);
-    text-decoration: underline;
+    color: var(--color-gold-light); /* Apenas muda a cor */
+    text-decoration: none; /* REMOVIDO: Sem sublinhado */
 }
 
-/* --- ÍCONE DO INSTAGRAM (Cores Oficiais) --- */
+/* --- ÍCONE DO INSTAGRAM --- */
 .insta-icon {
-    font-size: 0.9rem; /* Mesmo tamanho visual do texto */
-    
-    /* Gradiente Oficial do Instagram */
+    font-size: 0.9rem;
     background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%);
-    
-    /* Aplica o gradiente no texto (ícone) */
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
-    
     transition: transform 0.3s ease;
 }
 
-/* Efeito extra ao passar o mouse no link */
+/* Efeito extra ao passar o mouse */
 .footer-dev a:hover .insta-icon {
-    transform: scale(1.2) rotate(5deg); /* Leve movimento */
+    transform: scale(1.2) rotate(5deg);
 }
