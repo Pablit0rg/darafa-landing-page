@@ -253,11 +253,24 @@
 .artist-bio-subtitle {
     font-family: var(--font-sans);
     font-size: 1.1rem;
-    color: var(--color-gold-light); 
+    
+    /* Cor do Texto: Amarelo/Dourado Claro (como o fundo é amarelo, isso precisa de contorno) */
+    /* Ou podemos usar Branco se preferir destaque total */
+    color: #fff; 
+    
     margin-bottom: 30px;
     text-transform: uppercase;
     letter-spacing: 2px;
     margin-top: 10px;
+    font-weight: 700; /* Mais peso para o contorno aparecer bem */
+    
+    /* --- CONTORNO NAS LETRAS (Text Stroke Simulado) --- */
+    /* Cria uma sombra sólida marrom ao redor de cada letra */
+    text-shadow: 
+        -1px -1px 0 var(--color-gold-medium),  
+         1px -1px 0 var(--color-gold-medium),
+        -1px  1px 0 var(--color-gold-medium),
+         1px  1px 0 var(--color-gold-medium);
 }
 
 .artist-bio-desc {
