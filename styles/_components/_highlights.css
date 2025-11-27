@@ -1,6 +1,6 @@
 /*
  * COMPONENTE: Highlights (Cards Internos)
- * Atualizado: Contorno Marrom no Subtítulo Branco
+ * Atualizado: Subtítulo da Bio Limpo (Cor Chocolate)
  */
 
 /* --- Grids --- */
@@ -213,37 +213,32 @@
     padding-bottom: 15px;
     position: relative;
 }
-
 .artist-bio-title::after {
     content: '';
     position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 60px;
-    height: 2px;
+    bottom: 0; left: 0;
+    width: 60px; height: 2px;
     background-color: #ff0000;
 }
 
-/* SUBTÍTULO: Branco com Contorno Marrom */
+/* SUBTÍTULO: Chocolate (Igual ao texto) */
 .artist-bio-subtitle {
     font-family: var(--font-sans);
     font-size: 1.1rem;
     
-    /* Texto BRANCO */
-    color: #ffffff; 
+    /* MUDANÇA: Cor Chocolate (Igual ao texto abaixo) */
+    color: var(--color-text-main); 
     
     margin-bottom: 30px;
     text-transform: uppercase;
     letter-spacing: 2px;
     margin-top: 10px;
-    font-weight: 900; /* Peso extra para o contorno ficar bom */
     
-    /* CONTORNO MARROM CHOCOLATE (Sombra sólida) */
-    text-shadow: 
-        -1px -1px 0 var(--color-gold-medium),  
-         1px -1px 0 var(--color-gold-medium),
-        -1px  1px 0 var(--color-gold-medium),
-         1px  1px 0 var(--color-gold-medium);
+    /* Mantemos negrito para diferenciar */
+    font-weight: 700; 
+    
+    /* Removido: Qualquer sombra ou contorno */
+    text-shadow: none;
 }
 
 .artist-bio-desc {
