@@ -42,3 +42,22 @@ Este log documenta o progresso, as decisões e os próximos passos no desenvolvi
 * [ ] **Deploy:** Publicar a versão final.
 
 ---
+
+---
+
+### 26 de novembro de 2025 (Parte 5): Registro de Alternativa de Design (Botão Hard Shadow)
+
+**Status:** 📝 Item adicionado ao Backlog de Testes.
+
+**Nota de Design:**
+Foi criada e validada uma variação do botão principal que pode ser testada na revisão final do projeto.
+
+* **Estilo:** "Hard Shadow" (Sombra Dura/Brutalista Suave).
+* **Características:**
+    * Fundo Chocolate (`#241000`).
+    * Texto Amarelo (`#FDB90C`).
+    * Bordas levemente arredondadas (`border-radius: 8px`).
+    * **Diferencial:** Sombra sólida deslocada na cor **Amarela (#FDB90C)** (mesma do fundo), criando um efeito de relevo tátil interessante.
+
+**Ação Futura:**
+* [ ] Testar a implementação do botão "Hard Shadow" com sombra amarela para ver se o contraste é suficiente ou se preferimos manter o gradiente atual.
