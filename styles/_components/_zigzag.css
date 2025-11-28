@@ -1,6 +1,6 @@
 /*
  * COMPONENTE: Layout Zig-Zag e Modal
- * Atualizado: Todos os Cards Grandes com Tamanho Uniforme (550px)
+ * Atualizado: Barra de Clique Chocolate (Desktop e Mobile)
  */
 
 /* --- ESTRUTURA ZIG-ZAG --- */
@@ -27,9 +27,6 @@
 .text-content {
     flex: 1;
     max-width: 500px;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
 }
 
 .section-description {
@@ -50,10 +47,10 @@
     margin-top: var(--spacing-lg);
 }
 
-/* --- Coluna Visual (Para agrupar Card + Botão) --- */
+/* --- Coluna Visual (Para agrupar Card + Botão na seção Artista) --- */
 .artist-visual-col {
     flex: 1;
-    max-width: 550px; /* Tamanho do container igual ao card */
+    max-width: 550px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -64,14 +61,18 @@
 .big-card-wrapper {
     flex: 1;
     position: relative;
-    
-    /* MUDANÇA: Tamanho Máximo UNIFORME para TODOS os cards */
     max-width: 550px; 
-    width: 100%; /* Ocupa o espaço disponível até o max-width */
-    
+    width: 100%;
     aspect-ratio: 4 / 5;
     cursor: pointer;
     z-index: 10;
+}
+
+/* Ajuste para Catálogo e Atelier ficarem menores/elegantes se não estiverem na coluna visual */
+#gallery-door, 
+#about-door {
+    max-width: 400px; 
+    margin: 0 auto;   
 }
 
 /* A Capa Visível */
@@ -97,22 +98,29 @@
     filter: brightness(0.9);
 }
 
-/* Barrinha de Clique */
+/* Barrinha de Clique (CORRIGIDA PARA CHOCOLATE) */
 .click-bar {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     padding: 10px 0;
-    background-color: rgba(198, 163, 107, 0.95);
-    color: var(--color-black-pure);
+    
+    /* MUDANÇA: Usando a variável Chocolate (Marrom Escuro) */
+    background-color: var(--color-gold-medium); 
+    
+    color: #FDB90C; /* Texto Amarelo */
     text-align: center;
     font-size: 0.85rem;
     text-transform: uppercase;
-    font-weight: 500;
+    font-weight: 600;
+    letter-spacing: 1px;
     z-index: 20;
     transform: translateY(-100%);
     transition: transform 0.3s ease;
+    
+    /* Sombra leve */
+    box-shadow: 0 2px 10px rgba(0,0,0,0.3);
 }
 
 /* Hover */
@@ -128,7 +136,7 @@
     transform: translateY(0);
 }
 
-/* Conteúdo Interno */
+/* Conteúdo Interno (Escondido) */
 .hidden-content {
     display: none !important;
     visibility: hidden;
@@ -137,7 +145,7 @@
     overflow: hidden;
 }
 
-/* Card não clicável */
+/* Card não clicável (se houver) */
 .big-card-wrapper.no-expand { cursor: default; }
 .big-card-wrapper.no-expand .click-bar { display: none; }
 
@@ -146,8 +154,11 @@
     position: fixed;
     top: 0; left: 0; width: 100%; height: 100%;
     z-index: 2000;
+    
+    /* Fundo Amarelo Mel com Transparência */
     background-color: rgba(253, 185, 12, 0.97); 
     backdrop-filter: blur(15px);
+    
     opacity: 0; visibility: hidden;
     transition: all 0.4s ease;
     overflow-y: auto;
@@ -178,9 +189,11 @@
         gap: 40px;
         text-align: center;
     }
+    
     .text-content {
         max-width: 100%;
     }
+    
     .section-title { text-align: center !important; }
     .section-description {
         text-align: justify !important;
@@ -188,21 +201,24 @@
     }
     .decorative-line { margin: 20px auto; }
     
-    .artist-visual-col, .big-card-wrapper {
+    /* No mobile, deixa ocupar a largura total */
+    .artist-visual-col, .big-card-wrapper, #gallery-door, #about-door {
         width: 100%;
-        max-width: 100%; /* No mobile ocupa a largura total */
+        max-width: 100%; 
     }
     
     .click-bar { 
         transform: translateY(0); 
-        background-color: rgba(36, 16, 0, 0.9);
+        /* Garante o fundo Chocolate também no mobile */
+        background-color: var(--color-gold-medium);
     }
 }
 
-/* --- VISUALIZADOR DE IMAGEM (ZOOM) --- */
+/* --- VISUALIZADOR DE IMAGEM (ZOOM NÍVEL 2) --- */
 .image-viewer-overlay {
     position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    z-index: 3000; background-color: rgba(36, 16, 0, 0.98);
+    z-index: 3000; 
+    background-color: rgba(36, 16, 0, 0.98);
     display: flex; justify-content: center; align-items: center;
     opacity: 0; visibility: hidden; transition: all 0.3s ease;
     cursor: zoom-out;
