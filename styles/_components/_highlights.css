@@ -1,6 +1,6 @@
 /*
- * COMPONENTE: Highlights (Cards Internos e Modais)
- * Atualizado: Bordas na Cor do Rodapé (Gray Dark) e Texto Justificado
+ * COMPONENTE: Highlights (Cards Internos)
+ * Atualizado: Moldura Sólida nos Mini-Cards
  */
 
 /* --- Grids --- */
@@ -18,20 +18,26 @@
     width: 100%;
 }
 
-/* --- O Card Pequeno --- */
+/* --- O Card Pequeno (MOLDURA PREENCHIDA) --- */
 .gold-framebox {
     position: relative;
     width: 100%;
     aspect-ratio: 3 / 4;
     overflow: hidden;
     
-    /* MUDANÇA: Borda igual à linha do Rodapé */
-    border: 1px solid var(--color-gray-dark); 
+    /* Borda Externa Vermelha */
+    border: 1px solid #ff0000; 
     
-    background-color: transparent;
+    /* MUDANÇA AQUI: Padding + Cor de Fundo para criar a moldura interna */
+    padding: 4px; /* Espessura da moldura interna */
+    background-color: #241000; /* Cor Chocolate (fundo da moldura) */
+    
     transition: all 0.3s ease;
     cursor: pointer;
     border-radius: var(--border-radius-sm);
+    
+    /* Garante que o padding não aumente o tamanho total */
+    box-sizing: border-box;
 }
 
 .gold-framebox img {
@@ -39,39 +45,44 @@
     height: 100%;
     object-fit: cover;
     transition: transform 0.5s ease;
-    opacity: 1; 
+    /* Imagem ocupa 100% do espaço restante (dentro do padding) */
+    display: block;
 }
 
 .gold-framebox:hover {
-    /* Sombra suave na cor do mel */
-    box-shadow: 0 5px 15px rgba(187, 99, 2, 0.3); 
+    box-shadow: 0 5px 15px rgba(255, 0, 0, 0.3); 
     transform: translateY(-5px);
     z-index: 2;
+    /* Opcional: Mudar a cor da borda no hover */
+    border-color: #FDB90C; 
 }
 
 .gold-framebox:hover img {
-    transform: scale(1.08);
+    transform: scale(1.05); /* Zoom interno */
 }
 
 
-/* --- BARRA DE INFORMAÇÕES (Chocolate/Amarelo) --- */
+/* --- BARRA DE INFORMAÇÕES --- */
 .card-info-bar {
     position: absolute;
     bottom: 0;
     left: 0;
-    width: 100%;
+    width: 100%; /* Cobre a largura total (incluindo padding) */
     height: 80px; 
     padding: 10px;
     background: linear-gradient(to right, #241000, #4a2500);
     
-    /* Borda superior igual ao Rodapé */
-    border-top: 1px solid var(--color-gray-dark);
+    /* Borda superior Vermelha */
+    border-top: 1px solid #ff0000;
     
     z-index: 5;
     transition: all 0.3s ease;
     display: flex;
     flex-direction: column;
     justify-content: center;
+    
+    /* Ajuste para ficar por cima do padding do card */
+    margin: 0; 
 }
 
 .info-title {
@@ -103,8 +114,8 @@
 /* --- BADGE DE HISTÓRIA --- */
 .story-badge {
     position: absolute;
-    bottom: 10px;
-    right: 10px;
+    bottom: 14px; /* Ajuste por causa da moldura */
+    right: 14px;
     background-color: var(--color-gold-medium);
     color: #FDB90C;
     border: none;
@@ -130,10 +141,7 @@
     width: 90%;
     max-width: 900px;
     background-color: #FDB90C; 
-    
-    /* Borda Externa igual ao Rodapé */
-    border: 1px solid var(--color-gray-dark);
-    
+    border: 1px solid #ff0000;
     box-shadow: 0 20px 50px rgba(0,0,0,0.8);
     overflow: hidden;
     border-radius: 8px;
@@ -144,9 +152,7 @@
     flex: 1.2;
     min-height: 400px;
     position: relative;
-    
-    /* Divisória igual ao Rodapé */
-    border-right: 1px solid var(--color-gray-dark);
+    border-right: 1px solid #ff0000;
 }
 .story-image-col img {
     width: 100%;
@@ -170,10 +176,7 @@
     margin-bottom: 25px;
     padding-bottom: 15px;
     position: relative;
-    
-    /* Linha Decorativa igual ao Rodapé */
-    border-bottom: 2px solid var(--color-gray-dark);
-    
+    border-bottom: 2px solid #ff0000;
     display: inline-block;
     text-transform: uppercase;
 }
@@ -184,8 +187,6 @@
     color: var(--color-text-main);
     line-height: 1.8;
     font-weight: 500;
-    
-    /* Texto Justificado */
     text-align: justify;
     text-justify: inter-word;
 }
@@ -197,10 +198,7 @@
     height: 100%;
     min-height: 600px;
     background-color: #FDB90C; 
-    
-    /* Borda Externa igual ao Rodapé */
-    border: 1px solid var(--color-gray-dark);
-    
+    border: 1px solid #ff0000;
     box-shadow: 0 0 60px rgba(0,0,0,0.9);
     border-radius: 8px;
     overflow: hidden;
@@ -209,9 +207,7 @@
 .artist-bio-image {
     flex: 1;
     position: relative;
-    
-    /* Divisória igual ao Rodapé */
-    border-right: 1px solid var(--color-gray-dark);
+    border-right: 1px solid #ff0000;
 }
 .artist-bio-image img {
     width: 100%;
@@ -240,7 +236,6 @@
     text-transform: uppercase;
 }
 
-/* Linha abaixo do nome igual ao Rodapé */
 .artist-bio-title::after {
     content: '';
     position: absolute;
@@ -248,10 +243,9 @@
     left: 0;
     width: 60px;
     height: 2px;
-    background-color: var(--color-gray-dark);
+    background-color: #ff0000;
 }
 
-/* SUBTÍTULO: Limpo e Chocolate */
 .artist-bio-subtitle {
     font-family: var(--font-sans);
     font-size: 1.1rem;
@@ -273,8 +267,6 @@
     line-height: 1.9;
     margin-bottom: 20px;
     font-weight: 500;
-    
-    /* Texto Justificado */
     text-align: justify;
     text-justify: inter-word;
     padding-right: 20px;
@@ -294,7 +286,7 @@
         min-height: 250px; 
         flex: none;
         border-right: none; 
-        border-bottom: 1px solid var(--color-gray-dark);
+        border-bottom: 1px solid #ff0000;
     }
     .story-text-col { padding: 30px; }
 }
@@ -303,7 +295,7 @@
     .artist-bio-image { 
         height: 400px; 
         border-right: none; 
-        border-bottom: 1px solid var(--color-gray-dark);
+        border-bottom: 1px solid #ff0000;
     }
     .artist-bio-text { padding: 30px; }
     .artist-bio-title { font-size: 2.2rem; }
