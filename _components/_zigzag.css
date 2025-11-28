@@ -1,6 +1,6 @@
 /*
  * COMPONENTE: Layout Zig-Zag e Modal
- * Atualizado: Botão Mobile abaixo da Foto (Reordenamento Flex)
+ * CORRIGIDO: Botão abaixo da foto na seção Artista
  */
 
 /* --- ESTRUTURA ZIG-ZAG --- */
@@ -23,14 +23,10 @@
     flex-direction: row-reverse;
 }
 
-/* --- Lado do Texto --- */
+/* --- Coluna de Texto --- */
 .text-content {
     flex: 1;
     max-width: 500px;
-    /* Necessário para o flex funcionar nos filhos se precisarmos reordenar algo dentro */
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
 }
 
 .section-description {
@@ -51,14 +47,23 @@
     margin-top: var(--spacing-lg);
 }
 
+/* --- Coluna Visual (NOVO: Para agrupar Card + Botão) --- */
+.artist-visual-col {
+    flex: 1;
+    max-width: 550px;
+    display: flex;
+    flex-direction: column; /* Empilha Card e Botão */
+    align-items: center;
+    gap: 30px; /* Espaço entre o Card e o Botão */
+}
+
 /* --- Lado do Card Grande (PORTA) --- */
 .big-card-wrapper {
-    flex: 1;
-    position: relative;
-    max-width: 550px;
+    width: 100%;
     aspect-ratio: 4 / 5;
     cursor: pointer;
     z-index: 10;
+    position: relative;
 }
 
 /* A Capa Visível */
@@ -72,7 +77,7 @@
     outline-offset: 6px;
     box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
     transition: transform 0.4s ease;
-    background-color: var(--color-gold-medium); 
+    background-color: var(--color-black-deep);
     border-radius: 4px;
 }
 
@@ -90,18 +95,16 @@
     top: 0;
     left: 0;
     width: 100%;
-    padding: 12px 0;
-    background-color: var(--color-gold-medium);
-    color: #FDB90C;
+    padding: 10px 0;
+    background-color: rgba(198, 163, 107, 0.95);
+    color: var(--color-black-pure);
     text-align: center;
     font-size: 0.85rem;
     text-transform: uppercase;
-    font-weight: 600;
-    letter-spacing: 1px;
+    font-weight: 500;
     z-index: 20;
     transform: translateY(-100%);
     transition: transform 0.3s ease;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.3);
 }
 
 /* Hover */
@@ -111,7 +114,6 @@
 }
 .big-card-wrapper:hover .card-cover img {
     transform: scale(1.05);
-    filter: brightness(1);
 }
 .big-card-wrapper:hover .click-bar {
     transform: translateY(0);
@@ -126,214 +128,78 @@
     overflow: hidden;
 }
 
-/* Card não clicável (Artista) */
-.big-card-wrapper.no-expand {
-    cursor: default;
-}
-.big-card-wrapper.no-expand .click-bar {
-    display: none;
-}
+/* Card não clicável (se houver) */
+.big-card-wrapper.no-expand { cursor: default; }
+.big-card-wrapper.no-expand .click-bar { display: none; }
 
 /* --- MODAL (OVERLAY) --- */
 .expansion-overlay {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    top: 0; left: 0; width: 100%; height: 100%;
     z-index: 2000;
-    background-color: rgba(253, 185, 12, 0.97); 
+    background-color: rgba(5, 5, 5, 0.98); 
     backdrop-filter: blur(15px);
-    opacity: 0;
-    visibility: hidden;
+    opacity: 0; visibility: hidden;
     transition: all 0.4s ease;
     overflow-y: auto;
     display: flex;
     justify-content: center;
     padding: 80px 0;
 }
-
-.expansion-overlay.active {
-    opacity: 1;
-    visibility: visible;
-}
+.expansion-overlay.active { opacity: 1; visibility: visible; }
 
 .expansion-content {
-    width: 90%;
-    max-width: 1200px;
-    margin: auto;
-    position: relative;
-    transform: translateY(30px);
-    transition: transform 0.4s ease;
+    width: 90%; max-width: 1200px; margin: auto; position: relative;
+    transform: translateY(30px); transition: transform 0.4s ease;
 }
-
-.expansion-overlay.active .expansion-content {
-    transform: translateY(0);
-}
+.expansion-overlay.active .expansion-content { transform: translateY(0); }
 
 .close-expansion {
-    position: fixed;
-    top: 20px;
-    right: 30px;
-    background: none;
-    border: none;
-    color: var(--color-gold-medium);
-    font-size: 3rem;
-    cursor: pointer;
+    position: fixed; top: 20px; right: 30px;
+    background: none; border: none;
+    color: var(--color-gold-light);
+    font-size: 3rem; cursor: pointer;
     z-index: 2001;
 }
 
 /* --- RESPONSIVIDADE (Mobile) --- */
 @media (max-width: 900px) {
     .zig-zag-container {
-        /* Agora o container vira uma coluna flexível */
         flex-direction: column !important;
-        gap: 30px;
+        gap: 40px;
         text-align: center;
     }
-
-    /* Ajuste do Texto */
     .text-content {
         max-width: 100%;
-        align-items: center; /* Centraliza o texto e título */
-        
-        /* Mágica do Reordenamento:
-           Queremos que o Texto (Título/Desc) venha primeiro (Order 1),
-           A Foto venha depois (Order 2),
-           E o Botão (que está DENTRO do .text-content) venha por último.
-           
-           Mas como o botão está dentro do .text-content, não podemos tirá-lo de lá facilmente só com CSS.
-           
-           A SOLUÇÃO FLEXÍVEL:
-           Vamos inverter a lógica visual do container pai.
-        */
     }
+    .section-title { text-align: center !important; }
+    .decorative-line { margin: 20px auto; }
     
-    /* Ordem Padrão Mobile:
-       1. Texto (Título + Descrição)
-       2. Imagem (Card)
-       3. Botão (Nós vamos fazer o botão "fugir" do fluxo normal com display contents ou similar, 
-          mas o jeito mais seguro e robusto sem mudar HTML é usar a ordem dos blocos principais).
-    */
-
-    /* BLOCO 1: TEXTO */
-    .text-content { order: 1; }
-    
-    /* BLOCO 2: IMAGEM */
-    .big-card-wrapper { 
+    .artist-visual-col, .big-card-wrapper {
         width: 100%;
-        max-width: 100%;
-        order: 2; 
-        margin-bottom: 20px;
     }
     
-    /* BLOCO 3: BOTÃO (Gambiarra CSS para Mobile) */
-    /* Como o botão .artist-btn está dentro de .text-content, ele ficaria no Bloco 1.
-       Para ele ir para baixo da imagem, precisaríamos mudar o HTML.
-       
-       MAS, podemos fazer um truque visual:
-       Na seção da artista (#artist-section), podemos usar 'display: contents' no .text-content
-       apenas se reestruturarmos. 
-       
-       Se não quiser mudar o HTML, a solução é:
-       1. Deixar Título e Descrição no Order 1.
-       2. Deixar a Imagem no Order 2.
-       3. E o Botão? Ele está preso no Order 1.
-       
-       Vamos mudar a abordagem para o #artist-section específico.
-    */
+    .click-bar { transform: translateY(0); }
 }
 
-/* --- TRUQUE ESPECÍFICO PARA A SEÇÃO ARTISTA NO MOBILE --- */
-@media (max-width: 900px) {
-    #artist-section .zig-zag-container {
-        display: flex;
-        flex-direction: column;
-    }
-    
-    /* Quebra o .text-content para seus filhos obedecerem ao pai */
-    #artist-section .text-content {
-        display: contents; 
-    }
-    
-    /* Reordenando os filhos diretos agora soltos */
-    
-    /* 1. Título e Descrição */
-    #artist-section .section-title, 
-    #artist-section .section-description {
-        order: 1;
-    }
-    
-    /* 2. A Imagem (Card) */
-    #artist-section .big-card-wrapper {
-        order: 2;
-        margin: 20px 0; /* Espaço em cima e embaixo */
-    }
-    
-    /* 3. O Botão */
-    #artist-section .artist-btn {
-        order: 3;
-        width: 100%; /* Botão largura total no mobile fica bom */
-        max-width: 300px;
-    }
-    
-    /* Ajustes visuais gerais */
-    .section-title {
-        text-align: center !important;
-    }
-    .section-description {
-        text-align: justify !important;
-        padding: 0 10px;
-    }
-    .big-card-wrapper:not(.no-expand) .click-bar {
-        transform: translateY(0);
-        background-color: rgba(198, 163, 107, 0.8);
-    }
-}
-
-/* --- VISUALIZADOR DE IMAGEM (ZOOM NÍVEL 2) --- */
+/* --- VISUALIZADOR DE IMAGEM (ZOOM) --- */
 .image-viewer-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 3000;
-    background-color: rgba(36, 16, 0, 0.98);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    opacity: 0;
-    visibility: hidden;
-    transition: all 0.3s ease;
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    z-index: 3000; background-color: rgba(0, 0, 0, 0.98);
+    display: flex; justify-content: center; align-items: center;
+    opacity: 0; visibility: hidden; transition: all 0.3s ease;
     cursor: zoom-out;
 }
-
-.image-viewer-overlay.active {
-    opacity: 1;
-    visibility: visible;
-}
-
+.image-viewer-overlay.active { opacity: 1; visibility: visible; }
 .image-viewer-content {
-    max-width: 90%;
-    max-height: 90vh;
+    max-width: 90%; max-height: 90vh;
     box-shadow: 0 0 30px rgba(0,0,0,0.8);
     border: 1px solid var(--color-gold-dark);
-    transform: scale(0.9);
-    transition: transform 0.3s ease;
+    transform: scale(0.9); transition: transform 0.3s ease;
 }
-
-.image-viewer-overlay.active .image-viewer-content {
-    transform: scale(1);
-}
-
+.image-viewer-overlay.active .image-viewer-content { transform: scale(1); }
 .close-viewer {
-    position: absolute;
-    top: 20px;
-    right: 30px;
-    color: #fff;
-    font-size: 2rem;
-    background: none;
-    border: none;
-    cursor: pointer;
+    position: absolute; top: 20px; right: 30px;
+    color: #fff; font-size: 2rem; background: none;
+    border: none; cursor: pointer;
 }
