@@ -1,0 +1,143 @@
+/* * COMPONENTE: Botão Instagram Profile (Tooltip)
+ * Adaptado para o tema DaRafa Honey
+ */
+
+.tooltip-container {
+  position: relative;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 17px;
+  border-radius: 10px;
+  display: inline-block; /* Para não ocupar a linha toda */
+  margin-top: 20px;
+}
+
+.tooltip {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 10px;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.3s;
+  border-radius: 15px;
+  background: rgba(36, 16, 0, 0.95); /* Fundo Chocolate */
+  border: 1px solid #FDB90C; /* Borda Amarela */
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  width: 220px;
+  z-index: 100;
+}
+
+.tooltip-container:hover .tooltip {
+  top: -160px; /* Sobe para mostrar o perfil */
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.profile {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.user {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.img {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%; /* Foto redonda */
+  border: 2px solid #FDB90C;
+  background: #000;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.details {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.name {
+  font-size: 16px;
+  font-weight: 700;
+  color: #FDB90C; /* Nome Amarelo */
+  font-family: 'Playfair Display', serif;
+}
+
+.username {
+  font-size: 13px;
+  color: #ccc;
+  font-family: 'Poppins', sans-serif;
+}
+
+.about {
+  color: #ccc;
+  font-size: 13px;
+  font-family: 'Poppins', sans-serif;
+  border-top: 1px solid #4a2500;
+  padding-top: 8px;
+}
+
+/* --- O BOTÃO PRINCIPAL --- */
+.icon {
+  text-decoration: none;
+  color: #FDB90C; /* Texto Amarelo */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  position: relative;
+  
+  background: linear-gradient(to right, #241000, #4a2500); /* Fundo Chocolate */
+  padding: 12px 30px;
+  border-radius: 50px;
+  border: none;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: 0 5px 15px rgba(36, 16, 0, 0.3);
+  transition: transform 0.3s ease;
+}
+
+.icon:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(36, 16, 0, 0.5);
+}
+
+.layer {
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.instagramSVG {
+  font-size: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Gradiente Oficial do Instagram no Ícone */
+  background: -webkit-linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Removemos os "spans" extras do código original para simplificar e manter o design clean */
