@@ -61,3 +61,28 @@ Foi criada e validada uma variação do botão principal que pode ser testada na
 
 **Ação Futura:**
 * [ ] Testar a implementação do botão "Hard Shadow" com sombra amarela para ver se o contraste é suficiente ou se preferimos manter o gradiente atual.
+
+---
+
+### 24 de novembro de 2025: Reestruturação de Layout e Lógica "Portal"
+
+**Status:** 🟡 Fase 2 (Interatividade) em andamento. Layout estrutural concluído.
+
+**O que foi feito hoje:**
+* **Mudança de Layout (Zig-Zag):** Alteramos a estrutura da home para um fluxo alternado (Texto/Imagem -> Imagem/Texto) para melhorar o ritmo visual e a narrativa.
+* **Implementação do Conceito "Portal":**
+    * Os cards grandes ("Galeria" e "Sobre") agora funcionam como botões gigantes.
+    * Criada a lógica JavaScript (`main.js`) que clona o conteúdo oculto desses cards e o exibe em um **Modal de Tela Cheia**.
+    * Adicionada a barra "Clique para expandir" que aparece ao passar o mouse (Hover), indicando interatividade.
+* **Preparo para Conteúdo:** A estrutura HTML já prevê espaços para 15 joias na galeria e 4 destaques na seção "Sobre".
+
+**Pendências Técnicas (Para resolver no final):**
+* [ ] **Correção de Cores (Fundo Branco):** O modal e algumas seções estão com fundo branco/padrão. Precisamos reconectar as variáveis de cor (`var(--color-black-pure)`, etc.) nos arquivos CSS novos (`_zigzag.css`, `_highlights.css`) para voltar ao tema "Ouro na Noite".
+* [ ] **Botão "Voltar ao Topo":** O JS está pronto, mas precisamos verificar se o CSS do botão está visível e posicionado corretamente.
+* [ ] **Menu Mobile:** Testar a abertura/fechamento do menu hambúrguer com a nova estrutura.
+
+**Próximos Passos (Conteúdo):**
+* [ ] **Upload de Assets:** Subir as fotos reais da Rafa (Capa da Galeria, Capa do Sobre, Foto da Artista e as Joias).
+* [ ] **Preenchimento:** Substituir os placeholders `placehold.co` pelas imagens reais.
+
+---
