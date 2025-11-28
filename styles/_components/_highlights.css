@@ -1,6 +1,6 @@
 /*
  * COMPONENTE: Highlights (Cards Internos)
- * Atualizado: Texto Justificado nas Histórias e Bordas Vermelhas
+ * Atualizado: Bordas agora usam a cor da linha do Rodapé (Gray Dark)
  */
 
 /* --- Grids --- */
@@ -25,8 +25,8 @@
     aspect-ratio: 3 / 4;
     overflow: hidden;
     
-    /* Borda Vermelha Fixa */
-    border: 1px solid #ff0000; 
+    /* MUDANÇA AQUI: Borda igual à do Rodapé */
+    border: 1px solid var(--color-gray-dark); 
     
     background-color: transparent;
     transition: all 0.3s ease;
@@ -43,8 +43,8 @@
 }
 
 .gold-framebox:hover {
-    /* Sombra vermelha no hover */
-    box-shadow: 0 5px 15px rgba(255, 0, 0, 0.3); 
+    /* Sombra suave da mesma cor no hover */
+    box-shadow: 0 5px 15px rgba(187, 99, 2, 0.3); 
     transform: translateY(-5px);
     z-index: 2;
 }
@@ -54,7 +54,7 @@
 }
 
 
-/* --- BARRA DE INFORMAÇÕES (Chocolate/Amarelo) --- */
+/* --- BARRA DE INFORMAÇÕES --- */
 .card-info-bar {
     position: absolute;
     bottom: 0;
@@ -64,8 +64,8 @@
     padding: 10px;
     background: linear-gradient(to right, #241000, #4a2500);
     
-    /* Borda superior Vermelha */
-    border-top: 1px solid #ff0000;
+    /* Borda superior igual ao Rodapé */
+    border-top: 1px solid var(--color-gray-dark);
     
     z-index: 5;
     transition: all 0.3s ease;
@@ -131,8 +131,8 @@
     max-width: 900px;
     background-color: #FDB90C; 
     
-    /* Borda Externa Vermelha */
-    border: 1px solid #ff0000;
+    /* Borda Externa igual ao Rodapé */
+    border: 1px solid var(--color-gray-dark);
     
     box-shadow: 0 20px 50px rgba(0,0,0,0.8);
     overflow: hidden;
@@ -145,8 +145,8 @@
     min-height: 400px;
     position: relative;
     
-    /* Divisória Vermelha */
-    border-right: 1px solid #ff0000;
+    /* Divisória igual ao Rodapé */
+    border-right: 1px solid var(--color-gray-dark);
 }
 .story-image-col img {
     width: 100%;
@@ -171,8 +171,8 @@
     padding-bottom: 15px;
     position: relative;
     
-    /* Linha Decorativa Vermelha */
-    border-bottom: 2px solid #ff0000;
+    /* Linha decorativa igual ao Rodapé */
+    border-bottom: 2px solid var(--color-gray-dark);
     
     display: inline-block;
     text-transform: uppercase;
@@ -185,7 +185,7 @@
     line-height: 1.8;
     font-weight: 500;
     
-    /* --- ALINHAMENTO JUSTIFICADO FORÇADO --- */
+    /* Alinhamento Justificado */
     text-align: justify;
     text-justify: inter-word;
 }
@@ -198,8 +198,8 @@
     min-height: 600px;
     background-color: #FDB90C; 
     
-    /* Borda Externa Vermelha */
-    border: 1px solid #ff0000;
+    /* Borda Externa igual ao Rodapé */
+    border: 1px solid var(--color-gray-dark);
     
     box-shadow: 0 0 60px rgba(0,0,0,0.9);
     border-radius: 8px;
@@ -210,8 +210,8 @@
     flex: 1;
     position: relative;
     
-    /* Divisória Vermelha */
-    border-right: 1px solid #ff0000;
+    /* Divisória igual ao Rodapé */
+    border-right: 1px solid var(--color-gray-dark);
 }
 .artist-bio-image img {
     width: 100%;
@@ -240,7 +240,7 @@
     text-transform: uppercase;
 }
 
-/* Linha Vermelha abaixo do nome */
+/* Linha abaixo do nome igual ao Rodapé */
 .artist-bio-title::after {
     content: '';
     position: absolute;
@@ -248,24 +248,18 @@
     left: 0;
     width: 60px;
     height: 2px;
-    background-color: #ff0000;
+    background-color: var(--color-gray-dark);
 }
 
-/* SUBTÍTULO: Limpo e da mesma cor do texto */
 .artist-bio-subtitle {
     font-family: var(--font-sans);
     font-size: 1.1rem;
-    
-    /* Cor Chocolate (Igual ao texto abaixo) */
     color: var(--color-text-main); 
-    
     margin-bottom: 30px;
     text-transform: uppercase;
     letter-spacing: 2px;
     margin-top: 10px;
     font-weight: 700;
-    
-    /* Sem bordas ou sombras */
     border: none;
     text-shadow: none;
     padding: 0;
@@ -278,8 +272,6 @@
     line-height: 1.9;
     margin-bottom: 20px;
     font-weight: 500;
-    
-    /* --- ALINHAMENTO JUSTIFICADO FORÇADO --- */
     text-align: justify;
     text-justify: inter-word;
     padding-right: 20px;
@@ -299,7 +291,7 @@
         min-height: 250px; 
         flex: none;
         border-right: none; 
-        border-bottom: 1px solid #ff0000;
+        border-bottom: 1px solid var(--color-gray-dark);
     }
     .story-text-col { padding: 30px; }
 }
@@ -308,7 +300,7 @@
     .artist-bio-image { 
         height: 400px; 
         border-right: none; 
-        border-bottom: 1px solid #ff0000;
+        border-bottom: 1px solid var(--color-gray-dark);
     }
     .artist-bio-text { padding: 30px; }
     .artist-bio-title { font-size: 2.2rem; }
