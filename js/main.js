@@ -1,45 +1,44 @@
 /**
- * DaRafa Acessórios - Main Script
- * Controla: Menu, Scroll, Expansão e Efeito Gota (Navbar)
+ * DaRafa Acessórios - Main Script (Final)
+ * Funcionalidades:
+ * 1. Geração Automática do Catálogo (50 Itens)
+ * 2. Menu Mobile
+ * 3. Botão Voltar ao Topo
+ * 4. Lógica de Expansão de Cards (Portal)
+ * 5. Modais de Detalhe (Zoom e Revista)
  */
 
 document.addEventListener('DOMContentLoaded', () => {
+
+    // =========================================================
+    // 1. GERADOR DE CATÁLOGO (50 ITENS AUTOMÁTICOS)
+    // =========================================================
+    const galleryContainer = document.querySelector('#gallery-door .gallery-5-cols');
     
-    // =========================================================
-    // 0. EFEITO GOTA DE MEL (NAVBAR GOOEY)
-    // =========================================================
-    const navContainer = document.getElementById('navbar-menu');
-    const blob = document.querySelector('.honey-blob');
-    const navLinksDesktop = document.querySelectorAll('.navbar-menu .navbar-link');
-
-    // Só ativa se a gota existir (modo Desktop)
-    if (blob && navContainer) {
-        navLinksDesktop.forEach(link => {
-            link.addEventListener('mouseenter', (e) => {
-                // Pega a posição e tamanho do link onde o mouse está
-                const rect = e.target.getBoundingClientRect();
-                const containerRect = navContainer.getBoundingClientRect();
-                
-                // Calcula onde a gota deve ir (relativo ao menu)
-                const leftPosition = rect.left - containerRect.left;
-                const width = rect.width;
-
-                // Aplica os valores na gota
-                blob.style.width = `${width}px`;
-                blob.style.left = `${leftPosition}px`;
-                blob.style.opacity = '1'; // Mostra a gota
-            });
-        });
-
-        // Quando o mouse sai do menu inteiro, a gota desaparece
-        navContainer.addEventListener('mouseleave', () => {
-            blob.style.opacity = '0';
-        });
+    if (galleryContainer) {
+        // Limpa qualquer conteúdo inicial (para não duplicar)
+        galleryContainer.innerHTML = '';
+        
+        // Cria 50 cards automaticamente
+        for (let i = 1; i <= 50; i++) {
+            // Monta o HTML de um card
+            const cardHTML = `
+                <div class="gold-framebox">
+                    <img src="https://placehold.co/300x400/0e0e0e/C6A36B?text=Joia+${i}" alt="Joia ${i} da Coleção">
+                    <div class="card-info-bar">
+                        <h3 class="info-title">Joia Exclusiva ${i}</h3>
+                        <p class="info-desc">Design artesanal em arame dourado, peça única da coleção DaRafa.</p>
+                    </div>
+                </div>
+            `;
+            // Adiciona ao container
+            galleryContainer.innerHTML += cardHTML;
+        }
     }
 
 
     // =========================================================
-    // 1. MENU MOBILE
+    // 2. MENU MOBILE (Hambúrguer)
     // =========================================================
     const navbarToggler = document.getElementById('navbar-toggler');
     const navbarMenu = document.getElementById('navbar-menu');
@@ -57,12 +56,14 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // Fecha o menu ao clicar num link
     navLinks.forEach(link => {
         link.addEventListener('click', () => {
             if (navbarMenu.classList.contains('active')) toggleMenu();
         });
     });
 
+    // Fecha ao clicar fora
     document.addEventListener('click', (e) => {
         if (navbarMenu && navbarMenu.classList.contains('active') && 
             !navbarMenu.contains(e.target) && 
@@ -73,7 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     // =========================================================
-    // 2. BOTÃO VOLTAR AO TOPO
+    // 3. BOTÃO VOLTAR AO TOPO
     // =========================================================
     const backToTopBtn = document.getElementById('backToTop');
 
@@ -86,7 +87,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     // =========================================================
-    // 3. A MÁGICA: EXPANSÃO DOS CARDS (NÍVEL 1)
+    // 4. A MÁGICA: EXPANSÃO DOS CARDS (NÍVEL 1 - PORTAL)
     // =========================================================
     const doors = document.querySelectorAll('.big-card-wrapper:not(.no-expand)');
     const body = document.body;
@@ -94,7 +95,11 @@ document.addEventListener('DOMContentLoaded', () => {
     doors.forEach(door => {
         door.addEventListener('click', function(e) {
             e.preventDefault();
+            
+            // Busca o conteúdo escondido dentro deste card específico
+            // (Agora ele pega os 50 itens que acabamos de gerar lá em cima)
             const hiddenContentDiv = this.querySelector('.hidden-content');
+            
             if (hiddenContentDiv) {
                 openExpansionModal(hiddenContentDiv.innerHTML);
             }
@@ -113,25 +118,33 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
 
         body.appendChild(overlay);
-        body.style.overflow = 'hidden';
+        body.style.overflow = 'hidden'; // Trava rolagem do fundo
 
+        // Animação de entrada
         requestAnimationFrame(() => { overlay.classList.add('active'); });
 
-        // --- CLIQUE NOS MINI CARDS (NÍVEL 2) ---
+        // --- CONFIGURA CLIQUE NOS MINI CARDS (NÍVEL 2) ---
+        // Precisamos re-selecionar os cards agora que eles existem dentro do modal
         const miniCards = overlay.querySelectorAll('.gold-framebox');
+        
         miniCards.forEach(card => {
             card.addEventListener('click', (e) => {
-                e.stopPropagation();
+                e.stopPropagation(); // Impede que feche a galeria
+                
                 const img = card.querySelector('img');
                 
+                // LÓGICA DE DECISÃO: É HISTÓRIA OU JOIA?
                 if (card.dataset.description) {
+                    // Tem descrição longa? Então é Modo Revista (Atelier)
                     openStoryMode(img.src, card.dataset.title, card.dataset.description);
                 } else {
+                    // Não tem? Então é Zoom na Foto (Galeria Gerada Automaticamente)
                     if(img) openImageViewer(img.src);
                 }
             });
         });
 
+        // Função interna para fechar este modal
         const close = () => {
             overlay.classList.remove('active');
             body.style.overflow = '';
@@ -141,12 +154,15 @@ document.addEventListener('DOMContentLoaded', () => {
         };
 
         overlay.querySelector('.close-expansion').addEventListener('click', close);
+        
+        // Fecha se clicar no fundo escuro (mas não no conteúdo)
         overlay.addEventListener('click', (e) => { 
             if (e.target === overlay || e.target.classList.contains('expansion-content')) {
                 close(); 
             }
         });
         
+        // Fecha com ESC
         const closeOnEsc = (e) => {
             if (e.key === 'Escape' && !document.querySelector('.image-viewer-overlay.active')) {
                 close();
@@ -158,13 +174,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     // =========================================================
-    // 4. MODAIS DE DETALHE (NÍVEL 2)
+    // 5. MODAIS DE DETALHE (NÍVEL 2)
     // =========================================================
+
+    // TIPO A: Visualizador Simples (Zoom na Foto)
     function openImageViewer(imageSrc) {
         const content = `<img src="${imageSrc}" class="image-viewer-content" style="max-height:90vh; max-width:90%; border:1px solid var(--color-gold-dark); box-shadow: 0 0 30px rgba(0,0,0,0.8);">`;
         createViewerOverlay(content);
     }
 
+    // TIPO B: Modo Revista (Foto + Texto)
     function openStoryMode(imageSrc, title, description) {
         const content = `
             <div class="story-viewer-content">
@@ -180,16 +199,20 @@ document.addEventListener('DOMContentLoaded', () => {
         createViewerOverlay(content);
     }
 
+    // Função Genérica para criar o Overlay do Nível 2 (acima de tudo)
     function createViewerOverlay(innerContent) {
         const viewer = document.createElement('div');
         viewer.className = 'image-viewer-overlay';
+        
         viewer.innerHTML = `
             <button class="close-viewer" aria-label="Fechar" style="position:absolute; top:20px; right:30px; color:#fff; font-size:2rem; background:none; border:none; cursor:pointer; z-index:3001;">
                 &times;
             </button>
             ${innerContent}
         `;
+        
         body.appendChild(viewer);
+        
         requestAnimationFrame(() => viewer.classList.add('active'));
 
         const closeViewer = () => {
@@ -201,9 +224,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const closeBtn = viewer.querySelector('.close-viewer');
         if(closeBtn) closeBtn.addEventListener('click', closeViewer);
+        
         viewer.addEventListener('click', (e) => { 
             if(e.target === viewer) closeViewer(); 
         });
+        
         const closeViewerOnEsc = (e) => {
             if (e.key === 'Escape') {
                 closeViewer();
@@ -213,4 +238,5 @@ document.addEventListener('DOMContentLoaded', () => {
         };
         document.addEventListener('keydown', closeViewerOnEsc);
     }
+
 });
