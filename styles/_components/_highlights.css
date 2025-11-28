@@ -1,6 +1,6 @@
 /*
  * COMPONENTE: Highlights (Cards Internos)
- * Atualizado: Texto Justificado nas Histórias e Bordas Vermelhas
+ * Versão Blindada: Texto Justificado Forçado
  */
 
 /* --- Grids --- */
@@ -24,10 +24,7 @@
     width: 100%;
     aspect-ratio: 3 / 4;
     overflow: hidden;
-    
-    /* Borda Vermelha Fixa */
     border: 1px solid #ff0000; 
-    
     background-color: transparent;
     transition: all 0.3s ease;
     cursor: pointer;
@@ -43,7 +40,6 @@
 }
 
 .gold-framebox:hover {
-    /* Sombra vermelha no hover */
     box-shadow: 0 5px 15px rgba(255, 0, 0, 0.3); 
     transform: translateY(-5px);
     z-index: 2;
@@ -54,7 +50,7 @@
 }
 
 
-/* --- BARRA DE INFORMAÇÕES (Chocolate/Amarelo) --- */
+/* --- BARRA DE INFORMAÇÕES --- */
 .card-info-bar {
     position: absolute;
     bottom: 0;
@@ -63,10 +59,7 @@
     height: 80px; 
     padding: 10px;
     background: linear-gradient(to right, #241000, #4a2500);
-    
-    /* Borda superior Vermelha */
     border-top: 1px solid #ff0000;
-    
     z-index: 5;
     transition: all 0.3s ease;
     display: flex;
@@ -130,10 +123,7 @@
     width: 90%;
     max-width: 900px;
     background-color: #FDB90C; 
-    
-    /* Borda Externa Vermelha */
     border: 1px solid #ff0000;
-    
     box-shadow: 0 20px 50px rgba(0,0,0,0.8);
     overflow: hidden;
     border-radius: 8px;
@@ -144,8 +134,6 @@
     flex: 1.2;
     min-height: 400px;
     position: relative;
-    
-    /* Divisória Vermelha */
     border-right: 1px solid #ff0000;
 }
 .story-image-col img {
@@ -170,11 +158,9 @@
     margin-bottom: 25px;
     padding-bottom: 15px;
     position: relative;
-    
-    /* Linha Decorativa Vermelha */
     border-bottom: 2px solid #ff0000;
-    
     display: inline-block;
+    text-transform: uppercase;
 }
 
 .story-desc {
@@ -184,9 +170,12 @@
     line-height: 1.8;
     font-weight: 500;
     
-    /* --- ALINHAMENTO JUSTIFICADO --- */
-    text-align: justify;
-    text-justify: inter-word;
+    /* --- ALINHAMENTO JUSTIFICADO FORÇADO --- */
+    text-align: justify !important;
+    text-justify: inter-word !important;
+    -webkit-hyphens: auto;
+    -ms-hyphens: auto;
+    hyphens: auto; /* Adiciona hífens para quebrar palavras longas e ajustar melhor */
 }
 
 /* --- BIO DA ARTISTA --- */
@@ -196,10 +185,7 @@
     height: 100%;
     min-height: 600px;
     background-color: #FDB90C; 
-    
-    /* Borda Externa Vermelha */
     border: 1px solid #ff0000;
-    
     box-shadow: 0 0 60px rgba(0,0,0,0.9);
     border-radius: 8px;
     overflow: hidden;
@@ -208,8 +194,6 @@
 .artist-bio-image {
     flex: 1;
     position: relative;
-    
-    /* Divisória Vermelha */
     border-right: 1px solid #ff0000;
 }
 .artist-bio-image img {
@@ -236,9 +220,9 @@
     margin-bottom: 10px;
     padding-bottom: 15px;
     position: relative;
+    text-transform: uppercase;
 }
 
-/* Linha Vermelha abaixo do nome */
 .artist-bio-title::after {
     content: '';
     position: absolute;
@@ -249,21 +233,15 @@
     background-color: #ff0000;
 }
 
-/* SUBTÍTULO: Limpo e da mesma cor do texto */
 .artist-bio-subtitle {
     font-family: var(--font-sans);
     font-size: 1.1rem;
-    
-    /* Cor Chocolate (Igual ao texto abaixo) */
     color: var(--color-text-main); 
-    
     margin-bottom: 30px;
     text-transform: uppercase;
     letter-spacing: 2px;
     margin-top: 10px;
     font-weight: 700;
-    
-    /* Sem bordas ou sombras */
     border: none;
     text-shadow: none;
     padding: 0;
@@ -277,9 +255,12 @@
     margin-bottom: 20px;
     font-weight: 500;
     
-    /* Alinhamento Justificado */
-    text-align: justify;
-    text-justify: inter-word;
+    /* --- ALINHAMENTO JUSTIFICADO FORÇADO --- */
+    text-align: justify !important;
+    text-justify: inter-word !important;
+    -webkit-hyphens: auto;
+    -ms-hyphens: auto;
+    hyphens: auto;
     padding-right: 20px;
 }
 
