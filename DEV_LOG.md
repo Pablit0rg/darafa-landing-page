@@ -1,157 +1,95 @@
-# Diário de Bordo do Projeto - DaRafa Landing Page
+# 🐝 DaRafa Acessórios - O Dossiê Completo do Projeto (MASTER LOG)
 
-Este log documenta o progresso, as decisões e os próximos passos no desenvolvimento da landing page DaRafa.
-
----
-
-### 15 de novembro de 2025: Kick-off e Estruturação
-* **Status:** Início
-* **Feito:** Planejamento, Setup Inicial, Estrutura de Pastas Modular.
+**Resumo Executivo:**
+Este documento narra a evolução completa do desenvolvimento da Landing Page para "DaRafa Acessórios". O projeto saiu de um conceito monolítico simples para uma aplicação modular, interativa e com uma identidade visual proprietária ("Honey Theme").
 
 ---
 
-### 24 de novembro de 2025: Interatividade e Lógica "Portal"
-* **Status:** Fase 2 Concluída.
-* **Feito:** Layout Zig-Zag, Lógica de Cards Expansíveis (JS), Modais de Nível 1 e 2.
+## 1. A Filosofia Inicial: Modularização
+**O Problema:** Projetos anteriores cresciam demais e se tornavam difíceis de manter (arquivos de 1000+ linhas).
+**A Solução:** Adotamos uma **Arquitetura CSS Modular**.
+* Não existe um "style.css" gigante.
+* Existe um "Maestro" (`styles/main.css`) que apenas importa pequenos arquivos específicos.
+* **Estrutura de Pastas:**
+    * `_base/`: Configurações globais (Reset, Variáveis, Tipografia).
+    * `_components/`: Cada pedaço do site tem seu arquivo (`_navbar.css`, `_hero.css`, etc.).
 
 ---
 
-### 26 de novembro de 2025: Pivô de Identidade "Honey"
-* **Status:** Fase 3 Concluída.
-* **Feito:** Mudança radical para Fundo Amarelo (#FDB90C), Texto Chocolate, Logo 3D.
+## 2. Evolução Visual (Do Escuro ao Mel)
+
+### Fase 1: "Ouro na Noite" (Gold in the Night) 🌑
+* **Conceito:** Fundo preto profundo (`#050505`) com detalhes em Dourado Metálico.
+* **Objetivo:** Passar luxo e exclusividade, como uma joalheria noturna.
+
+### Fase 2: O Pivô para "Honey Theme" (O Tema Atual) 🍯
+* **A Mudança:** Identidade visual baseada na cor da logo da Abelha.
+* **Paleta Oficial:**
+    * **Fundo:** Amarelo Mel Vibrante (`#FDB90C`).
+    * **Contraste:** Textos e elementos gráficos em **Chocolate/Preto** (`#241000`) para leitura perfeita.
+    * **Destaque:** Bordas e Linhas em **Vermelho Vivo (`#ff0000`)** fixo, criando um visual moderno e "street".
+* **Textura:** Fundo de "Favo de Mel" (Honeycomb) fixo (`background-attachment: fixed`) com filtro escuro.
+
+### Fase 3: Refinamento Final de UI (Red & Gold)
+* **Cards:** Mini-cards com bordas vermelhas fixas e Barra de Informação em Chocolate com texto Amarelo.
+* **Modais:** Fundo Amarelo Mel Sólido com bordas vermelhas, mantendo a consistência visual.
+* **Navbar:** Transparente (Clean) com links em Chocolate que não somem no hover.
 
 ---
 
-### 27 de novembro de 2025: Refinamento Final de UI (Red & Gold)
+## 3. Evolução Estrutural (Layout e UX)
 
-**Status:** 🏁 Design System Finalizado e Congelado.
+### Layout Zig-Zag
+As seções principais ("Catálogo", "O Atelier", "A Artista") seguem um fluxo alternado (Texto à Esquerda/Imagem à Direita, e vice-versa) para melhorar o ritmo de leitura.
 
-**O que foi feito hoje (Ajustes Finos):**
-* **Identidade Visual (Ousada):**
-    * **Bordas de Alto Contraste:** Substituída a borda dourada suave por uma **Borda Vermelha (`#ff0000`)** fixa nos mini-cards e modais, criando um destaque vibrante sobre o fundo amarelo.
-    * **Subtítulo da Artista:** Estilizado com cor amarela e **contorno (text-shadow) marrom**, criando um efeito gráfico de destaque sem usar caixas.
-* **Refinamento de Leitura:**
-    * **Texto Justificado:** Aplicado alinhamento `justify` em todos os blocos de texto longos (Bio da Artista e Histórias do Atelier) para um visual editorial mais organizado.
-    * **Navbar Sólida:** Removida a transparência da barra de navegação, adotando a cor sólida do tema para garantir legibilidade máxima dos links.
-* **Consistência:**
-    * As Barras de Informação (`.card-info-bar`) dos produtos agora seguem o padrão **Fundo Chocolate / Borda Vermelha**, alinhando-se com os botões e o restante da interface.
+### A Lógica dos "Cards Porta" (Feature Principal) 🚪
+Não mostramos todas as fotos de uma vez. Criamos uma experiência de descoberta:
+1.  **A Capa:** O usuário vê um Card Grande (uma "Porta") com uma foto de capa e uma barra "Clique para expandir".
+2.  **A Ação:** Ao clicar, o card expande (via JavaScript) para um **Modal de Tela Cheia**.
+3.  **O Conteúdo Oculto:** O JS clona o conteúdo escondido (`.hidden-content`) e exibe no modal.
 
-**Próximos Passos (Pós-Desenvolvimento):**
-* [ ] **Conteúdo Real:** O site está pronto para receber as fotos finais e os textos descritivos de cada joia.
-* [ ] **Integração:** Planejar a conexão com o Instagram no futuro.
-* [ ] **Deploy:** Publicar a versão final.
+### Níveis de Profundidade (Deep Dive)
+O JavaScript foi programado para lidar com dois tipos de conteúdo dentro dos modais:
+* **Tipo 1 (Galeria):** Ao clicar numa joia pequena, abre um **Lightbox** (Zoom na foto).
+* **Tipo 2 (Atelier/História):** Ao clicar numa foto de processo (que tem atributos `data-description`), abre o **Modo Revista** (Uma janela dividida com Foto Grande + Texto Explicativo).
 
 ---
 
----
+## 4. Mapa Técnico dos Arquivos (O Código Atual)
 
-### 26 de novembro de 2025 (Parte 5): Registro de Alternativa de Design (Botão Hard Shadow)
+Se precisar editar algo, vá direto ao arquivo responsável:
 
-**Status:** 📝 Item adicionado ao Backlog de Testes.
+### 📂 `styles/_base/`
+* `_variables.css`: Define a paleta "Mel & Chocolate" e fontes.
+* `_global.css`: Define o background de colmeia, o botão "Voltar ao Topo" (Estilo Luxo) e tipografia base.
+* `_reset.css`: Limpeza padrão de navegador.
 
-**Nota de Design:**
-Foi criada e validada uma variação do botão principal que pode ser testada na revisão final do projeto.
+### 📂 `styles/_components/`
+* `_navbar.css`: Barra transparente. Links Chocolate.
+* `_hero.css`: Seção inicial. Contém a Logo (Imagem) centralizada. Efeito de glow removido para limpeza visual.
+* `_zigzag.css`: **(ARQUIVO CRÍTICO)** Controla o layout das seções principais, o estilo dos Cards Grandes e o **Modal de Expansão**.
+* `_highlights.css`: Controla os grids internos (mini-cards), a **Barra de Informação** e o estilo do **Modo Revista**.
+* `_uiverse-button.css`: Botões com gradiente Chocolate e texto Amarelo.
+* `_footer.css`: Rodapé com assinatura e copyright.
 
-* **Estilo:** "Hard Shadow" (Sombra Dura/Brutalista Suave).
-* **Características:**
-    * Fundo Chocolate (`#241000`).
-    * Texto Amarelo (`#FDB90C`).
-    * Bordas levemente arredondadas (`border-radius: 8px`).
-    * **Diferencial:** Sombra sólida deslocada na cor **Amarela (#FDB90C)** (mesma do fundo), criando um efeito de relevo tátil interessante.
-
-**Ação Futura:**
-* [ ] Testar a implementação do botão "Hard Shadow" com sombra amarela para ver se o contraste é suficiente ou se preferimos manter o gradiente atual.
-
----
-
-### 24 de novembro de 2025: Reestruturação de Layout e Lógica "Portal"
-
-**Status:** 🟡 Fase 2 (Interatividade) em andamento. Layout estrutural concluído.
-
-**O que foi feito hoje:**
-* **Mudança de Layout (Zig-Zag):** Alteramos a estrutura da home para um fluxo alternado (Texto/Imagem -> Imagem/Texto) para melhorar o ritmo visual e a narrativa.
-* **Implementação do Conceito "Portal":**
-    * Os cards grandes ("Galeria" e "Sobre") agora funcionam como botões gigantes.
-    * Criada a lógica JavaScript (`main.js`) que clona o conteúdo oculto desses cards e o exibe em um **Modal de Tela Cheia**.
-    * Adicionada a barra "Clique para expandir" que aparece ao passar o mouse (Hover), indicando interatividade.
-* **Preparo para Conteúdo:** A estrutura HTML já prevê espaços para 15 joias na galeria e 4 destaques na seção "Sobre".
-
-**Pendências Técnicas (Para resolver no final):**
-* [ ] **Correção de Cores (Fundo Branco):** O modal e algumas seções estão com fundo branco/padrão. Precisamos reconectar as variáveis de cor (`var(--color-black-pure)`, etc.) nos arquivos CSS novos (`_zigzag.css`, `_highlights.css`) para voltar ao tema "Ouro na Noite".
-* [ ] **Botão "Voltar ao Topo":** O JS está pronto, mas precisamos verificar se o CSS do botão está visível e posicionado corretamente.
-* [ ] **Menu Mobile:** Testar a abertura/fechamento do menu hambúrguer com a nova estrutura.
-
-**Próximos Passos (Conteúdo):**
-* [ ] **Upload de Assets:** Subir as fotos reais da Rafa (Capa da Galeria, Capa do Sobre, Foto da Artista e as Joias).
-* [ ] **Preenchimento:** Substituir os placeholders `placehold.co` pelas imagens reais.
+### 📂 `js/`
+* `main.js`: Cérebro único do site.
+    1.  **Gerador de Catálogo:** Cria automaticamente 50 cards de joias ao carregar a página.
+    2.  **Menu Mobile:** Controle do hambúrguer.
+    3.  **Botão "Voltar ao Topo":** Scroll listener.
+    4.  **Modais:** Lógica de abrir/fechar e detecção inteligente de conteúdo (Zoom vs Revista).
 
 ---
 
----
+## 5. Pendências e Futuro (To-Do List)
 
-### 28 de novembro de 2025: Backlog de Refinamento Final (To-Do List)
+**Para o Lançamento (Reta Final):**
+* [ ] **Conteúdo Real:** Substituir os placeholders (`placehold.co`) pelas fotos reais das joias e da Rafa.
+* [ ] **Copywriting:** Preencher o Array no JS com os nomes e descrições reais das 50 peças.
+* [ ] **SEO:** Configurar Meta Tags e Alt Texts.
 
-**Status:** 🚧 Planejamento de Polimento Final.
-
-**Lista de Ajustes Visuais e Estruturais (Prioridade Alta):**
-
-1.  **Logo Hero:**
-    * **Ação:** Remover efeito de expansão/zoom no hover. A logo deve ser estática ou ter uma animação muito sutil de "respiração", sem alterar o tamanho.
-
-2.  **Tipografia (Letreiros):**
-    * **Ação:** Substituir a fonte dos títulos (`Playfair Display`) por uma que harmonize melhor com a tipografia manuscrita/vintage da nova logo.
-    * *Sugestão:* Testar fontes como `Abril Fatface`, `Cinzel` ou manter uma serifada mais robusta.
-
-3.  **Catálogo (Expansão de Conteúdo):**
-    * **Ação:** Aumentar o grid da galeria para suportar **50 mini-cards** de produtos (atualmente são 15).
-    * *Nota:* Otimizar imagens para não pesar o carregamento.
-
-4.  **Cards (Visual):**
-    * **Background:** Alterar o fundo dos mini-cards para um **Marrom Mais Escuro** (Chocolate Amargo) para aumentar o contraste com o fundo amarelo do modal.
-    * **Bordas:** Substituir a linha fina **Vermelha** (`#ff0000`) por uma cor que converse melhor com o tema "Mel" (ex: Laranja Queimado, Âmbar ou Dourado Escuro). O vermelho atual está destoando.
-
-5.  **Seção "A Artista":**
-    * **Ação:** Corrigir o alinhamento do parágrafo de descrição. O texto precisa estar **perfeitamente justificado** (alinhado nas duas margens).
-
-6.  **Rodapé:**
-    * **Ação:** Revisar ou remover a frase de tagline ("Artesanal. Autêntico...") antes do copyright, para limpar o visual.
+**Para o Futuro (Pós-Entrega):**
+* [ ] **Automação Instagram:** Implementar uma API ou Widget para puxar posts do Instagram automaticamente.
 
 ---
----
-
-### 28 de novembro de 2025 (Parte 2): Automação e Escalabilidade do Catálogo
-
-**Status:** 🚀 Funcionalidade de Catálogo Dinâmico Implementada.
-
-**O que foi feito hoje:**
-* **Automação via JavaScript (`main.js`):**
-    * Substituída a estrutura manual de HTML estático por um **Gerador de Cards Automático**.
-    * O script agora renderiza um loop de **50 mini-cards** instantaneamente ao carregar a página.
-    * **Benefício:** O código HTML ficou limpo e leve, e a manutenção futura será muito mais fácil (basta editar os dados no JS em vez de mexer em 500 linhas de HTML).
-* **Padronização Visual:**
-    * Os cards gerados automaticamente herdam perfeitamente o Design System "Honey": Borda Vermelha Fixa, Barra de Informação Chocolate e Texto Amarelo.
-    * Garantida a uniformidade de altura e alinhamento em todos os 50 itens.
-
-**Próximos Passos (Conteúdo Real):**
-* [ ] **População de Dados:** Criar um *Array* (Lista de Objetos) no arquivo `main.js` contendo os Nomes e Descrições reais das 50 joias, substituindo o texto genérico "Joia X".
-* [ ] **Upload em Massa:** Subir as 50 fotos reais para a pasta `assets/images/` e conectar ao script.
-
----
-
-### 28 de novembro de 2025 (Parte 3): Definição de Metas de Performance e SEO
-
-**Novas Prioridades Adicionadas ao Backlog Final:**
-
-**1. SEO de Elite (Máxima Qualidade):**
-* [ ] **Meta Tags Avançadas:** Implementar Open Graph (Facebook/Instagram/WhatsApp) e Twitter Cards com imagens de compartilhamento personalizadas.
-* [ ] **Semântica HTML5:** Revisão pente-fino para garantir que todas as tags (`h1`-`h6`, `article`, `section`, `aside`) estejam hierarquicamente perfeitas para os robôs do Google.
-* [ ] **Acessibilidade (a11y):** Garantir que todas as imagens tenham textos alternativos (`alt`) descritivos e ricos em palavras-chave relevantes ("joias artesanais", "acessórios afros", etc.).
-* [ ] **Sitemap e Robots.txt:** Gerar arquivos para indexação rápida.
-
-**2. Otimização de Performance (Site Ultra Leve):**
-* [ ] **Lazy Loading Inteligente:** Implementar carregamento sob demanda para as 50 imagens do catálogo via JavaScript (Intersection Observer), para que o site carregue instantaneamente e as imagens apareçam só quando o usuário rolar.
-* [ ] **Minificação:** Minificar todos os arquivos CSS e JS para reduzir o tamanho do download.
-* [ ] **Formatos Modernos:** Converter todas as imagens finais para WebP de alta compressão sem perda visual.
-* [ ] **Auditoria Lighthouse:** Buscar pontuação 95-100 no Google Lighthouse em Performance e SEO.
-
----
+*Log Finalizado em: 28/11/2025 - Versão: Honeycomb Production Ready*
