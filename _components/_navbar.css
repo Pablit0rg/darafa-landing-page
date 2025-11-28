@@ -1,6 +1,6 @@
 /*
  * COMPONENTE: Navbar
- * Design: Sólido (Cores idênticas ao Rodapé)
+ * Design: Transparente (Clean) com Interação Ouro Envelhecido
  */
 
 .navbar {
@@ -11,18 +11,15 @@
     left: 0;
     z-index: 1000;
     
-    /* --- CORES DO RODAPÉ --- */
-    /* Fundo Preto Sólido (Igual ao Footer) */
-    background-color: var(--color-black-pure);
-    
-    /* Borda inferior sutil (Igual à borda superior do Footer) */
-    border-bottom: 1px solid var(--color-gray-dark);
-    
-    /* Removemos efeitos de vidro/transparência */
+    /* Navbar Invisível (Fundo transparente) */
+    background-color: transparent; 
+    border: none;
+    box-shadow: none;
     backdrop-filter: none;
     
     display: flex;
     align-items: center;
+    transition: background-color 0.3s ease;
 }
 
 .navbar-container {
@@ -43,6 +40,8 @@
     height: 60px;
     width: auto;
     transition: transform 0.3s ease;
+    /* Sombra escura suave para garantir que a logo apareça bem */
+    filter: drop-shadow(0 2px 3px rgba(0,0,0,0.2));
 }
 
 .navbar-brand-logo:hover .nav-logo-img {
@@ -68,30 +67,38 @@
     font-size: 0.9rem;
     text-transform: uppercase;
     letter-spacing: 1px;
-    font-weight: 400;
+    font-weight: 700; /* Negrito para ler bem no amarelo */
     
-    /* Cor do texto: Cinza Muted (Igual ao copyright do footer) */
-    color: var(--color-text-muted);
+    /* COR PADRÃO: Chocolate (Preto da marca) */
+    color: var(--color-gold-medium); 
     
     position: relative;
     text-decoration: none;
-    transition: color 0.3s ease;
+    transition: color 0.3s ease, transform 0.3s ease;
 }
 
+/* --- HOVER: OURO ENVELHECIDO (CLASSIC) --- */
 .navbar-link:hover {
-    /* Hover: Dourado Claro (Igual aos links do footer) */
-    color: var(--color-gold-light);
+    /* Cor Creme/Ouro Pálido para contraste elegante */
+    color: #FFFDD0; 
+    
+    transform: translateY(-2px); /* Leve subidinha */
+    
+    /* Sombra Chocolate para garantir leitura sobre o amarelo */
+    text-shadow: 0 2px 4px rgba(36, 16, 0, 0.5); 
 }
 
 .navbar-link::after {
     content: '';
     position: absolute;
     width: 0;
-    height: 1px;
+    height: 2px;
     bottom: -4px;
     left: 0;
-    background-color: var(--color-gold-medium);
+    /* Linha também vira Ouro Envelhecido */
+    background-color: #FFFDD0;
     transition: width 0.3s ease;
+    box-shadow: 0 2px 4px rgba(36, 16, 0, 0.3);
 }
 
 .navbar-link:hover::after {
@@ -112,20 +119,22 @@
 
 .toggler-icon {
     width: 30px;
-    height: 2px;
+    height: 3px;
+    /* Ícone escuro para ver no amarelo */
     background-color: var(--color-gold-medium);
+    border-radius: 2px;
     transition: all 0.3s ease;
 }
 
 /* Animação do X */
 .navbar-toggler.is-active .toggler-icon:nth-child(1) {
-    transform: rotate(45deg) translate(5px, 5px);
+    transform: rotate(45deg) translate(6px, 6px);
 }
 .navbar-toggler.is-active .toggler-icon:nth-child(2) {
     opacity: 0;
 }
 .navbar-toggler.is-active .toggler-icon:nth-child(3) {
-    transform: rotate(-45deg) translate(7px, -7px);
+    transform: rotate(-45deg) translate(6px, -7px);
 }
 
 /* --- Responsividade Mobile --- */
@@ -141,9 +150,9 @@
         width: 70%;
         height: 100vh;
         
-        /* Fundo Sólido (Preto Puro) */
-        background-color: var(--color-black-pure);
-        border-left: 1px solid var(--color-gray-dark);
+        /* No mobile, o fundo precisa ser SÓLIDO para ler os links */
+        background-color: #FDB90C; /* Amarelo Mel Sólido */
+        border-left: 1px solid var(--color-gold-medium);
         
         flex-direction: column;
         justify-content: center;
@@ -151,7 +160,7 @@
         gap: var(--spacing-xl);
         
         transition: right 0.4s cubic-bezier(0.77, 0, 0.175, 1);
-        box-shadow: -10px 0 30px rgba(0,0,0,0.5);
+        box-shadow: -10px 0 30px rgba(0,0,0,0.3);
     }
 
     .navbar-menu.active {
@@ -159,7 +168,8 @@
     }
 
     .navbar-link {
-        font-size: 1.2rem;
+        font-size: 1.3rem;
+        /* Links escuros no mobile também */
         color: var(--color-gold-medium);
     }
     
