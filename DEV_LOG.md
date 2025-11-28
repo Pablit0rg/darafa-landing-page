@@ -117,3 +117,21 @@ Foi criada e validada uma variação do botão principal que pode ser testada na
     * **Ação:** Revisar ou remover a frase de tagline ("Artesanal. Autêntico...") antes do copyright, para limpar o visual.
 
 ---
+---
+
+### 28 de novembro de 2025 (Parte 2): Automação e Escalabilidade do Catálogo
+
+**Status:** 🚀 Funcionalidade de Catálogo Dinâmico Implementada.
+
+**O que foi feito hoje:**
+* **Automação via JavaScript (`main.js`):**
+    * Substituída a estrutura manual de HTML estático por um **Gerador de Cards Automático**.
+    * O script agora renderiza um loop de **50 mini-cards** instantaneamente ao carregar a página.
+    * **Benefício:** O código HTML ficou limpo e leve, e a manutenção futura será muito mais fácil (basta editar os dados no JS em vez de mexer em 500 linhas de HTML).
+* **Padronização Visual:**
+    * Os cards gerados automaticamente herdam perfeitamente o Design System "Honey": Borda Vermelha Fixa, Barra de Informação Chocolate e Texto Amarelo.
+    * Garantida a uniformidade de altura e alinhamento em todos os 50 itens.
+
+**Próximos Passos (Conteúdo Real):**
+* [ ] **População de Dados:** Criar um *Array* (Lista de Objetos) no arquivo `main.js` contendo os Nomes e Descrições reais das 50 joias, substituindo o texto genérico "Joia X".
+* [ ] **Upload em Massa:** Subir as 50 fotos reais para a pasta `assets/images/` e conectar ao script.
