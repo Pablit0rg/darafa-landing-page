@@ -1,6 +1,6 @@
 /*
  * COMPONENTE: Layout Zig-Zag e Modal
- * Atualizado: Coluna Visual para Artista e Espaçamentos
+ * Atualizado: Tamanho dos Cards Superiores Ajustado (Menores)
  */
 
 /* --- ESTRUTURA ZIG-ZAG --- */
@@ -27,9 +27,6 @@
 .text-content {
     flex: 1;
     max-width: 500px;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
 }
 
 .section-description {
@@ -50,26 +47,39 @@
     margin-top: var(--spacing-lg);
 }
 
-/* --- Coluna Visual (NOVO: Para agrupar Card + Botão) --- */
+/* --- Coluna Visual (Para agrupar Card + Botão na seção Artista) --- */
 .artist-visual-col {
     flex: 1;
     max-width: 550px;
     display: flex;
-    flex-direction: column; /* Empilha Card e Botão */
+    flex-direction: column;
     align-items: center;
-    
-    /* Espaço aumentado para dar "respiro" entre a foto e o botão */
-    gap: 60px; 
+    gap: 60px;
 }
 
 /* --- Lado do Card Grande (PORTA) --- */
 .big-card-wrapper {
-    width: 100%; /* Ocupa a largura da coluna pai */
+    flex: 1; /* Ocupa espaço disponível */
+    position: relative;
+    
+    /* Tamanho Padrão Máximo (Para a seção da Artista) */
+    max-width: 550px; 
+    
     aspect-ratio: 4 / 5;
     cursor: pointer;
     z-index: 10;
-    position: relative;
 }
+
+/* --- AJUSTE ESPECÍFICO: CARDS DE CATÁLOGO E ATELIER ---
+   Reduzimos o tamanho máximo desses dois para não ficarem gigantes,
+   igualando a percepção visual com o card da Artista.
+*/
+#gallery-door, 
+#about-door {
+    max-width: 400px; /* Mais contido e elegante */
+    margin: 0 auto;   /* Centraliza na coluna */
+}
+
 
 /* A Capa Visível */
 .card-cover {
@@ -143,11 +153,8 @@
     position: fixed;
     top: 0; left: 0; width: 100%; height: 100%;
     z-index: 2000;
-    
-    /* Fundo Amarelo Mel com Transparência */
     background-color: rgba(253, 185, 12, 0.97); 
     backdrop-filter: blur(15px);
-    
     opacity: 0; visibility: hidden;
     transition: all 0.4s ease;
     overflow-y: auto;
@@ -183,7 +190,6 @@
         max-width: 100%;
     }
     
-    /* Ajustes de Texto */
     .section-title { text-align: center !important; }
     .section-description {
         text-align: justify !important;
@@ -191,12 +197,12 @@
     }
     .decorative-line { margin: 20px auto; }
     
-    /* Ajustes dos Cards */
-    .artist-visual-col, .big-card-wrapper {
+    /* No mobile, deixa ocupar a largura total para ficar bom */
+    .artist-visual-col, .big-card-wrapper, #gallery-door, #about-door {
         width: 100%;
+        max-width: 100%; 
     }
     
-    /* No mobile, a barrinha fica visível */
     .click-bar { 
         transform: translateY(0); 
         background-color: rgba(36, 16, 0, 0.9);
