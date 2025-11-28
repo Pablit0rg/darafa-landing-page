@@ -1,6 +1,6 @@
 /*
  * COMPONENTE: Layout Zig-Zag e Modal
- * Atualizado: Barra de Clique Chocolate (Desktop e Mobile)
+ * Atualizado: Todos os Cards Grandes com Tamanho IGUAL (550px)
  */
 
 /* --- ESTRUTURA ZIG-ZAG --- */
@@ -47,7 +47,7 @@
     margin-top: var(--spacing-lg);
 }
 
-/* --- Coluna Visual (Para agrupar Card + Botão na seção Artista) --- */
+/* --- Coluna Visual (Para a seção Artista) --- */
 .artist-visual-col {
     flex: 1;
     max-width: 550px;
@@ -61,19 +61,19 @@
 .big-card-wrapper {
     flex: 1;
     position: relative;
+    
+    /* MUDANÇA: Tamanho Máximo Uniforme para TODOS (550px) */
     max-width: 550px; 
     width: 100%;
+    
     aspect-ratio: 4 / 5;
     cursor: pointer;
     z-index: 10;
 }
 
-/* Ajuste para Catálogo e Atelier ficarem menores/elegantes se não estiverem na coluna visual */
-#gallery-door, 
-#about-door {
-    max-width: 400px; 
-    margin: 0 auto;   
-}
+/* REMOVIDO: A regra que diminuía os cards de cima (#gallery-door, #about-door) foi apagada.
+   Agora todos herdam o max-width: 550px acima. */
+
 
 /* A Capa Visível */
 .card-cover {
@@ -98,18 +98,15 @@
     filter: brightness(0.9);
 }
 
-/* Barrinha de Clique (CORRIGIDA PARA CHOCOLATE) */
+/* Barrinha de Clique (Chocolate) */
 .click-bar {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     padding: 10px 0;
-    
-    /* MUDANÇA: Usando a variável Chocolate (Marrom Escuro) */
-    background-color: var(--color-gold-medium); 
-    
-    color: #FDB90C; /* Texto Amarelo */
+    background-color: var(--color-gold-medium); /* Chocolate */
+    color: #FDB90C; /* Amarelo */
     text-align: center;
     font-size: 0.85rem;
     text-transform: uppercase;
@@ -118,8 +115,6 @@
     z-index: 20;
     transform: translateY(-100%);
     transition: transform 0.3s ease;
-    
-    /* Sombra leve */
     box-shadow: 0 2px 10px rgba(0,0,0,0.3);
 }
 
@@ -154,11 +149,8 @@
     position: fixed;
     top: 0; left: 0; width: 100%; height: 100%;
     z-index: 2000;
-    
-    /* Fundo Amarelo Mel com Transparência */
     background-color: rgba(253, 185, 12, 0.97); 
     backdrop-filter: blur(15px);
-    
     opacity: 0; visibility: hidden;
     transition: all 0.4s ease;
     overflow-y: auto;
@@ -201,16 +193,15 @@
     }
     .decorative-line { margin: 20px auto; }
     
-    /* No mobile, deixa ocupar a largura total */
-    .artist-visual-col, .big-card-wrapper, #gallery-door, #about-door {
+    /* Ajuste total para mobile */
+    .artist-visual-col, .big-card-wrapper {
         width: 100%;
         max-width: 100%; 
     }
     
     .click-bar { 
         transform: translateY(0); 
-        /* Garante o fundo Chocolate também no mobile */
-        background-color: var(--color-gold-medium);
+        background-color: rgba(36, 16, 0, 0.9);
     }
 }
 
