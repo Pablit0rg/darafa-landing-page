@@ -1,6 +1,6 @@
 /*
- * COMPONENTE: Highlights (Cards Internos)
- * Atualizado: Bordas agora usam a cor da linha do Rodapé (Gray Dark)
+ * COMPONENTE: Highlights (Cards Internos e Modais)
+ * Atualizado: Bordas na Cor do Rodapé (Gray Dark) e Texto Justificado
  */
 
 /* --- Grids --- */
@@ -25,7 +25,7 @@
     aspect-ratio: 3 / 4;
     overflow: hidden;
     
-    /* MUDANÇA AQUI: Borda igual à do Rodapé */
+    /* MUDANÇA: Borda igual à linha do Rodapé */
     border: 1px solid var(--color-gray-dark); 
     
     background-color: transparent;
@@ -43,7 +43,7 @@
 }
 
 .gold-framebox:hover {
-    /* Sombra suave da mesma cor no hover */
+    /* Sombra suave na cor do mel */
     box-shadow: 0 5px 15px rgba(187, 99, 2, 0.3); 
     transform: translateY(-5px);
     z-index: 2;
@@ -54,7 +54,7 @@
 }
 
 
-/* --- BARRA DE INFORMAÇÕES --- */
+/* --- BARRA DE INFORMAÇÕES (Chocolate/Amarelo) --- */
 .card-info-bar {
     position: absolute;
     bottom: 0;
@@ -171,7 +171,7 @@
     padding-bottom: 15px;
     position: relative;
     
-    /* Linha decorativa igual ao Rodapé */
+    /* Linha Decorativa igual ao Rodapé */
     border-bottom: 2px solid var(--color-gray-dark);
     
     display: inline-block;
@@ -185,7 +185,7 @@
     line-height: 1.8;
     font-weight: 500;
     
-    /* Alinhamento Justificado */
+    /* Texto Justificado */
     text-align: justify;
     text-justify: inter-word;
 }
@@ -251,6 +251,7 @@
     background-color: var(--color-gray-dark);
 }
 
+/* SUBTÍTULO: Limpo e Chocolate */
 .artist-bio-subtitle {
     font-family: var(--font-sans);
     font-size: 1.1rem;
@@ -272,6 +273,8 @@
     line-height: 1.9;
     margin-bottom: 20px;
     font-weight: 500;
+    
+    /* Texto Justificado */
     text-align: justify;
     text-justify: inter-word;
     padding-right: 20px;
