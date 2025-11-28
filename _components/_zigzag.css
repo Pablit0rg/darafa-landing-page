@@ -1,6 +1,6 @@
 /*
  * COMPONENTE: Layout Zig-Zag e Modal
- * CORRIGIDO: Fundo do Modal agora é Mel (Amarelo)
+ * Atualizado: Botão Mobile abaixo da Foto (Reordenamento Flex)
  */
 
 /* --- ESTRUTURA ZIG-ZAG --- */
@@ -27,6 +27,10 @@
 .text-content {
     flex: 1;
     max-width: 500px;
+    /* Necessário para o flex funcionar nos filhos se precisarmos reordenar algo dentro */
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
 }
 
 .section-description {
@@ -68,7 +72,7 @@
     outline-offset: 6px;
     box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
     transition: transform 0.4s ease;
-    background-color: transparent;
+    background-color: var(--color-gold-medium); 
     border-radius: 4px;
 }
 
@@ -86,16 +90,18 @@
     top: 0;
     left: 0;
     width: 100%;
-    padding: 10px 0;
-    background-color: rgba(198, 163, 107, 0.95);
-    color: var(--color-black-pure);
+    padding: 12px 0;
+    background-color: var(--color-gold-medium);
+    color: #FDB90C;
     text-align: center;
     font-size: 0.85rem;
     text-transform: uppercase;
-    font-weight: 500;
+    font-weight: 600;
+    letter-spacing: 1px;
     z-index: 20;
     transform: translateY(-100%);
     transition: transform 0.3s ease;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.3);
 }
 
 /* Hover */
@@ -105,12 +111,13 @@
 }
 .big-card-wrapper:hover .card-cover img {
     transform: scale(1.05);
+    filter: brightness(1);
 }
 .big-card-wrapper:hover .click-bar {
     transform: translateY(0);
 }
 
-/* Conteúdo Interno (Escondido) */
+/* Conteúdo Interno */
 .hidden-content {
     display: none !important;
     visibility: hidden;
@@ -135,11 +142,8 @@
     width: 100%;
     height: 100%;
     z-index: 2000;
-    
-    /* MUDANÇA AQUI: Fundo Amarelo Mel com Transparência */
-    background-color: rgba(253, 185, 12, 0.97); /* #FDB90C @ 97% */
+    background-color: rgba(253, 185, 12, 0.97); 
     backdrop-filter: blur(15px);
-    
     opacity: 0;
     visibility: hidden;
     transition: all 0.4s ease;
@@ -173,24 +177,117 @@
     right: 30px;
     background: none;
     border: none;
-    color: var(--color-gold-medium); /* Chocolate para contrastar no amarelo */
+    color: var(--color-gold-medium);
     font-size: 3rem;
     cursor: pointer;
     z-index: 2001;
 }
 
-/* Mobile */
+/* --- RESPONSIVIDADE (Mobile) --- */
 @media (max-width: 900px) {
     .zig-zag-container {
+        /* Agora o container vira uma coluna flexível */
         flex-direction: column !important;
-        gap: 40px;
+        gap: 30px;
         text-align: center;
     }
-    .big-card-wrapper {
-        width: 100%;
+
+    /* Ajuste do Texto */
+    .text-content {
+        max-width: 100%;
+        align-items: center; /* Centraliza o texto e título */
+        
+        /* Mágica do Reordenamento:
+           Queremos que o Texto (Título/Desc) venha primeiro (Order 1),
+           A Foto venha depois (Order 2),
+           E o Botão (que está DENTRO do .text-content) venha por último.
+           
+           Mas como o botão está dentro do .text-content, não podemos tirá-lo de lá facilmente só com CSS.
+           
+           A SOLUÇÃO FLEXÍVEL:
+           Vamos inverter a lógica visual do container pai.
+        */
     }
-    .click-bar {
-        transform: translateY(0); 
+    
+    /* Ordem Padrão Mobile:
+       1. Texto (Título + Descrição)
+       2. Imagem (Card)
+       3. Botão (Nós vamos fazer o botão "fugir" do fluxo normal com display contents ou similar, 
+          mas o jeito mais seguro e robusto sem mudar HTML é usar a ordem dos blocos principais).
+    */
+
+    /* BLOCO 1: TEXTO */
+    .text-content { order: 1; }
+    
+    /* BLOCO 2: IMAGEM */
+    .big-card-wrapper { 
+        width: 100%;
+        max-width: 100%;
+        order: 2; 
+        margin-bottom: 20px;
+    }
+    
+    /* BLOCO 3: BOTÃO (Gambiarra CSS para Mobile) */
+    /* Como o botão .artist-btn está dentro de .text-content, ele ficaria no Bloco 1.
+       Para ele ir para baixo da imagem, precisaríamos mudar o HTML.
+       
+       MAS, podemos fazer um truque visual:
+       Na seção da artista (#artist-section), podemos usar 'display: contents' no .text-content
+       apenas se reestruturarmos. 
+       
+       Se não quiser mudar o HTML, a solução é:
+       1. Deixar Título e Descrição no Order 1.
+       2. Deixar a Imagem no Order 2.
+       3. E o Botão? Ele está preso no Order 1.
+       
+       Vamos mudar a abordagem para o #artist-section específico.
+    */
+}
+
+/* --- TRUQUE ESPECÍFICO PARA A SEÇÃO ARTISTA NO MOBILE --- */
+@media (max-width: 900px) {
+    #artist-section .zig-zag-container {
+        display: flex;
+        flex-direction: column;
+    }
+    
+    /* Quebra o .text-content para seus filhos obedecerem ao pai */
+    #artist-section .text-content {
+        display: contents; 
+    }
+    
+    /* Reordenando os filhos diretos agora soltos */
+    
+    /* 1. Título e Descrição */
+    #artist-section .section-title, 
+    #artist-section .section-description {
+        order: 1;
+    }
+    
+    /* 2. A Imagem (Card) */
+    #artist-section .big-card-wrapper {
+        order: 2;
+        margin: 20px 0; /* Espaço em cima e embaixo */
+    }
+    
+    /* 3. O Botão */
+    #artist-section .artist-btn {
+        order: 3;
+        width: 100%; /* Botão largura total no mobile fica bom */
+        max-width: 300px;
+    }
+    
+    /* Ajustes visuais gerais */
+    .section-title {
+        text-align: center !important;
+    }
+    .section-description {
+        text-align: justify !important;
+        padding: 0 10px;
+    }
+    .big-card-wrapper:not(.no-expand) .click-bar {
+        transform: translateY(0);
+        background-color: rgba(198, 163, 107, 0.8);
     }
 }
 
@@ -202,10 +299,7 @@
     width: 100%;
     height: 100%;
     z-index: 3000;
-    
-    /* Fundo Chocolate Escuro para destacar a foto */
     background-color: rgba(36, 16, 0, 0.98);
-    
     display: flex;
     justify-content: center;
     align-items: center;
