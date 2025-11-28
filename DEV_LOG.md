@@ -93,3 +93,21 @@ Se precisar editar algo, vá direto ao arquivo responsável:
 
 ---
 *Log Finalizado em: 28/11/2025 - Versão: Honeycomb Production Ready*
+
+---
+
+### 28 de novembro de 2025 (Parte 4): Backlog de Correções e Polimento
+
+**Status:** ⚠️ Pendências Visuais Identificadas.
+
+**Correções Prioritárias (Para o Final):**
+
+1.  **Botão Instagram (HTML):**
+    * O código CSS (`_instagram-button.css`) e a importação no `main.css` já foram feitos.
+    * **Pendente:** Inserir corretamente o bloco HTML do botão "Profile Card" na seção da Artista (`index.html`) sem quebrar o layout. Deixado para a etapa final de revisão de código.
+
+2.  **Fundo dos Cards Grandes (Opacidade):**
+    * **Problema:** Os fundos dos cards "Catálogo" e "O Atelier" (`.card-cover`) estão translúcidos demais, permitindo ver o conteúdo ou a textura de fundo por trás, o que polui a leitura.
+    * **Solução Necessária:** Alterar o `background-color` desses elementos no `_zigzag.css` para um **Marrom Chocolate Sólido e Escuro** (100% opacidade) ou aumentar drasticamente a opacidade para garantir leitura limpa.
+
+---
