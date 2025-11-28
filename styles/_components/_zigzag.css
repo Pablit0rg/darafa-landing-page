@@ -1,6 +1,6 @@
 /*
  * COMPONENTE: Layout Zig-Zag e Modal
- * Atualizado: Todos os Cards Grandes com Tamanho IGUAL (550px)
+ * Atualizado: Bordas dos Cards Grandes agora são CHOCOLATE (igual ao botão)
  */
 
 /* --- ESTRUTURA ZIG-ZAG --- */
@@ -61,28 +61,25 @@
 .big-card-wrapper {
     flex: 1;
     position: relative;
-    
-    /* MUDANÇA: Tamanho Máximo Uniforme para TODOS (550px) */
     max-width: 550px; 
     width: 100%;
-    
     aspect-ratio: 4 / 5;
     cursor: pointer;
     z-index: 10;
 }
 
-/* REMOVIDO: A regra que diminuía os cards de cima (#gallery-door, #about-door) foi apagada.
-   Agora todos herdam o max-width: 550px acima. */
-
-
-/* A Capa Visível */
+/* --- A Capa Visível (Estilização do Card) --- */
 .card-cover {
     width: 100%;
     height: 100%;
     position: relative;
     overflow: hidden;
-    border: 1px solid var(--color-gold-medium);
-    outline: 1px solid var(--color-gold-dark);
+    
+    /* MUDANÇA AQUI: Borda e Outline agora são CHOCOLATE (Gold Medium) */
+    /* Antes estava Vermelho ou Gold Light */
+    border: 1px solid var(--color-gold-medium); 
+    outline: 1px solid var(--color-gold-medium); /* Outline Chocolate também */
+    
     outline-offset: 6px;
     box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
     transition: transform 0.4s ease;
@@ -98,7 +95,7 @@
     filter: brightness(0.9);
 }
 
-/* Barrinha de Clique (Chocolate) */
+/* Barrinha de Clique */
 .click-bar {
     position: absolute;
     top: 0;
@@ -121,7 +118,8 @@
 /* Hover */
 .big-card-wrapper:hover .card-cover {
     transform: translateY(-5px);
-    border-color: var(--color-gold-light);
+    /* No hover, a borda continua Chocolate (ou pode clarear se quiser) */
+    border-color: var(--color-gold-medium);
 }
 .big-card-wrapper:hover .card-cover img {
     transform: scale(1.05);
@@ -140,7 +138,7 @@
     overflow: hidden;
 }
 
-/* Card não clicável (se houver) */
+/* Card não clicável */
 .big-card-wrapper.no-expand { cursor: default; }
 .big-card-wrapper.no-expand .click-bar { display: none; }
 
@@ -181,11 +179,9 @@
         gap: 40px;
         text-align: center;
     }
-    
     .text-content {
         max-width: 100%;
     }
-    
     .section-title { text-align: center !important; }
     .section-description {
         text-align: justify !important;
@@ -193,7 +189,6 @@
     }
     .decorative-line { margin: 20px auto; }
     
-    /* Ajuste total para mobile */
     .artist-visual-col, .big-card-wrapper {
         width: 100%;
         max-width: 100%; 
@@ -208,8 +203,7 @@
 /* --- VISUALIZADOR DE IMAGEM (ZOOM NÍVEL 2) --- */
 .image-viewer-overlay {
     position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    z-index: 3000; 
-    background-color: rgba(36, 16, 0, 0.98);
+    z-index: 3000; background-color: rgba(36, 16, 0, 0.98);
     display: flex; justify-content: center; align-items: center;
     opacity: 0; visibility: hidden; transition: all 0.3s ease;
     cursor: zoom-out;
