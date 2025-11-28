@@ -86,3 +86,34 @@ Foi criada e validada uma variação do botão principal que pode ser testada na
 * [ ] **Preenchimento:** Substituir os placeholders `placehold.co` pelas imagens reais.
 
 ---
+
+---
+
+### 28 de novembro de 2025: Backlog de Refinamento Final (To-Do List)
+
+**Status:** 🚧 Planejamento de Polimento Final.
+
+**Lista de Ajustes Visuais e Estruturais (Prioridade Alta):**
+
+1.  **Logo Hero:**
+    * **Ação:** Remover efeito de expansão/zoom no hover. A logo deve ser estática ou ter uma animação muito sutil de "respiração", sem alterar o tamanho.
+
+2.  **Tipografia (Letreiros):**
+    * **Ação:** Substituir a fonte dos títulos (`Playfair Display`) por uma que harmonize melhor com a tipografia manuscrita/vintage da nova logo.
+    * *Sugestão:* Testar fontes como `Abril Fatface`, `Cinzel` ou manter uma serifada mais robusta.
+
+3.  **Catálogo (Expansão de Conteúdo):**
+    * **Ação:** Aumentar o grid da galeria para suportar **50 mini-cards** de produtos (atualmente são 15).
+    * *Nota:* Otimizar imagens para não pesar o carregamento.
+
+4.  **Cards (Visual):**
+    * **Background:** Alterar o fundo dos mini-cards para um **Marrom Mais Escuro** (Chocolate Amargo) para aumentar o contraste com o fundo amarelo do modal.
+    * **Bordas:** Substituir a linha fina **Vermelha** (`#ff0000`) por uma cor que converse melhor com o tema "Mel" (ex: Laranja Queimado, Âmbar ou Dourado Escuro). O vermelho atual está destoando.
+
+5.  **Seção "A Artista":**
+    * **Ação:** Corrigir o alinhamento do parágrafo de descrição. O texto precisa estar **perfeitamente justificado** (alinhado nas duas margens).
+
+6.  **Rodapé:**
+    * **Ação:** Revisar ou remover a frase de tagline ("Artesanal. Autêntico...") antes do copyright, para limpar o visual.
+
+---
