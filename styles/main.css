@@ -12,8 +12,9 @@
 @import url('_components/_navbar.css');
 @import url('_components/_hero.css');
 @import url('_components/_uiverse-button.css');
+@import url('_components/_instagram-button.css'); /* NOVO */
 
-/* A ordem aqui é crucial: Zigzag (estrutura) antes de Highlights (conteúdo) */
+/* Layouts */
 @import url('_components/_zigzag.css');
 @import url('_components/_highlights.css');
 
