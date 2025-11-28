@@ -1,42 +1,53 @@
 /*
  * COMPONENTE: Footer Section
+ * Atualizado: Altura Reduzida (Igual à Navbar ~80px)
  */
 
 .footer-section {
-    padding: var(--spacing-lg) 0;
+    /* Reduzimos o padding para diminuir a altura total */
+    padding: 15px 0; 
+    
     background-color: var(--color-black-pure);
     border-top: 1px solid var(--color-gray-dark);
     text-align: center;
     margin-top: auto; 
+    
+    /* Altura mínima para garantir consistência */
+    min-height: 80px;
+    display: flex;
+    align-items: center;
 }
 
 .footer-content {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 5px; /* Reduzimos o espaço entre os textos */
     align-items: center;
+    justify-content: center;
 }
 
 .footer-tagline {
     font-family: var(--font-serif);
     color: var(--color-gold-medium);
-    font-size: 1.1rem;
+    font-size: 1rem; /* Levemente menor */
     letter-spacing: 1px;
+    margin: 0;
 }
 
 .footer-copyright {
     font-family: var(--font-sans);
-    font-size: 0.85rem;
+    font-size: 0.75rem;
     color: var(--color-text-muted);
     opacity: 0.8;
+    margin: 0;
 }
 
 /* --- Assinatura do Dev --- */
 .footer-dev {
     font-family: var(--font-sans);
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     color: #666;
-    margin-top: 5px;
+    margin-top: 2px; /* Espaço mínimo */
 }
 
 .footer-dev a {
@@ -46,25 +57,19 @@
     transition: color 0.3s ease;
     display: inline-flex;
     align-items: center;
-    gap: 5px; 
+    gap: 4px; 
 }
 
 .footer-dev a:hover {
-    color: var(--color-gold-light); /* Apenas muda a cor */
-    text-decoration: none; /* REMOVIDO: Sem sublinhado */
+    color: var(--color-gold-light);
+    text-decoration: underline;
 }
 
-/* --- ÍCONE DO INSTAGRAM --- */
+/* Ícone do Instagram no Footer */
 .insta-icon {
-    font-size: 0.9rem;
+    font-size: 0.8rem;
     background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
-    transition: transform 0.3s ease;
-}
-
-/* Efeito extra ao passar o mouse */
-.footer-dev a:hover .insta-icon {
-    transform: scale(1.2) rotate(5deg);
 }
