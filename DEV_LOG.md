@@ -135,3 +135,23 @@ Foi criada e validada uma variação do botão principal que pode ser testada na
 **Próximos Passos (Conteúdo Real):**
 * [ ] **População de Dados:** Criar um *Array* (Lista de Objetos) no arquivo `main.js` contendo os Nomes e Descrições reais das 50 joias, substituindo o texto genérico "Joia X".
 * [ ] **Upload em Massa:** Subir as 50 fotos reais para a pasta `assets/images/` e conectar ao script.
+
+---
+
+### 28 de novembro de 2025 (Parte 3): Definição de Metas de Performance e SEO
+
+**Novas Prioridades Adicionadas ao Backlog Final:**
+
+**1. SEO de Elite (Máxima Qualidade):**
+* [ ] **Meta Tags Avançadas:** Implementar Open Graph (Facebook/Instagram/WhatsApp) e Twitter Cards com imagens de compartilhamento personalizadas.
+* [ ] **Semântica HTML5:** Revisão pente-fino para garantir que todas as tags (`h1`-`h6`, `article`, `section`, `aside`) estejam hierarquicamente perfeitas para os robôs do Google.
+* [ ] **Acessibilidade (a11y):** Garantir que todas as imagens tenham textos alternativos (`alt`) descritivos e ricos em palavras-chave relevantes ("joias artesanais", "acessórios afros", etc.).
+* [ ] **Sitemap e Robots.txt:** Gerar arquivos para indexação rápida.
+
+**2. Otimização de Performance (Site Ultra Leve):**
+* [ ] **Lazy Loading Inteligente:** Implementar carregamento sob demanda para as 50 imagens do catálogo via JavaScript (Intersection Observer), para que o site carregue instantaneamente e as imagens apareçam só quando o usuário rolar.
+* [ ] **Minificação:** Minificar todos os arquivos CSS e JS para reduzir o tamanho do download.
+* [ ] **Formatos Modernos:** Converter todas as imagens finais para WebP de alta compressão sem perda visual.
+* [ ] **Auditoria Lighthouse:** Buscar pontuação 95-100 no Google Lighthouse em Performance e SEO.
+
+---
