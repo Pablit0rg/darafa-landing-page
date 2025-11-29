@@ -15,15 +15,15 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
     <style>
-        /* Por padrão (PC), esconde o botão mobile */
+        /* Padrão (PC): Esconde o botão da versão mobile */
         .mobile-only-btn { display: none; }
         
-        /* Regras para Celular/Tablet */
+        /* Regras para Celular/Tablet (Telas menores que 900px) */
         @media (max-width: 900px) {
-            /* Esconde o botão que ficava no meio do texto */
+            /* Esconde o botão do PC (que fica no meio do texto) */
             .desktop-only-btn { display: none !important; }
             
-            /* Mostra o botão que está abaixo da foto */
+            /* Mostra o botão Mobile (que fica embaixo da foto) */
             .mobile-only-btn { 
                 display: flex !important; 
                 justify-content: center;
@@ -169,7 +169,7 @@
                     </p>
                     <div class="decorative-line"></div>
 
-                    <div class="tooltip-container desktop-only-btn" style="margin-top: 35px;">
+                    <div class="tooltip-container desktop-only-btn" style="margin-top: 100px;">
                         <div class="tooltip">
                             <div class="profile">
                                 <div class="user">
@@ -189,7 +189,7 @@
                             <span class="text">Seguir no Instagram</span>
                         </a>
                     </div>
-                    </div>
+                </div>
 
                 <div class="artist-visual-col">
                     <div class="big-card-wrapper">
@@ -242,7 +242,7 @@
                             <span class="text">Seguir no Instagram</span>
                         </a>
                     </div>
-                    </div>
+                </div>
 
             </div>
         </section>
