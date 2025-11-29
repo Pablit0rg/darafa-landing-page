@@ -13,6 +13,25 @@
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <style>
+        /* Por padrão (PC), esconde o botão mobile */
+        .mobile-only-btn { display: none; }
+        
+        /* Regras para Celular/Tablet */
+        @media (max-width: 900px) {
+            /* Esconde o botão que ficava no meio do texto */
+            .desktop-only-btn { display: none !important; }
+            
+            /* Mostra o botão que está abaixo da foto */
+            .mobile-only-btn { 
+                display: flex !important; 
+                justify-content: center;
+                margin-top: 40px; 
+                width: 100%;
+            }
+        }
+    </style>
 </head>
 <body id="top">
 
@@ -150,7 +169,7 @@
                     </p>
                     <div class="decorative-line"></div>
 
-                    <div class="tooltip-container" style="margin-top: 35px;">
+                    <div class="tooltip-container desktop-only-btn" style="margin-top: 35px;">
                         <div class="tooltip">
                             <div class="profile">
                                 <div class="user">
@@ -165,13 +184,8 @@
                                 <div class="about">Arte em arame & Autoestima. Encomendas via DM.</div>
                             </div>
                         </div>
-                        
                         <a class="icon" href="https://www.instagram.com/darafa_cwb/" target="_blank">
-                            <div class="layer">
-                                <span class="instagramSVG">
-                                    <i class="fab fa-instagram"></i>
-                                </span>
-                            </div>
+                            <div class="layer"><span class="instagramSVG"><i class="fab fa-instagram"></i></span></div>
                             <span class="text">Seguir no Instagram</span>
                         </a>
                     </div>
@@ -207,7 +221,28 @@
                             </div>
                         </div>
                     </div>
-                </div>
+
+                    <div class="tooltip-container mobile-only-btn">
+                        <div class="tooltip">
+                            <div class="profile">
+                                <div class="user">
+                                    <div class="img">
+                                        <img src="assets/images/rafa-lifestyle0.webp" alt="Rafaela">
+                                    </div>
+                                    <div class="details">
+                                        <div class="name">Rafaela</div>
+                                        <div class="username">@darafa_cwb</div>
+                                    </div>
+                                </div>
+                                <div class="about">Arte em arame & Autoestima. Encomendas via DM.</div>
+                            </div>
+                        </div>
+                        <a class="icon" href="https://www.instagram.com/darafa_cwb/" target="_blank">
+                            <div class="layer"><span class="instagramSVG"><i class="fab fa-instagram"></i></span></div>
+                            <span class="text">Seguir no Instagram</span>
+                        </a>
+                    </div>
+                    </div>
 
             </div>
         </section>
