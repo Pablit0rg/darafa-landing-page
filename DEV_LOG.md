@@ -6,108 +6,69 @@ Este documento narra a evolução completa do desenvolvimento da Landing Page pa
 ---
 
 ## 1. A Filosofia Inicial: Modularização
-**O Problema:** Projetos anteriores cresciam demais e se tornavam difíceis de manter (arquivos de 1000+ linhas).
+**O Problema:** Projetos anteriores cresciam demais e se tornavam difíceis de manter.
 **A Solução:** Adotamos uma **Arquitetura CSS Modular**.
 * Não existe um "style.css" gigante.
-* Existe um "Maestro" (`styles/main.css`) que apenas importa pequenos arquivos específicos.
-* **Estrutura de Pastas:**
-    * `_base/`: Configurações globais (Reset, Variáveis, Tipografia).
-    * `_components/`: Cada pedaço do site tem seu arquivo (`_navbar.css`, `_hero.css`, etc.).
+* Existe um "Maestro" (`styles/main.css`) que importa pequenos arquivos específicos.
+* **Estrutura:** `_base/` (Globais) e `_components/` (Navbar, Hero, ZigZag, etc.).
 
 ---
 
 ## 2. Evolução Visual (Do Escuro ao Mel)
 
-### Fase 1: "Ouro na Noite" (Gold in the Night)
-* **Conceito:** Fundo preto profundo (`#050505`) com detalhes em Dourado Metálico.
-* **Objetivo:** Passar luxo e exclusividade, como uma joalheria noturna.
+### Fase 1: "Ouro na Noite" 🌑
+* Conceito inicial de fundo preto profundo com detalhes dourados.
 
-### Fase 2: O Pivô para "Honey Theme" (O Tema Atual)
-* **A Mudança:** Identidade visual baseada na cor da logo da Abelha.
-* **Paleta Oficial:**
-    * **Fundo:** Amarelo Mel Vibrante (`#FDB90C`).
-    * **Contraste:** Textos e elementos gráficos em **Chocolate/Preto** (`#241000`) para leitura perfeita.
-    * **Destaque:** Bordas e Linhas em **Vermelho Vivo (`#ff0000`)** fixo, criando um visual moderno e "street".
-* **Textura:** Fundo de "Favo de Mel" (Honeycomb) fixo (`background-attachment: fixed`) com filtro escuro.
+### Fase 2: O Pivô para "Honey Theme"
+* **A Mudança:** Invertemos a paleta para **Fundo Amarelo Mel Vibrante** (`#FDB90C`).
+* **Contraste:** Textos e elementos em **Chocolate/Preto** (`#241000`) para leitura.
+* **Textura:** Fundo "Favo de Mel" (Honeycomb) fixo com filtro escuro.
 
-### Fase 3: Refinamento Final de UI (Red & Gold)
-* **Cards:** Mini-cards com bordas vermelhas fixas e Barra de Informação em Chocolate com texto Amarelo.
-* **Modais:** Fundo Amarelo Mel Sólido com bordas vermelhas, mantendo a consistência visual.
-* **Navbar:** Transparente (Clean) com links em Chocolate que não somem no hover.
+### Fase 3: Refinamento "Red & Gold"
+* **Bordas:** Definidas em **Vermelho Vivo (`#ff0000`)** fixo para alto contraste nos cards.
+* **Cards:** Mini-cards com moldura preenchida (Padding + Fundo Chocolate).
+* **Info Bars:** Fundo Chocolate com texto Amarelo.
+* **Tipografia:** Subtítulos limpos na cor do texto e parágrafos justificados.
 
 ---
 
-## 3. Evolução Estrutural (Layout e UX)
+## 3. Evolução Estrutural e Funcionalidade
 
-### Layout Zig-Zag
-As seções principais ("Catálogo", "O Atelier", "A Artista") seguem um fluxo alternado (Texto à Esquerda/Imagem à Direita, e vice-versa) para melhorar o ritmo de leitura.
+### Layout Zig-Zag e "Portais"
+* As seções seguem fluxo alternado (Texto/Imagem).
+* **Cards Grandes (Portais):** Ao clicar, expandem para um **Modal de Tela Cheia**.
+* **Níveis de Profundidade:**
+    1.  **Zoom (Lightbox):** Para joias.
+    2.  **Modo Revista:** Para histórias do atelier (Foto + Texto).
 
-### A Lógica dos "Cards Porta" (Feature Principal)
-Não mostramos todas as fotos de uma vez. Criamos uma experiência de descoberta:
-1.  **A Capa:** O usuário vê um Card Grande (uma "Porta") com uma foto de capa e uma barra "Clique para expandir".
-2.  **A Ação:** Ao clicar, o card expande (via JavaScript) para um **Modal de Tela Cheia**.
-3.  **O Conteúdo Oculto:** O JS clona o conteúdo escondido (`.hidden-content`) e exibe no modal.
-
-### Níveis de Profundidade (Deep Dive)
-O JavaScript foi programado para lidar com dois tipos de conteúdo dentro dos modais:
-* **Tipo 1 (Galeria):** Ao clicar numa joia pequena, abre um **Lightbox** (Zoom na foto).
-* **Tipo 2 (Atelier/História):** Ao clicar numa foto de processo (que tem atributos `data-description`), abre o **Modo Revista** (Uma janela dividida com Foto Grande + Texto Explicativo).
+### Automação do Catálogo
+* Substituímos o HTML manual por um **Gerador JavaScript** que cria 50 cards automaticamente, facilitando a manutenção e performance.
 
 ---
 
-## 4. Mapa Técnico dos Arquivos (O Código Atual)
+## 4. Mapa Técnico Atual (Status dos Arquivos)
 
-Se precisar editar algo, vá direto ao arquivo responsável:
-
-### `styles/_base/`
-* `_variables.css`: Define a paleta "Mel & Chocolate" e fontes.
-* `_global.css`: Define o background de colmeia, o botão "Voltar ao Topo" (Estilo Luxo) e tipografia base.
-* `_reset.css`: Limpeza padrão de navegador.
-
-### `styles/_components/`
-* `_navbar.css`: Barra transparente. Links Chocolate.
-* `_hero.css`: Seção inicial. Contém a Logo (Imagem) centralizada. Efeito de glow removido para limpeza visual.
-* `_zigzag.css`: **(ARQUIVO CRÍTICO)** Controla o layout das seções principais, o estilo dos Cards Grandes e o **Modal de Expansão**.
-* `_highlights.css`: Controla os grids internos (mini-cards), a **Barra de Informação** e o estilo do **Modo Revista**.
-* `_uiverse-button.css`: Botões com gradiente Chocolate e texto Amarelo.
-* `_footer.css`: Rodapé com assinatura e copyright.
-
-### `js/`
-* `main.js`: Cérebro único do site.
-    1.  **Gerador de Catálogo:** Cria automaticamente 50 cards de joias ao carregar a página.
-    2.  **Menu Mobile:** Controle do hambúrguer.
-    3.  **Botão "Voltar ao Topo":** Scroll listener.
-    4.  **Modais:** Lógica de abrir/fechar e detecção inteligente de conteúdo (Zoom vs Revista).
+* **`styles/_components/_zigzag.css`:** Controla o layout macro e os Cards Grandes.
+* **`styles/_components/_highlights.css`:** Controla os Cards Pequenos (Bordas Vermelhas, Info Bar Chocolate) e o Modal de História.
+* **`styles/_components/_navbar.css`:** Barra transparente com links Chocolate (Hover sutil).
+* **`js/main.js`:** Contém a lógica de geração de cards, modais e menu mobile.
 
 ---
 
-## 5. Pendências e Futuro (To-Do List)
+## 5. BACKLOG DE PENDÊNCIAS (Próximos Passos)
 
-**Para o Lançamento (Reta Final):**
-* [ ] **Conteúdo Real:** Substituir os placeholders (`placehold.co`) pelas fotos reais das joias e da Rafa.
-* [ ] **Copywriting:** Preencher o Array no JS com os nomes e descrições reais das 50 peças.
-* [ ] **SEO:** Configurar Meta Tags e Alt Texts.
+** PRIORIDADE MÁXIMA (Correções):**
+1.  **Conserto do HTML (Index):** A implementação do botão "Seguir no Instagram" na seção da Artista quebrou o layout ou ficou com código incompleto.
+    * *Ação:* Revisar e reinserir o bloco HTML da seção Artista com o botão posicionado corretamente (abaixo da foto no mobile, ao lado no desktop).
+2.  **Revisão de Código:** Garantir que nenhum arquivo CSS ou JS ficou cortado ou incompleto nas últimas atualizações.
 
-**Para o Futuro (Pós-Entrega):**
-* [ ] **Automação Instagram:** Implementar uma API ou Widget para puxar posts do Instagram automaticamente.
+** CONTEÚDO E AJUSTES:**
+1.  **Escurecimento de Fundos:** Ajustar a opacidade/cor de fundo dos Modais (Atelier e Catálogo) para garantir que não fiquem translúcidos demais sobre o fundo de colmeia.
+2.  **Conteúdo Real:** Inserir as 50 fotos reais e textos descritivos.
 
----
-*Log Finalizado em: 28/11/2025 - Versão: Honeycomb Production Ready*
-
----
-
-### 28 de novembro de 2025 (Parte 4): Backlog de Correções e Polimento
-
-**Status:** Pendências Visuais Identificadas.
-
-**Correções Prioritárias (Para o Final):**
-
-1.  **Botão Instagram (HTML):**
-    * O código CSS (`_instagram-button.css`) e a importação no `main.css` já foram feitos.
-    * **Pendente:** Inserir corretamente o bloco HTML do botão "Profile Card" na seção da Artista (`index.html`) sem quebrar o layout. Deixado para a etapa final de revisão de código.
-
-2.  **Fundo dos Cards Grandes (Opacidade):**
-    * **Problema:** Os fundos dos cards "Catálogo" e "O Atelier" (`.card-cover`) estão translúcidos demais, permitindo ver o conteúdo ou a textura de fundo por trás, o que polui a leitura.
-    * **Solução Necessária:** Alterar o `background-color` desses elementos no `_zigzag.css` para um **Marrom Chocolate Sólido e Escuro** (100% opacidade) ou aumentar drasticamente a opacidade para garantir leitura limpa.
+** FUTURO (Pós-Entrega):**
+1.  **Automação Instagram:** Implementar API para puxar posts automaticamente.
+2.  **SEO de Elite:** Configurar Meta Tags finais.
 
 ---
+*Última atualização: 29/11/2025 (Sábado) - Status: Pausado para Correção de HTML*
