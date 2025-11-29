@@ -1,6 +1,6 @@
 /*
  * COMPONENTE: Layout Zig-Zag e Modal
- * Atualizado: Bordas dos Cards Grandes iguais à linha do Rodapé (Gray Dark)
+ * Atualizado: Moldura Sólida (Chocolate) nos Cards Grandes
  */
 
 /* --- ESTRUTURA ZIG-ZAG --- */
@@ -75,15 +75,21 @@
     position: relative;
     overflow: hidden;
     
-    /* MUDANÇA AQUI: Borda e Outline na cor da linha do Rodapé (Gray Dark) */
-    border: 1px solid var(--color-gray-dark); 
-    outline: 1px solid var(--color-gray-dark);
-    
+    /* Borda Chocolate */
+    border: 1px solid var(--color-gold-medium); 
+    outline: 1px solid var(--color-gold-dark);
     outline-offset: 6px;
+    
+    /* MUDANÇA AQUI: Fundo Sólido + Padding = Moldura */
+    background-color: var(--color-gold-medium); /* Chocolate */
+    padding: 6px; /* Espessura da moldura */
+    
     box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
     transition: transform 0.4s ease;
-    background-color: var(--color-black-deep);
     border-radius: 4px;
+    
+    /* Garante que o padding não estoure o tamanho */
+    box-sizing: border-box; 
 }
 
 .card-cover img {
@@ -92,6 +98,7 @@
     object-fit: cover;
     transition: transform 0.6s ease;
     filter: brightness(0.9);
+    display: block;
 }
 
 /* Barrinha de Clique */
@@ -101,7 +108,7 @@
     left: 0;
     width: 100%;
     padding: 10px 0;
-    background-color: var(--color-gold-medium); /* Mantém Chocolate para contraste com texto */
+    background-color: var(--color-gold-medium);
     color: #FDB90C; /* Amarelo */
     text-align: center;
     font-size: 0.85rem;
@@ -117,8 +124,7 @@
 /* Hover */
 .big-card-wrapper:hover .card-cover {
     transform: translateY(-5px);
-    /* Mantém a cor da borda no hover (ou muda se quiser destaque) */
-    border-color: var(--color-gray-dark);
+    border-color: var(--color-gold-light);
 }
 .big-card-wrapper:hover .card-cover img {
     transform: scale(1.05);
