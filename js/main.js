@@ -1,123 +1,126 @@
 /**
- * DaRafa Acessórios - Main Script (Versão Data-Driven Uniformizada)
- * * ATUALIZAÇÃO:
- * - Todas as joias do catálogo agora usam a imagem de referência (4 peças).
- * - Mantida a estrutura de dados para fácil alteração futura.
+ * DaRafa Acessórios - Main Script (Versão Mestre)
+ * * FUNCIONALIDADES:
+ * 1. Catálogo Data-Driven (Baseado em Dados)
+ * 2. Imagens Uniformizadas (4 Peças)
+ * 3. Scroll Reveal / Lazy Loading (Aparece ao descer)
+ * 4. Filtros de Categoria (Bônus)
+ * 5. Menu Mobile, Portais e Modais
  */
 
 document.addEventListener('DOMContentLoaded', () => {
 
     // =========================================================
-    // 0. CONFIGURAÇÕES GERAIS
+    // 0. CONFIGURAÇÕES & DADOS
     // =========================================================
-    const INSTAGRAM_TOKEN = ''; // Seu Token aqui futuramente
+    const INSTAGRAM_TOKEN = ''; 
     const POSTS_LIMIT = 50; 
 
-    // =========================================================
-    // 1. BASE DE DADOS (Seu Catálogo Virtual)
-    // Todas as imagens apontam para 'darafa-catalogo.jpg' conforme solicitado.
-    // =========================================================
+    // O "Banco de Dados" com a imagem padronizada (darafa-catalogo.jpg)
     const productsData = [
         {
             id: 1,
             category: 'nose-cuff',
             title: 'Nose Cuff Spirals',
-            description: 'Design espiral em arame dourado, ajuste anatômico sem necessidade de furos.',
-            image: 'assets/images/darafa-catalogo.jpg' 
+            description: 'Design espiral em arame dourado, ajuste anatômico sem furos.',
+            image: 'assets/images/darafa-catalogo.jpg'
         },
         {
             id: 2,
             category: 'brincos',
             title: 'Brinco Solar',
-            description: 'Peça statement inspirada no sol, leve, marcante e com acabamento martelado.',
+            description: 'Peça statement inspirada no sol, leve e marcante.',
             image: 'assets/images/darafa-catalogo.jpg'
         },
         {
             id: 3,
             category: 'body',
             title: 'Body Chain Lux',
-            description: 'Corrente corporal para realçar a beleza natural no verão ou em ocasiões especiais.',
+            description: 'Corrente corporal para realçar a beleza natural.',
             image: 'assets/images/darafa-catalogo.jpg'
         },
         {
             id: 4,
             category: 'aneis',
-            title: 'Anel Regulável Flow',
-            description: 'Adapta-se a qualquer dedo com conforto, trazendo movimento orgânico.',
+            title: 'Anel Flow',
+            description: 'Adapta-se a qualquer dedo com conforto e movimento.',
             image: 'assets/images/darafa-catalogo.jpg'
         },
         {
             id: 5,
-            category: 'brincos',
-            title: 'Argola Texturizada',
-            description: 'Um clássico revisitado com texturas manuais que captam a luz.',
+            category: 'aneis',
+            title: 'Anel Regulável Flow',
+            description: 'Design orgânico que abraça o dedo com elegância.',
             image: 'assets/images/darafa-catalogo.jpg'
         },
         {
             id: 6,
             category: 'colar',
             title: 'Choker Minimal',
-            description: 'Aro rígido dourado, elegância instantânea para qualquer composição.',
+            description: 'Aro rígido dourado, elegância instantânea.',
             image: 'assets/images/darafa-catalogo.jpg'
         },
         {
             id: 7,
             category: 'nose-cuff',
             title: 'Nose Cuff Duplo',
-            description: 'Duas voltas de arame para destaque extra no visual.',
+            description: 'Duas voltas de arame para destaque extra.',
             image: 'assets/images/darafa-catalogo.jpg'
         },
         {
             id: 8,
             category: 'brincos',
             title: 'Maxi Brinco',
-            description: 'Para quem não tem medo de brilhar e ocupar espaço.',
+            description: 'Para quem não tem medo de brilhar.',
             image: 'assets/images/darafa-catalogo.jpg'
         }
+        // Adicione mais itens aqui copiando o bloco acima...
     ];
 
+
     // =========================================================
-    // 2. CONTROLE DE CONTEÚDO E RENDERIZAÇÃO
+    // 1. INICIALIZAÇÃO DO CATÁLOGO
     // =========================================================
     const galleryContainer = document.querySelector('#gallery-door .gallery-5-cols');
     
     if (galleryContainer) {
         initCatalog();
+        initFilters(); // Inicia os filtros também
     }
 
     async function initCatalog() {
-        // Lógica de Fallback: Se não tem token, carrega o local direto
         if (INSTAGRAM_TOKEN) {
             try {
                 await fetchInstagramPosts();
             } catch (error) {
-                console.warn("Falha no Instagram, carregando catálogo local...", error);
+                console.warn("Instagram offline, usando catálogo local.");
                 renderLocalCatalog(productsData);
             }
         } else {
-            // Carregamento Padrão (Local)
             renderLocalCatalog(productsData);
         }
         
-        // Inicia o observador de imagens (Lazy Load) após criar os elementos
+        // CRUCIAL: Chama o observador APÓS criar os elementos para o efeito funcionar
         initLazyObserver();
     }
 
-    // --- A. RENDERIZA O CATÁLOGO LOCAL ---
+    // --- RENDERIZADOR (Gera o HTML) ---
     function renderLocalCatalog(items) {
         if (!galleryContainer) return;
-        galleryContainer.innerHTML = ''; // Limpa container
-
+        
+        // Montamos uma string única para performance
+        let fullHTML = '';
+        
         items.forEach(item => {
-            // Criação do HTML baseado nos dados do objeto
-            const cardHTML = `
+            // Nota: style="opacity: 0" garante que comece invisível para o efeito acontecer
+            fullHTML += `
                 <div class="gold-framebox" data-category="${item.category}" data-title="${item.title}" data-description="${item.description}">
                     <img 
                         class="lazy-image" 
                         src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
                         data-src="${item.image}" 
                         alt="${item.title}"
-                        style="transition: opacity 0.5s ease; opacity: 0;"
+                        style="transition: opacity 0.8s ease; opacity: 0;"
                     >
                     <div class="card-info-bar">
                         <h3 class="info-title">${item.title}</h3>
@@ -125,82 +128,119 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                 </div>
             `;
-            galleryContainer.innerHTML += cardHTML;
         });
-    }
-
-    // --- B. BUSCA DO INSTAGRAM (MANTIDO) ---
-    async function fetchInstagramPosts() {
-        const url = `https://graph.instagram.com/me/media?fields=id,caption,media_type,media_url,thumbnail_url,permalink&access_token=${INSTAGRAM_TOKEN}&limit=${POSTS_LIMIT}`;
-        const response = await fetch(url);
-        if (!response.ok) throw new Error('Erro na resposta do Instagram');
-        const data = await response.json();
         
-        galleryContainer.innerHTML = '';
-
-        data.data.forEach(post => {
-            const imageUrl = post.media_type === 'VIDEO' ? post.thumbnail_url : post.media_url;
-            const caption = post.caption ? post.caption : 'DaRafa Acessórios';
-            const shortDesc = caption.length > 80 ? caption.substring(0, 80) + '...' : caption;
-
-            const cardHTML = `
-                <div class="gold-framebox">
-                    <img 
-                        class="lazy-image" 
-                        src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" 
-                        data-src="${imageUrl}" 
-                        alt="Post Instagram"
-                        style="transition: opacity 0.5s ease; opacity: 0;" 
-                    >
-                    <div class="card-info-bar">
-                        <h3 class="info-title">Do Instagram</h3>
-                        <p class="info-desc">${shortDesc}</p>
-                    </div>
-                </div>
-            `;
-            galleryContainer.innerHTML += cardHTML;
-        });
+        galleryContainer.innerHTML = fullHTML;
     }
 
-    // --- C. OBSERVADOR DE IMAGENS (LAZY LOADER) ---
+
+    // =========================================================
+    // 2. A MÁGICA: SCROLL REVEAL (LAZY LOADER)
+    // =========================================================
     function initLazyObserver() {
         const lazyImages = document.querySelectorAll('.lazy-image');
 
+        // Configura o observador
         const imageObserver = new IntersectionObserver((entries, observer) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     const img = entry.target;
-                    img.src = img.dataset.src; // Carrega a imagem real
                     
+                    // 1. Troca o src falso pela imagem real
+                    if(img.dataset.src) {
+                        img.src = img.dataset.src;
+                    }
+
+                    // 2. Quando carregar, aplica a opacidade 1 (Efeito Fade In)
                     img.onload = () => {
-                        img.style.opacity = 1; // Efeito Fade-In
-                        img.classList.add('loaded'); 
+                        img.style.opacity = 1;
+                        img.classList.add('loaded');
                     };
                     
+                    // 3. Para de observar essa imagem (já carregou)
                     observer.unobserve(img);
                 }
             });
         }, {
-            rootMargin: "50px 0px", 
-            threshold: 0.01
+            rootMargin: "0px 0px -50px 0px", // Só carrega quando entrar um pouco na tela
+            threshold: 0.1
         });
 
-        lazyImages.forEach(image => {
-            imageObserver.observe(image);
+        // Aplica o observador em todas as imagens
+        lazyImages.forEach(image => imageObserver.observe(image));
+    }
+
+
+    // =========================================================
+    // 3. LÓGICA DE FILTROS (BÔNUS)
+    // =========================================================
+    function initFilters() {
+        // Usa delegação de eventos no body (pois os botões podem estar dentro do Modal clonado)
+        document.body.addEventListener('click', (e) => {
+            if (e.target.classList.contains('filter-btn')) {
+                const button = e.target;
+                const filterValue = button.dataset.filter;
+                
+                // 1. Visual do Botão
+                const container = button.closest('.catalog-filters');
+                if(container) {
+                    container.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+                }
+
+                // 2. Filtragem dos Dados
+                let filteredData;
+                if (filterValue === 'all') {
+                    filteredData = productsData;
+                } else {
+                    filteredData = productsData.filter(item => item.category === filterValue);
+                }
+
+                // 3. Atualiza a Galeria (Procura a galeria mais próxima do botão clicado)
+                const modalContent = button.closest('.expansion-content'); // Se estiver no modal
+                const targetGallery = modalContent 
+                    ? modalContent.querySelector('.gallery-5-cols') 
+                    : document.querySelector('#gallery-door .gallery-5-cols'); // Se estiver na home
+                
+                if(targetGallery) {
+                    // Renderiza apenas os filtrados
+                    let html = '';
+                    filteredData.forEach(item => {
+                        html += `
+                            <div class="gold-framebox" data-category="${item.category}">
+                                <img class="lazy-image" src="${item.image}" alt="${item.title}" style="opacity: 0; transition: opacity 0.5s ease;">
+                                <div class="card-info-bar">
+                                    <h3 class="info-title">${item.title}</h3>
+                                    <p class="info-desc">${item.description}</p>
+                                </div>
+                            </div>
+                        `;
+                    });
+                    targetGallery.innerHTML = html;
+                    
+                    // Reativa o efeito de aparecer suavemente para os novos itens
+                    const newImages = targetGallery.querySelectorAll('.lazy-image');
+                    setTimeout(() => {
+                        newImages.forEach(img => img.style.opacity = 1);
+                    }, 100);
+                }
+            }
         });
     }
 
 
     // =========================================================
-    // 3. MENU MOBILE
+    // 4. MENU MOBILE & UX
     // =========================================================
     const navbarToggler = document.getElementById('navbar-toggler');
     const navbarMenu = document.getElementById('navbar-menu');
     const navLinks = document.querySelectorAll('.navbar-link');
 
     function toggleMenu() {
-        navbarMenu.classList.toggle('active');
-        navbarToggler.classList.toggle('is-active');
+        if(navbarMenu && navbarToggler) {
+            navbarMenu.classList.toggle('active');
+            navbarToggler.classList.toggle('is-active');
+        }
     }
 
     if(navbarToggler){
@@ -216,7 +256,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Fecha ao clicar fora
     document.addEventListener('click', (e) => {
         if (navbarMenu && navbarMenu.classList.contains('active') && 
             !navbarMenu.contains(e.target) && 
@@ -225,12 +264,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-
-    // =========================================================
-    // 4. BOTÃO VOLTAR AO TOPO
-    // =========================================================
+    // Botão Voltar ao Topo
     const backToTopBtn = document.getElementById('backToTop');
-
     if(backToTopBtn) {
         window.addEventListener('scroll', () => {
             if (window.scrollY > 300) backToTopBtn.classList.add('visible');
@@ -240,18 +275,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     // =========================================================
-    // 5. SISTEMA DE PORTAL (EXPANSÃO DE CARDS)
+    // 5. SISTEMA DE PORTAL & MODAIS
     // =========================================================
     const doors = document.querySelectorAll('.big-card-wrapper:not(.no-expand)');
     const body = document.body;
 
     doors.forEach(door => {
         door.addEventListener('click', function(e) {
+            // Evita abrir se clicou direto no botão de filtro dentro do card (caso raro)
+            if(e.target.classList.contains('filter-btn')) return;
+
             e.preventDefault();
             const hiddenContentDiv = this.querySelector('.hidden-content');
             
             if (hiddenContentDiv) {
-                // Clona o conteúdo para o Modal
                 const contentHTML = hiddenContentDiv.innerHTML;
                 openExpansionModal(contentHTML);
             }
@@ -270,22 +307,21 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
 
         body.appendChild(overlay);
-        body.style.overflow = 'hidden'; // Trava o scroll da página principal
+        body.style.overflow = 'hidden'; 
 
         requestAnimationFrame(() => { overlay.classList.add('active'); });
 
-        // --- REATIVAR LAZY LOAD DENTRO DO MODAL ---
+        // --- REATIVAR O EFEITO LAZY LOAD DENTRO DO MODAL ---
+        // Como criamos novo HTML, precisamos avisar o observador
         const modalImages = overlay.querySelectorAll('.lazy-image');
         if(modalImages.length > 0) {
             const modalObserver = new IntersectionObserver((entries, observer) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
                         const img = entry.target;
-                        if(img.dataset.src) {
-                            img.src = img.dataset.src;
-                            img.onload = () => { img.style.opacity = 1; };
-                            observer.unobserve(img);
-                        }
+                        if(img.dataset.src) img.src = img.dataset.src;
+                        img.onload = () => { img.style.opacity = 1; };
+                        observer.unobserve(img);
                     }
                 });
             }, { root: overlay, rootMargin: "50px" });
@@ -293,25 +329,23 @@ document.addEventListener('DOMContentLoaded', () => {
             modalImages.forEach(img => modalObserver.observe(img));
         }
 
-        // --- RE-BIND NOS MINI CARDS (CLIQUES DENTRO DO MODAL) ---
-        const miniCards = overlay.querySelectorAll('.gold-framebox');
-        miniCards.forEach(card => {
-            card.addEventListener('click', (e) => {
+        // --- CLIQUES NOS MINI CARDS (ZOOM / HISTÓRIA) ---
+        // Usamos delegação de evento dentro do overlay para garantir funcionamento
+        overlay.addEventListener('click', (e) => {
+            const card = e.target.closest('.gold-framebox');
+            if (card && overlay.contains(card)) {
                 e.stopPropagation();
                 const img = card.querySelector('img');
                 
-                // Verifica se é um card de história ou produto
                 if (card.dataset.description && card.classList.contains('story-card')) {
-                    // Modo História (Atelier)
                     openStoryMode(img.dataset.src || img.src, card.dataset.title, card.dataset.description);
                 } else {
-                    // Modo Produto (Zoom simples)
                     if(img) openImageViewer(img.dataset.src || img.src);
                 }
-            });
+            }
         });
 
-        // Função de Fechar
+        // Fechar Modal
         const close = () => {
             overlay.classList.remove('active');
             body.style.overflow = '';
@@ -321,11 +355,12 @@ document.addEventListener('DOMContentLoaded', () => {
         };
 
         overlay.querySelector('.close-expansion').addEventListener('click', close);
+        
+        // Clicar fora fecha (mas ignora cliques no conteúdo)
         overlay.addEventListener('click', (e) => { 
             if (e.target === overlay || e.target.classList.contains('expansion-content')) close(); 
         });
         
-        // Fechar com ESC
         const closeOnEsc = (e) => {
             if (e.key === 'Escape' && !document.querySelector('.image-viewer-overlay.active')) {
                 close();
@@ -337,16 +372,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     // =========================================================
-    // 6. MODAIS DE DETALHE (ZOOM E HISTÓRIA)
+    // 6. VISUALIZADORES (ZOOM)
     // =========================================================
-    
-    // Zoom Simples (Para produtos)
     function openImageViewer(imageSrc) {
         const content = `<img src="${imageSrc}" class="image-viewer-content" style="max-height:90vh; max-width:90%; border:1px solid var(--color-gold-dark); box-shadow: 0 0 30px rgba(0,0,0,0.8);">`;
         createViewerOverlay(content);
     }
 
-    // Modo História (Foto + Texto lado a lado)
     function openStoryMode(imageSrc, title, description) {
         const content = `
             <div class="story-viewer-content">
@@ -362,7 +394,6 @@ document.addEventListener('DOMContentLoaded', () => {
         createViewerOverlay(content);
     }
 
-    // Cria o Overlay Genérico
     function createViewerOverlay(innerContent) {
         const viewer = document.createElement('div');
         viewer.className = 'image-viewer-overlay';
