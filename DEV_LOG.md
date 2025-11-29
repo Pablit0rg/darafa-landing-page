@@ -1,4 +1,4 @@
-# 🐝 DaRafa Acessórios - O Dossiê Completo do Projeto (MASTER LOG)
+# DaRafa Acessórios - O Dossiê Completo do Projeto (MASTER LOG)
 
 **Resumo Executivo:**
 Este documento narra a evolução completa do desenvolvimento da Landing Page para "DaRafa Acessórios". O projeto saiu de um conceito monolítico simples para uma aplicação modular, interativa e com uma identidade visual proprietária ("Honey Theme").
@@ -18,11 +18,11 @@ Este documento narra a evolução completa do desenvolvimento da Landing Page pa
 
 ## 2. Evolução Visual (Do Escuro ao Mel)
 
-### Fase 1: "Ouro na Noite" (Gold in the Night) 🌑
+### Fase 1: "Ouro na Noite" (Gold in the Night)
 * **Conceito:** Fundo preto profundo (`#050505`) com detalhes em Dourado Metálico.
 * **Objetivo:** Passar luxo e exclusividade, como uma joalheria noturna.
 
-### Fase 2: O Pivô para "Honey Theme" (O Tema Atual) 🍯
+### Fase 2: O Pivô para "Honey Theme" (O Tema Atual)
 * **A Mudança:** Identidade visual baseada na cor da logo da Abelha.
 * **Paleta Oficial:**
     * **Fundo:** Amarelo Mel Vibrante (`#FDB90C`).
@@ -42,7 +42,7 @@ Este documento narra a evolução completa do desenvolvimento da Landing Page pa
 ### Layout Zig-Zag
 As seções principais ("Catálogo", "O Atelier", "A Artista") seguem um fluxo alternado (Texto à Esquerda/Imagem à Direita, e vice-versa) para melhorar o ritmo de leitura.
 
-### A Lógica dos "Cards Porta" (Feature Principal) 🚪
+### A Lógica dos "Cards Porta" (Feature Principal)
 Não mostramos todas as fotos de uma vez. Criamos uma experiência de descoberta:
 1.  **A Capa:** O usuário vê um Card Grande (uma "Porta") com uma foto de capa e uma barra "Clique para expandir".
 2.  **A Ação:** Ao clicar, o card expande (via JavaScript) para um **Modal de Tela Cheia**.
@@ -59,12 +59,12 @@ O JavaScript foi programado para lidar com dois tipos de conteúdo dentro dos mo
 
 Se precisar editar algo, vá direto ao arquivo responsável:
 
-### 📂 `styles/_base/`
+### `styles/_base/`
 * `_variables.css`: Define a paleta "Mel & Chocolate" e fontes.
 * `_global.css`: Define o background de colmeia, o botão "Voltar ao Topo" (Estilo Luxo) e tipografia base.
 * `_reset.css`: Limpeza padrão de navegador.
 
-### 📂 `styles/_components/`
+### `styles/_components/`
 * `_navbar.css`: Barra transparente. Links Chocolate.
 * `_hero.css`: Seção inicial. Contém a Logo (Imagem) centralizada. Efeito de glow removido para limpeza visual.
 * `_zigzag.css`: **(ARQUIVO CRÍTICO)** Controla o layout das seções principais, o estilo dos Cards Grandes e o **Modal de Expansão**.
@@ -72,7 +72,7 @@ Se precisar editar algo, vá direto ao arquivo responsável:
 * `_uiverse-button.css`: Botões com gradiente Chocolate e texto Amarelo.
 * `_footer.css`: Rodapé com assinatura e copyright.
 
-### 📂 `js/`
+### `js/`
 * `main.js`: Cérebro único do site.
     1.  **Gerador de Catálogo:** Cria automaticamente 50 cards de joias ao carregar a página.
     2.  **Menu Mobile:** Controle do hambúrguer.
@@ -98,7 +98,7 @@ Se precisar editar algo, vá direto ao arquivo responsável:
 
 ### 28 de novembro de 2025 (Parte 4): Backlog de Correções e Polimento
 
-**Status:** ⚠️ Pendências Visuais Identificadas.
+**Status:** Pendências Visuais Identificadas.
 
 **Correções Prioritárias (Para o Final):**
 
