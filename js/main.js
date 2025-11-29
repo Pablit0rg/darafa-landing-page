@@ -1,25 +1,22 @@
 /**
- * DaRafa Acessórios - Main Script (Final + Integração Instagram)
- * * Funcionalidades:
- * 1. Integração API Instagram (Busca fotos reais)
- * 2. Fallback: Gerador de Catálogo (50 Itens) se a API falhar
+ * DaRafa Acessórios - Main Script (Final + Lazy Loading Avançado)
+ * Funcionalidades:
+ * 1. Integração API Instagram (Com Lazy Loading)
+ * 2. Fallback: Catálogo Automático (Com Lazy Loading)
  * 3. Menu Mobile, Scroll, Modais e UX
+ * 4. Performance: Intersection Observer para imagens
  */
 
 document.addEventListener('DOMContentLoaded', () => {
 
     // =========================================================
-    // CONFIGURAÇÃO DO INSTAGRAM (PREENCHER AQUI NO FUTURO)
+    // CONFIGURAÇÃO DO INSTAGRAM
     // =========================================================
-    const INSTAGRAM_TOKEN = ''; // <--- Cole o Token da Rafa aqui entre as aspas
-    const INSTAGRAM_USER_ID = ''; // (Opcional para alguns endpoints)
-    
-    // Limite de itens para puxar (O Instagram geralmente paginas de 25 em 25)
+    const INSTAGRAM_TOKEN = ''; // Cole o Token aqui no futuro
     const POSTS_LIMIT = 50; 
 
-
     // =========================================================
-    // 1. CONTROLE DE CONTEÚDO (API vs PLACEHOLDER)
+    // 1. CONTROLE DE CONTEÚDO E LAZY LOADING
     // =========================================================
     const galleryContainer = document.querySelector('#gallery-door .gallery-5-cols');
     
@@ -28,7 +25,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function initCatalog() {
-        // Se tiver token, tenta buscar do Instagram
         if (INSTAGRAM_TOKEN) {
             try {
                 await fetchInstagramPosts();
@@ -37,36 +33,37 @@ document.addEventListener('DOMContentLoaded', () => {
                 generatePlaceholderCatalog();
             }
         } else {
-            // Sem token, usa os placeholders direto
-            console.log("Token não configurado. Gerando catálogo demonstrativo.");
             generatePlaceholderCatalog();
         }
+        
+        // INICIA O OBSERVADOR APÓS GERAR OS CARDS
+        initLazyObserver();
     }
 
     // --- A. FUNÇÃO QUE BUSCA DO INSTAGRAM ---
     async function fetchInstagramPosts() {
         const url = `https://graph.instagram.com/me/media?fields=id,caption,media_type,media_url,thumbnail_url,permalink&access_token=${INSTAGRAM_TOKEN}&limit=${POSTS_LIMIT}`;
-        
         const response = await fetch(url);
         if (!response.ok) throw new Error('Erro na resposta do Instagram');
-        
         const data = await response.json();
-        const posts = data.data;
-
-        // Limpa o container
+        
         galleryContainer.innerHTML = '';
 
-        // Cria os cards com fotos reais
-        posts.forEach(post => {
-            // Filtra: Se for VIDEO, usa a thumbnail. Se for IMAGEM/CAROUSEL, usa a media_url
+        data.data.forEach(post => {
             const imageUrl = post.media_type === 'VIDEO' ? post.thumbnail_url : post.media_url;
             const caption = post.caption ? post.caption : 'DaRafa Acessórios';
-            // Trunca o texto para caber no card
             const shortDesc = caption.length > 80 ? caption.substring(0, 80) + '...' : caption;
 
+            // USO DE DATA-SRC PARA O LAZY LOAD
             const cardHTML = `
                 <div class="gold-framebox">
-                    <img src="${imageUrl}" alt="Post Instagram" loading="lazy">
+                    <img 
+                        class="lazy-image" 
+                        src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" 
+                        data-src="${imageUrl}" 
+                        alt="Post Instagram"
+                        style="transition: opacity 0.5s ease; opacity: 0;" 
+                    >
                     <div class="card-info-bar">
                         <h3 class="info-title">Do Instagram</h3>
                         <p class="info-desc">${shortDesc}</p>
@@ -81,9 +78,16 @@ document.addEventListener('DOMContentLoaded', () => {
     function generatePlaceholderCatalog() {
         galleryContainer.innerHTML = '';
         for (let i = 1; i <= 50; i++) {
+            // USO DE DATA-SRC PARA O LAZY LOAD
             const cardHTML = `
                 <div class="gold-framebox">
-                    <img src="https://placehold.co/300x400/0e0e0e/C6A36B?text=Joia+${i}" alt="Joia ${i} da Coleção" loading="lazy">
+                    <img 
+                        class="lazy-image" 
+                        src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+                        data-src="https://placehold.co/300x400/0e0e0e/C6A36B?text=Joia+${i}" 
+                        alt="Joia ${i} da Coleção"
+                        style="transition: opacity 0.5s ease; opacity: 0;"
+                    >
                     <div class="card-info-bar">
                         <h3 class="info-title">Joia Exclusiva ${i}</h3>
                         <p class="info-desc">Design artesanal em arame dourado, peça única da coleção DaRafa.</p>
@@ -92,6 +96,36 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
             galleryContainer.innerHTML += cardHTML;
         }
+    }
+
+    // --- C. O OBSERVADOR DE IMAGENS (LAZY LOADER) ---
+    function initLazyObserver() {
+        const lazyImages = document.querySelectorAll('.lazy-image');
+
+        const imageObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const img = entry.target;
+                    // Troca o placeholder pela imagem real
+                    img.src = img.dataset.src;
+                    
+                    // Quando carregar, faz aparecer suavemente
+                    img.onload = () => {
+                        img.style.opacity = 1;
+                    };
+                    
+                    // Para de observar esta imagem (já carregou)
+                    observer.unobserve(img);
+                }
+            });
+        }, {
+            rootMargin: "50px 0px", // Carrega um pouco antes de aparecer na tela
+            threshold: 0.01
+        });
+
+        lazyImages.forEach(image => {
+            imageObserver.observe(image);
+        });
     }
 
 
@@ -152,9 +186,12 @@ document.addEventListener('DOMContentLoaded', () => {
         door.addEventListener('click', function(e) {
             e.preventDefault();
             const hiddenContentDiv = this.querySelector('.hidden-content');
+            
             if (hiddenContentDiv) {
-                // Se o conteúdo foi gerado dinamicamente (API), ele já estará atualizado no DOM
-                openExpansionModal(hiddenContentDiv.innerHTML);
+                // Clona o conteúdo e reativa o Lazy Loading dentro do Modal
+                // (Pois os elementos clonados precisam de novos observadores)
+                const contentHTML = hiddenContentDiv.innerHTML;
+                openExpansionModal(contentHTML);
             }
         });
     });
@@ -175,8 +212,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
         requestAnimationFrame(() => { overlay.classList.add('active'); });
 
-        // --- RE-BIND NOS MINI CARDS ---
-        // Necessário aplicar os ouvintes de clique nos novos elementos criados
+        // --- REATIVAR LAZY LOAD DENTRO DO MODAL ---
+        // Como o HTML foi injetado agora, precisamos observar as novas imagens
+        const modalImages = overlay.querySelectorAll('.lazy-image');
+        if(modalImages.length > 0) {
+            const modalObserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const img = entry.target;
+                        img.src = img.dataset.src;
+                        img.onload = () => { img.style.opacity = 1; };
+                        observer.unobserve(img);
+                    }
+                });
+            }, { root: overlay, rootMargin: "50px" }); // root é o overlay (que tem scroll)
+            
+            modalImages.forEach(img => modalObserver.observe(img));
+        }
+
+        // --- RE-BIND NOS MINI CARDS (CLIQUES) ---
         const miniCards = overlay.querySelectorAll('.gold-framebox');
         miniCards.forEach(card => {
             card.addEventListener('click', (e) => {
@@ -184,9 +238,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 const img = card.querySelector('img');
                 
                 if (card.dataset.description) {
-                    openStoryMode(img.src, card.dataset.title, card.dataset.description);
+                    openStoryMode(img.dataset.src || img.src, card.dataset.title, card.dataset.description);
                 } else {
-                    if(img) openImageViewer(img.src);
+                    if(img) openImageViewer(img.dataset.src || img.src);
                 }
             });
         });
