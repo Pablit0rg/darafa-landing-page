@@ -1,22 +1,85 @@
 /**
- * DaRafa Acessórios - Main Script (Final + Lazy Loading Avançado)
- * Funcionalidades:
- * 1. Integração API Instagram (Com Lazy Loading)
- * 2. Fallback: Catálogo Automático (Com Lazy Loading)
- * 3. Menu Mobile, Scroll, Modais e UX
- * 4. Performance: Intersection Observer para imagens
+ * DaRafa Acessórios - Main Script (Versão Data-Driven)
+ * * Atualizações:
+ * - Implementação de "Banco de Dados" Local (productsData)
+ * - Renderização dinâmica do catálogo (sem loops cegos)
+ * - Mantido: Lazy Loading, Menu Mobile e Modais
  */
 
 document.addEventListener('DOMContentLoaded', () => {
 
     // =========================================================
-    // CONFIGURAÇÃO DO INSTAGRAM
+    // 0. CONFIGURAÇÕES GERAIS
     // =========================================================
-    const INSTAGRAM_TOKEN = ''; // Cole o Token aqui no futuro
+    const INSTAGRAM_TOKEN = ''; // Seu Token aqui futuramente
     const POSTS_LIMIT = 50; 
 
     // =========================================================
-    // 1. CONTROLE DE CONTEÚDO E LAZY LOADING
+    // 1. BASE DE DADOS (Seu Catálogo Virtual)
+    // Aqui você edita, adiciona ou remove joias facilmente.
+    // =========================================================
+    const productsData = [
+        {
+            id: 1,
+            category: 'nose-cuff',
+            title: 'Nose Cuff Spirals',
+            description: 'Design espiral em arame dourado, ajuste anatômico sem necessidade de furos.',
+            image: 'assets/images/darafa-catalogo.jpg' // Usando imagem existente como exemplo
+        },
+        {
+            id: 2,
+            category: 'brincos',
+            title: 'Brinco Solar',
+            description: 'Peça statement inspirada no sol, leve, marcante e com acabamento martelado.',
+            image: 'assets/images/Darafa4.jpg'
+        },
+        {
+            id: 3,
+            category: 'body',
+            title: 'Body Chain Lux',
+            description: 'Corrente corporal para realçar a beleza natural no verão ou em ocasiões especiais.',
+            image: 'assets/images/Darafa5.jpg'
+        },
+        {
+            id: 4,
+            category: 'aneis',
+            title: 'Anel Regulável Flow',
+            description: 'Adapta-se a qualquer dedo com conforto, trazendo movimento orgânico.',
+            image: 'https://placehold.co/300x400/0e0e0e/C6A36B?text=Anel+Flow' // Placeholder
+        },
+        {
+            id: 5,
+            category: 'brincos',
+            title: 'Argola Texturizada',
+            description: 'Um clássico revisitado com texturas manuais que captam a luz.',
+            image: 'https://placehold.co/300x400/0e0e0e/C6A36B?text=Argola' // Placeholder
+        },
+        {
+            id: 6,
+            category: 'colar',
+            title: 'Choker Minimal',
+            description: 'Aro rígido dourado, elegância instantânea para qualquer composição.',
+            image: 'https://placehold.co/300x400/0e0e0e/C6A36B?text=Choker' // Placeholder
+        },
+        // --- DICA: Copie e cole o bloco acima para adicionar mais joias! ---
+    ];
+
+    // Se quiser preencher visualmente até 15 itens para teste, descomente as linhas abaixo:
+    /*
+    for(let i=7; i<=15; i++) {
+        productsData.push({
+            id: i,
+            category: 'geral',
+            title: `Joia Exclusiva ${i}`,
+            description: 'Peça única feita à mão com design exclusivo DaRafa.',
+            image: `https://placehold.co/300x400/0e0e0e/C6A36B?text=Joia+${i}`
+        });
+    }
+    */
+
+
+    // =========================================================
+    // 2. CONTROLE DE CONTEÚDO E RENDERIZAÇÃO
     // =========================================================
     const galleryContainer = document.querySelector('#gallery-door .gallery-5-cols');
     
@@ -25,22 +88,50 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function initCatalog() {
+        // Tenta carregar do Instagram se tiver Token, senão carrega Local
         if (INSTAGRAM_TOKEN) {
             try {
                 await fetchInstagramPosts();
             } catch (error) {
-                console.warn("Falha ao carregar Instagram. Usando backup...", error);
-                generatePlaceholderCatalog();
+                console.warn("Falha no Instagram, carregando catálogo local...", error);
+                renderLocalCatalog(productsData);
             }
         } else {
-            generatePlaceholderCatalog();
+            // Carregamento Padrão (Local)
+            renderLocalCatalog(productsData);
         }
         
-        // INICIA O OBSERVADOR APÓS GERAR OS CARDS
+        // Inicia o observador de imagens (Lazy Load) após criar os elementos
         initLazyObserver();
     }
 
-    // --- A. FUNÇÃO QUE BUSCA DO INSTAGRAM ---
+    // --- A. RENDERIZA O CATÁLOGO LOCAL (NOVA FUNÇÃO) ---
+    function renderLocalCatalog(items) {
+        if (!galleryContainer) return;
+        galleryContainer.innerHTML = ''; // Limpa container
+
+        items.forEach(item => {
+            // Criação do HTML baseado nos dados do objeto
+            const cardHTML = `
+                <div class="gold-framebox" data-category="${item.category}" data-title="${item.title}" data-description="${item.description}">
+                    <img 
+                        class="lazy-image" 
+                        src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+                        data-src="${item.image}" 
+                        alt="${item.title}"
+                        style="transition: opacity 0.5s ease; opacity: 0;"
+                    >
+                    <div class="card-info-bar">
+                        <h3 class="info-title">${item.title}</h3>
+                        <p class="info-desc">${item.description}</p>
+                    </div>
+                </div>
+            `;
+            galleryContainer.innerHTML += cardHTML;
+        });
+    }
+
+    // --- B. BUSCA DO INSTAGRAM (MANTIDO) ---
     async function fetchInstagramPosts() {
         const url = `https://graph.instagram.com/me/media?fields=id,caption,media_type,media_url,thumbnail_url,permalink&access_token=${INSTAGRAM_TOKEN}&limit=${POSTS_LIMIT}`;
         const response = await fetch(url);
@@ -52,9 +143,9 @@ document.addEventListener('DOMContentLoaded', () => {
         data.data.forEach(post => {
             const imageUrl = post.media_type === 'VIDEO' ? post.thumbnail_url : post.media_url;
             const caption = post.caption ? post.caption : 'DaRafa Acessórios';
+            // Corta textos muito longos
             const shortDesc = caption.length > 80 ? caption.substring(0, 80) + '...' : caption;
 
-            // USO DE DATA-SRC PARA O LAZY LOAD
             const cardHTML = `
                 <div class="gold-framebox">
                     <img 
@@ -74,31 +165,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- B. FUNÇÃO QUE GERA PLACEHOLDERS (BACKUP) ---
-    function generatePlaceholderCatalog() {
-        galleryContainer.innerHTML = '';
-        for (let i = 1; i <= 50; i++) {
-            // USO DE DATA-SRC PARA O LAZY LOAD
-            const cardHTML = `
-                <div class="gold-framebox">
-                    <img 
-                        class="lazy-image" 
-                        src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
-                        data-src="https://placehold.co/300x400/0e0e0e/C6A36B?text=Joia+${i}" 
-                        alt="Joia ${i} da Coleção"
-                        style="transition: opacity 0.5s ease; opacity: 0;"
-                    >
-                    <div class="card-info-bar">
-                        <h3 class="info-title">Joia Exclusiva ${i}</h3>
-                        <p class="info-desc">Design artesanal em arame dourado, peça única da coleção DaRafa.</p>
-                    </div>
-                </div>
-            `;
-            galleryContainer.innerHTML += cardHTML;
-        }
-    }
-
-    // --- C. O OBSERVADOR DE IMAGENS (LAZY LOADER) ---
+    // --- C. OBSERVADOR DE IMAGENS (LAZY LOADER) ---
     function initLazyObserver() {
         const lazyImages = document.querySelectorAll('.lazy-image');
 
@@ -106,20 +173,18 @@ document.addEventListener('DOMContentLoaded', () => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     const img = entry.target;
-                    // Troca o placeholder pela imagem real
-                    img.src = img.dataset.src;
+                    img.src = img.dataset.src; // Carrega a imagem real
                     
-                    // Quando carregar, faz aparecer suavemente
                     img.onload = () => {
-                        img.style.opacity = 1;
+                        img.style.opacity = 1; // Efeito Fade-In
+                        img.classList.add('loaded'); // Classe para controle CSS se necessário
                     };
                     
-                    // Para de observar esta imagem (já carregou)
                     observer.unobserve(img);
                 }
             });
         }, {
-            rootMargin: "50px 0px", // Carrega um pouco antes de aparecer na tela
+            rootMargin: "50px 0px", 
             threshold: 0.01
         });
 
@@ -130,7 +195,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     // =========================================================
-    // 2. MENU MOBILE
+    // 3. MENU MOBILE
     // =========================================================
     const navbarToggler = document.getElementById('navbar-toggler');
     const navbarMenu = document.getElementById('navbar-menu');
@@ -154,6 +219,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    // Fecha ao clicar fora
     document.addEventListener('click', (e) => {
         if (navbarMenu && navbarMenu.classList.contains('active') && 
             !navbarMenu.contains(e.target) && 
@@ -164,7 +230,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     // =========================================================
-    // 3. BOTÃO VOLTAR AO TOPO
+    // 4. BOTÃO VOLTAR AO TOPO
     // =========================================================
     const backToTopBtn = document.getElementById('backToTop');
 
@@ -177,7 +243,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     // =========================================================
-    // 4. A MÁGICA: EXPANSÃO DOS CARDS (PORTAL)
+    // 5. SISTEMA DE PORTAL (EXPANSÃO DE CARDS)
     // =========================================================
     const doors = document.querySelectorAll('.big-card-wrapper:not(.no-expand)');
     const body = document.body;
@@ -188,8 +254,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const hiddenContentDiv = this.querySelector('.hidden-content');
             
             if (hiddenContentDiv) {
-                // Clona o conteúdo e reativa o Lazy Loading dentro do Modal
-                // (Pois os elementos clonados precisam de novos observadores)
+                // Clona o conteúdo para o Modal
                 const contentHTML = hiddenContentDiv.innerHTML;
                 openExpansionModal(contentHTML);
             }
@@ -208,43 +273,48 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
 
         body.appendChild(overlay);
-        body.style.overflow = 'hidden'; 
+        body.style.overflow = 'hidden'; // Trava o scroll da página principal
 
         requestAnimationFrame(() => { overlay.classList.add('active'); });
 
         // --- REATIVAR LAZY LOAD DENTRO DO MODAL ---
-        // Como o HTML foi injetado agora, precisamos observar as novas imagens
         const modalImages = overlay.querySelectorAll('.lazy-image');
         if(modalImages.length > 0) {
             const modalObserver = new IntersectionObserver((entries, observer) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
                         const img = entry.target;
-                        img.src = img.dataset.src;
-                        img.onload = () => { img.style.opacity = 1; };
-                        observer.unobserve(img);
+                        if(img.dataset.src) {
+                            img.src = img.dataset.src;
+                            img.onload = () => { img.style.opacity = 1; };
+                            observer.unobserve(img);
+                        }
                     }
                 });
-            }, { root: overlay, rootMargin: "50px" }); // root é o overlay (que tem scroll)
+            }, { root: overlay, rootMargin: "50px" });
             
             modalImages.forEach(img => modalObserver.observe(img));
         }
 
-        // --- RE-BIND NOS MINI CARDS (CLIQUES) ---
+        // --- RE-BIND NOS MINI CARDS (CLIQUES DENTRO DO MODAL) ---
         const miniCards = overlay.querySelectorAll('.gold-framebox');
         miniCards.forEach(card => {
             card.addEventListener('click', (e) => {
                 e.stopPropagation();
                 const img = card.querySelector('img');
                 
-                if (card.dataset.description) {
+                // Verifica se é um card de história ou produto
+                if (card.dataset.description && card.classList.contains('story-card')) {
+                    // Modo História (Atelier)
                     openStoryMode(img.dataset.src || img.src, card.dataset.title, card.dataset.description);
                 } else {
+                    // Modo Produto (Zoom simples)
                     if(img) openImageViewer(img.dataset.src || img.src);
                 }
             });
         });
 
+        // Função de Fechar
         const close = () => {
             overlay.classList.remove('active');
             body.style.overflow = '';
@@ -258,6 +328,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (e.target === overlay || e.target.classList.contains('expansion-content')) close(); 
         });
         
+        // Fechar com ESC
         const closeOnEsc = (e) => {
             if (e.key === 'Escape' && !document.querySelector('.image-viewer-overlay.active')) {
                 close();
@@ -269,13 +340,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     // =========================================================
-    // 5. MODAIS DE DETALHE
+    // 6. MODAIS DE DETALHE (ZOOM E HISTÓRIA)
     // =========================================================
+    
+    // Zoom Simples (Para produtos)
     function openImageViewer(imageSrc) {
         const content = `<img src="${imageSrc}" class="image-viewer-content" style="max-height:90vh; max-width:90%; border:1px solid var(--color-gold-dark); box-shadow: 0 0 30px rgba(0,0,0,0.8);">`;
         createViewerOverlay(content);
     }
 
+    // Modo História (Foto + Texto lado a lado)
     function openStoryMode(imageSrc, title, description) {
         const content = `
             <div class="story-viewer-content">
@@ -291,6 +365,7 @@ document.addEventListener('DOMContentLoaded', () => {
         createViewerOverlay(content);
     }
 
+    // Cria o Overlay Genérico
     function createViewerOverlay(innerContent) {
         const viewer = document.createElement('div');
         viewer.className = 'image-viewer-overlay';
