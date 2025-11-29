@@ -1,9 +1,8 @@
 /**
- * DaRafa Acessórios - Main Script (Versão Data-Driven)
- * * Atualizações:
- * - Implementação de "Banco de Dados" Local (productsData)
- * - Renderização dinâmica do catálogo (sem loops cegos)
- * - Mantido: Lazy Loading, Menu Mobile e Modais
+ * DaRafa Acessórios - Main Script (Versão Data-Driven Uniformizada)
+ * * ATUALIZAÇÃO:
+ * - Todas as joias do catálogo agora usam a imagem de referência (4 peças).
+ * - Mantida a estrutura de dados para fácil alteração futura.
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -16,7 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // =========================================================
     // 1. BASE DE DADOS (Seu Catálogo Virtual)
-    // Aqui você edita, adiciona ou remove joias facilmente.
+    // Todas as imagens apontam para 'darafa-catalogo.jpg' conforme solicitado.
     // =========================================================
     const productsData = [
         {
@@ -24,59 +23,58 @@ document.addEventListener('DOMContentLoaded', () => {
             category: 'nose-cuff',
             title: 'Nose Cuff Spirals',
             description: 'Design espiral em arame dourado, ajuste anatômico sem necessidade de furos.',
-            image: 'assets/images/darafa-catalogo.jpg' // Usando imagem existente como exemplo
+            image: 'assets/images/darafa-catalogo.jpg' 
         },
         {
             id: 2,
             category: 'brincos',
             title: 'Brinco Solar',
             description: 'Peça statement inspirada no sol, leve, marcante e com acabamento martelado.',
-            image: 'assets/images/Darafa4.jpg'
+            image: 'assets/images/darafa-catalogo.jpg'
         },
         {
             id: 3,
             category: 'body',
             title: 'Body Chain Lux',
             description: 'Corrente corporal para realçar a beleza natural no verão ou em ocasiões especiais.',
-            image: 'assets/images/Darafa5.jpg'
+            image: 'assets/images/darafa-catalogo.jpg'
         },
         {
             id: 4,
             category: 'aneis',
             title: 'Anel Regulável Flow',
             description: 'Adapta-se a qualquer dedo com conforto, trazendo movimento orgânico.',
-            image: 'https://placehold.co/300x400/0e0e0e/C6A36B?text=Anel+Flow' // Placeholder
+            image: 'assets/images/darafa-catalogo.jpg'
         },
         {
             id: 5,
             category: 'brincos',
             title: 'Argola Texturizada',
             description: 'Um clássico revisitado com texturas manuais que captam a luz.',
-            image: 'https://placehold.co/300x400/0e0e0e/C6A36B?text=Argola' // Placeholder
+            image: 'assets/images/darafa-catalogo.jpg'
         },
         {
             id: 6,
             category: 'colar',
             title: 'Choker Minimal',
             description: 'Aro rígido dourado, elegância instantânea para qualquer composição.',
-            image: 'https://placehold.co/300x400/0e0e0e/C6A36B?text=Choker' // Placeholder
+            image: 'assets/images/darafa-catalogo.jpg'
         },
-        // --- DICA: Copie e cole o bloco acima para adicionar mais joias! ---
+        {
+            id: 7,
+            category: 'nose-cuff',
+            title: 'Nose Cuff Duplo',
+            description: 'Duas voltas de arame para destaque extra no visual.',
+            image: 'assets/images/darafa-catalogo.jpg'
+        },
+        {
+            id: 8,
+            category: 'brincos',
+            title: 'Maxi Brinco',
+            description: 'Para quem não tem medo de brilhar e ocupar espaço.',
+            image: 'assets/images/darafa-catalogo.jpg'
+        }
     ];
-
-    // Se quiser preencher visualmente até 15 itens para teste, descomente as linhas abaixo:
-    /*
-    for(let i=7; i<=15; i++) {
-        productsData.push({
-            id: i,
-            category: 'geral',
-            title: `Joia Exclusiva ${i}`,
-            description: 'Peça única feita à mão com design exclusivo DaRafa.',
-            image: `https://placehold.co/300x400/0e0e0e/C6A36B?text=Joia+${i}`
-        });
-    }
-    */
-
 
     // =========================================================
     // 2. CONTROLE DE CONTEÚDO E RENDERIZAÇÃO
@@ -88,7 +86,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function initCatalog() {
-        // Tenta carregar do Instagram se tiver Token, senão carrega Local
+        // Lógica de Fallback: Se não tem token, carrega o local direto
         if (INSTAGRAM_TOKEN) {
             try {
                 await fetchInstagramPosts();
@@ -105,7 +103,7 @@ document.addEventListener('DOMContentLoaded', () => {
         initLazyObserver();
     }
 
-    // --- A. RENDERIZA O CATÁLOGO LOCAL (NOVA FUNÇÃO) ---
+    // --- A. RENDERIZA O CATÁLOGO LOCAL ---
     function renderLocalCatalog(items) {
         if (!galleryContainer) return;
         galleryContainer.innerHTML = ''; // Limpa container
@@ -143,7 +141,6 @@ document.addEventListener('DOMContentLoaded', () => {
         data.data.forEach(post => {
             const imageUrl = post.media_type === 'VIDEO' ? post.thumbnail_url : post.media_url;
             const caption = post.caption ? post.caption : 'DaRafa Acessórios';
-            // Corta textos muito longos
             const shortDesc = caption.length > 80 ? caption.substring(0, 80) + '...' : caption;
 
             const cardHTML = `
@@ -177,7 +174,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     
                     img.onload = () => {
                         img.style.opacity = 1; // Efeito Fade-In
-                        img.classList.add('loaded'); // Classe para controle CSS se necessário
+                        img.classList.add('loaded'); 
                     };
                     
                     observer.unobserve(img);
