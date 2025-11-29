@@ -16,7 +16,7 @@ Este documento narra a evolução completa do desenvolvimento da Landing Page pa
 
 ## 2. Evolução Visual (Do Escuro ao Mel)
 
-### Fase 1: "Ouro na Noite" 🌑
+### Fase 1: "Ouro na Noite"
 * Conceito inicial de fundo preto profundo com detalhes dourados.
 
 ### Fase 2: O Pivô para "Honey Theme"
