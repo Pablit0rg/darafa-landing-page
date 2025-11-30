@@ -1,16 +1,9 @@
 /**
- * DaRafa Acessórios - Main Script (Versão FINAL - Analytics Edition)
- * * OTIMIZAÇÕES APLICADAS (10/10):
- * 1. Analytics Caseiro (Rastreamento de Dados) - NOVO!
- * 2. Notificações Toast
- * 3. Navegação por Teclado
- * 4. Infinite Scroll Real
- * 5. Ordenação Dinâmica
- * 6. Swipe Gestures
- * 7. Compartilhamento Nativo
- * 8. URL State (Links)
- * 9. Wishlist (Favoritos)
- * 10. Busca em Tempo Real
+ * DaRafa Acessórios - Main Script (Versão FASE 3 - SEO Edition)
+ * * NOVAS OTIMIZAÇÕES (FASE 3):
+ * 1. SEO Avançado: Injeção de JSON-LD (Dados Estruturados)
+ * * * FUNCIONALIDADES MANTIDAS (FASE 2):
+ * Analytics, Toast, Teclado, Infinite Scroll, Ordenação, Swipe, Share, URL, Wishlist, Busca.
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -24,11 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     let wishlist = JSON.parse(localStorage.getItem('darafa_wishlist')) || [];
     let analyticsData = JSON.parse(localStorage.getItem('darafa_analytics')) || {
-        views: 0,
-        searches: {},
-        categoryClicks: {},
-        productClicks: {},
-        interactions: { wishlist: 0, share: 0 }
+        views: 0, searches: {}, categoryClicks: {}, productClicks: {}, interactions: { wishlist: 0, share: 0 }
     };
     let currentSort = 'default';
     let activeData = []; 
@@ -36,36 +25,16 @@ document.addEventListener('DOMContentLoaded', () => {
     let scrollSentinel;
     let currentViewerIndex = -1;
 
-    // --- SISTEMA DE ANALYTICS (NOVO) ---
+    // --- ANALYTICS ---
     function trackEvent(type, label) {
         if (type === 'view') analyticsData.views++;
-        if (type === 'search' && label) {
-            analyticsData.searches[label] = (analyticsData.searches[label] || 0) + 1;
-        }
-        if (type === 'filter') {
-            analyticsData.categoryClicks[label] = (analyticsData.categoryClicks[label] || 0) + 1;
-        }
-        if (type === 'product_click') {
-            analyticsData.productClicks[label] = (analyticsData.productClicks[label] || 0) + 1;
-        }
-        if (type === 'interaction') {
-            analyticsData.interactions[label]++;
-        }
-        
+        if (type === 'search' && label) analyticsData.searches[label] = (analyticsData.searches[label] || 0) + 1;
+        if (type === 'filter') analyticsData.categoryClicks[label] = (analyticsData.categoryClicks[label] || 0) + 1;
+        if (type === 'product_click') analyticsData.productClicks[label] = (analyticsData.productClicks[label] || 0) + 1;
+        if (type === 'interaction') analyticsData.interactions[label]++;
         localStorage.setItem('darafa_analytics', JSON.stringify(analyticsData));
-        // console.log(`[Analytics] ${type}: ${label}`); // Descomente para debugar
     }
-
-    // Expõe função global para ver relatórios no console
-    window.showAnalytics = () => {
-        console.table(analyticsData.categoryClicks);
-        console.log('--- Buscas Populares ---', analyticsData.searches);
-        console.log('--- Produtos Mais Vistos ---', analyticsData.productClicks);
-        console.log('--- Engajamento ---', analyticsData.interactions);
-        return "Relatório gerado acima!";
-    };
-
-    // Registra visualização de página
+    window.showAnalytics = () => { console.table(analyticsData.categoryClicks); return analyticsData; };
     trackEvent('view');
 
     // --- DADOS DOS PRODUTOS ---
@@ -94,8 +63,62 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     // =========================================================
-    // 1. OBSERVERS
+    // 1. SEO: DADOS ESTRUTURADOS (JSON-LD) [NOVO!]
     // =========================================================
+    function initSEO() {
+        const baseUrl = window.location.origin + window.location.pathname.replace('index.html', '');
+        
+        const schema = {
+            "@context": "https://schema.org",
+            "@graph": [
+                {
+                    "@type": "JewelryStore",
+                    "name": "DaRafa Acessórios",
+                    "url": baseUrl,
+                    "description": "Joias artesanais feitas à mão em Curitiba. Design exclusivo em arame.",
+                    "logo": baseUrl + "assets/images/logo.darafa.oficial.logo.png",
+                    "sameAs": ["https://www.instagram.com/darafa_cwb/"],
+                    "address": {
+                        "@type": "PostalAddress",
+                        "addressLocality": "Curitiba",
+                        "addressRegion": "PR",
+                        "addressCountry": "BR"
+                    }
+                },
+                {
+                    "@type": "ItemList",
+                    "numberOfItems": productsData.length,
+                    "itemListElement": productsData.map((item, index) => ({
+                        "@type": "ListItem",
+                        "position": index + 1,
+                        "item": {
+                            "@type": "Product",
+                            "name": item.title,
+                            "description": item.description,
+                            "image": baseUrl + item.image,
+                            "sku": `DARAF-${item.id}`,
+                            "brand": { "@type": "Brand", "name": "DaRafa" },
+                            "offers": { "@type": "Offer", "availability": "https://schema.org/InStock", "price": "0.00", "priceCurrency": "BRL" } // Preço sob consulta
+                        }
+                    }))
+                }
+            ]
+        };
+
+        const script = document.createElement('script');
+        script.type = 'application/ld+json';
+        script.text = JSON.stringify(schema);
+        document.head.appendChild(script);
+        // console.log("SEO JSON-LD Injetado!");
+    }
+
+
+    // =========================================================
+    // 2. INICIALIZAÇÃO
+    // =========================================================
+    const galleryContainer = document.querySelector('#gallery-door .gallery-5-cols');
+    
+    // Observers
     const globalImageObserver = new IntersectionObserver((entries, observer) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
@@ -111,13 +134,9 @@ document.addEventListener('DOMContentLoaded', () => {
         if (entries[0].isIntersecting) loadNextBatch();
     }, { rootMargin: "200px" });
 
-
-    // =========================================================
-    // 2. INICIALIZAÇÃO
-    // =========================================================
-    const galleryContainer = document.querySelector('#gallery-door .gallery-5-cols');
-    
+    // Boot
     if (galleryContainer) {
+        initSEO(); // Inicia o SEO
         initCatalog();
         initFilters();
         initControls(); 
@@ -128,14 +147,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     window.addEventListener('popstate', loadStateFromURL);
 
+    // =========================================================
+    // 3. LÓGICA DE CATÁLOGO & INFINITE SCROLL
+    // =========================================================
     function updateURL(param, value) {
         const url = new URL(window.location);
         if (value && value !== 'all') url.searchParams.set(param, value);
         else url.searchParams.delete(param);
-        
         if (param === 'filtro') url.searchParams.delete('busca');
         if (param === 'busca') url.searchParams.delete('filtro');
-        
         window.history.pushState({}, '', url);
     }
 
@@ -174,11 +194,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!container) return;
         container.innerHTML = ''; 
         loadedCount = 0; 
-        if(scrollSentinel) {
-            infiniteScrollObserver.unobserve(scrollSentinel);
-            scrollSentinel.remove();
-            scrollSentinel = null;
-        }
+        if(scrollSentinel) { infiniteScrollObserver.unobserve(scrollSentinel); scrollSentinel.remove(); scrollSentinel = null; }
+        
         if (activeData.length === 0) {
             container.innerHTML = '<p style="color:#241000; text-align:center; width:100%; grid-column: 1/-1; padding: 20px;">Nada encontrado.</p>';
             return;
@@ -188,7 +205,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function loadNextBatch(container = galleryContainer) {
         if (loadedCount >= activeData.length) return;
-
         const nextBatch = activeData.slice(loadedCount, loadedCount + ITEMS_PER_PAGE);
         let htmlBuffer = '';
 
@@ -211,7 +227,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         container.insertAdjacentHTML('beforeend', htmlBuffer);
         loadedCount += nextBatch.length;
-
         attachCardEvents(container);
         attachObserversAndPreload(container);
         manageSentinel(container);
@@ -225,24 +240,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 scrollSentinel.style.cssText = "width:100%; height:20px; grid-column: 1/-1;"; 
                 container.parentNode.appendChild(scrollSentinel);
                 infiniteScrollObserver.observe(scrollSentinel);
-            } else {
-                container.parentNode.appendChild(scrollSentinel); 
-            }
-        } else {
-            if(scrollSentinel) {
-                infiniteScrollObserver.unobserve(scrollSentinel);
-                scrollSentinel.remove();
-                scrollSentinel = null;
-            }
+            } else container.parentNode.appendChild(scrollSentinel); 
+        } else if(scrollSentinel) {
+            infiniteScrollObserver.unobserve(scrollSentinel);
+            scrollSentinel.remove();
+            scrollSentinel = null;
         }
     }
 
     function attachObserversAndPreload(container) {
         const images = container.querySelectorAll('.lazy-image:not(.observed)');
-        images.forEach(img => {
-            globalImageObserver.observe(img);
-            img.classList.add('observed');
-        });
+        images.forEach(img => { globalImageObserver.observe(img); img.classList.add('observed'); });
         const cards = container.querySelectorAll('.gold-framebox');
         cards.forEach(card => {
             card.addEventListener('mouseenter', () => {
@@ -256,7 +264,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     // =========================================================
-    // 3. ESTILOS DINÂMICOS & UI
+    // 4. ESTILOS & INTERAÇÕES
     // =========================================================
     function injectDynamicStyles() {
         const style = document.createElement('style');
@@ -273,7 +281,6 @@ document.addEventListener('DOMContentLoaded', () => {
             #js-search-input { padding: 12px 25px; width: 100%; max-width: 300px; border-radius: 50px; border: 2px solid #241000; background: rgba(255,255,255,0.9); color: #241000; font-size: 1rem; outline: none; box-shadow: 0 4px 10px rgba(36,16,0,0.1); transition: all 0.3s ease; }
             #js-sort-select { padding: 12px 20px; border-radius: 50px; border: 2px solid #241000; background: #241000; color: #FDB90C; font-size: 0.9rem; font-weight: 600; cursor: pointer; outline: none; appearance: none; -webkit-appearance: none; text-align: center; box-shadow: 0 4px 10px rgba(36,16,0,0.2); }
             #js-sort-select:hover { background: #3a1a00; }
-            
             .toast-notification {
                 position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px);
                 background-color: #241000; color: #FDB90C; padding: 12px 24px;
@@ -290,202 +297,23 @@ document.addEventListener('DOMContentLoaded', () => {
     function showToast(message) {
         const oldToast = document.querySelector('.toast-notification');
         if(oldToast) oldToast.remove();
-
         const toast = document.createElement('div');
         toast.className = 'toast-notification';
         toast.innerHTML = message;
         document.body.appendChild(toast);
-
-        requestAnimationFrame(() => { toast.classList.add('show'); });
-        setTimeout(() => {
-            toast.classList.remove('show');
-            setTimeout(() => toast.remove(), 400);
-        }, 3000);
+        requestAnimationFrame(() => toast.classList.add('show'));
+        setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 400); }, 3000);
     }
 
     function attachCardEvents(container) {
         container.addEventListener('click', (e) => {
             const btn = e.target;
-            if (btn.classList.contains('wishlist-btn')) {
-                e.stopPropagation();
-                const card = btn.closest('.gold-framebox');
-                toggleWishlist(parseInt(card.dataset.id), btn);
-                return;
-            }
-            if (btn.classList.contains('share-btn')) {
-                e.stopPropagation();
-                const card = btn.closest('.gold-framebox');
-                shareProduct(card);
-                return;
-            }
+            if (btn.classList.contains('wishlist-btn')) { e.stopPropagation(); toggleWishlist(parseInt(btn.closest('.gold-framebox').dataset.id), btn); return; }
+            if (btn.classList.contains('share-btn')) { e.stopPropagation(); shareProduct(btn.closest('.gold-framebox')); return; }
         });
     }
 
-    // --- ACESSIBILIDADE E NAVEGAÇÃO ---
-    function initKeyboardNavigation() {
-        document.addEventListener('keydown', (e) => {
-            if (document.querySelector('.image-viewer-overlay.active')) {
-                if (e.key === 'ArrowRight') navigateViewer(1);
-                if (e.key === 'ArrowLeft') navigateViewer(-1);
-                return;
-            }
-            if (e.key === 'Enter' && document.activeElement.classList.contains('gold-framebox')) {
-                const card = document.activeElement;
-                const img = card.querySelector('img');
-                if (img) {
-                    trackEvent('product_click', card.dataset.title); // Analytics
-                    openImageViewer(img.dataset.src || img.src, card.dataset.id);
-                }
-            }
-        });
-    }
-
-    function navigateViewer(direction) {
-        if (activeData.length === 0 || currentViewerIndex === -1) return;
-        let newIndex = currentViewerIndex + direction;
-        if (newIndex >= activeData.length) newIndex = 0;
-        if (newIndex < 0) newIndex = activeData.length - 1;
-        const nextItem = activeData[newIndex];
-        currentViewerIndex = newIndex;
-        const viewerImg = document.querySelector('.image-viewer-content');
-        if (viewerImg) {
-            viewerImg.style.opacity = 0.5;
-            setTimeout(() => {
-                viewerImg.src = nextItem.image;
-                viewerImg.onload = () => viewerImg.style.opacity = 1;
-            }, 200);
-        }
-    }
-
-    async function shareProduct(card) {
-        const title = card.dataset.title;
-        const category = card.dataset.category;
-        const shareUrl = `${window.location.origin}${window.location.pathname}?filtro=${category}`;
-        
-        trackEvent('interaction', 'share'); // Analytics
-
-        const shareData = { title: `DaRafa: ${title}`, text: `Olha essa joia: ${title}`, url: shareUrl };
-        try { 
-            if (navigator.share) {
-                await navigator.share(shareData);
-            } else { 
-                await navigator.clipboard.writeText(shareUrl); 
-                showToast('Link copiado para a área de transferência! 📋');
-            } 
-        } catch (err) { console.warn('Erro share', err); }
-    }
-
-    function toggleWishlist(id, btnElement) {
-        const index = wishlist.indexOf(id);
-        if (index === -1) {
-            wishlist.push(id);
-            btnElement.classList.add('active');
-            btnElement.style.transform = "scale(1.4)";
-            setTimeout(() => btnElement.style.transform = "scale(1)", 200);
-            showToast('Adicionado aos Favoritos ❤️');
-            trackEvent('interaction', 'wishlist'); // Analytics Add
-        } else {
-            wishlist.splice(index, 1);
-            btnElement.classList.remove('active');
-            showToast('Removido dos Favoritos 💔');
-        }
-        localStorage.setItem('darafa_wishlist', JSON.stringify(wishlist));
-        
-        const activeFilter = document.querySelector('.filter-btn.active');
-        if (activeFilter && activeFilter.dataset.filter === 'favorites') {
-            activeData = productsData.filter(item => wishlist.includes(item.id));
-            activeData = applySort(activeData);
-            const parentContainer = btnElement.closest('.gallery-5-cols');
-            if(parentContainer) resetAndRender(parentContainer);
-        }
-    }
-
-
-    // =========================================================
-    // 4. CONTROLES UNIFICADOS (ANALYTICS ATIVADO)
-    // =========================================================
-    function initControls() {
-        const filterContainer = document.querySelector('.catalog-filters');
-        if (!filterContainer) return;
-
-        const controlsWrapper = document.createElement('div');
-        controlsWrapper.className = 'controls-wrapper';
-
-        const input = document.createElement('input');
-        input.type = 'text';
-        input.id = 'js-search-input';
-        input.placeholder = 'Buscar joia...';
-        input.addEventListener('focus', () => input.style.borderColor = '#CD4A00');
-        input.addEventListener('blur', () => input.style.borderColor = '#241000');
-
-        const sortSelect = document.createElement('select');
-        sortSelect.id = 'js-sort-select';
-        sortSelect.innerHTML = `<option value="default">✨ Relevância</option><option value="az">A - Z</option><option value="za">Z - A</option><option value="random">🎲 Aleatório</option>`;
-
-        controlsWrapper.appendChild(input);
-        controlsWrapper.appendChild(sortSelect);
-        filterContainer.prepend(controlsWrapper);
-
-        const updateGridData = () => {
-            const term = input.value.toLowerCase();
-            const activeFilterBtn = document.querySelector('.filter-btn.active');
-            const filterValue = activeFilterBtn ? activeFilterBtn.dataset.filter : 'all';
-
-            let filtered = productsData;
-            if (filterValue === 'favorites') {
-                filtered = productsData.filter(item => wishlist.includes(item.id));
-            } else if (filterValue !== 'all') {
-                filtered = productsData.filter(item => item.category === filterValue);
-            }
-
-            if (term) {
-                // Analytics Search (debounce simples para não floodar)
-                if(term.length > 3) trackEvent('search', term); 
-                
-                filtered = filtered.filter(item => 
-                    item.title.toLowerCase().includes(term) || 
-                    item.description.toLowerCase().includes(term) ||
-                    item.category.toLowerCase().includes(term)
-                );
-            }
-
-            activeData = applySort(filtered);
-            
-            const parentModal = input.closest('.expansion-content');
-            const targetGallery = parentModal ? parentModal.querySelector('.gallery-5-cols') : document.querySelector('#gallery-door .gallery-5-cols');
-            
-            resetAndRender(targetGallery);
-        };
-
-        input.addEventListener('input', (e) => {
-            if(this.searchTimeout) clearTimeout(this.searchTimeout);
-            this.searchTimeout = setTimeout(() => {
-                updateURL('busca', e.target.value.length > 0 ? e.target.value : null);
-            }, 500);
-            updateGridData();
-        });
-
-        sortSelect.addEventListener('change', (e) => {
-            currentSort = e.target.value;
-            updateGridData();
-        });
-    }
-
-    function applySort(items) {
-        let sortedItems = [...items];
-        switch (currentSort) {
-            case 'az': sortedItems.sort((a, b) => a.title.localeCompare(b.title)); break;
-            case 'za': sortedItems.sort((a, b) => b.title.localeCompare(a.title)); break;
-            case 'random': sortedItems.sort(() => Math.random() - 0.5); break;
-            default: sortedItems.sort((a, b) => a.id - b.id);
-        }
-        return sortedItems;
-    }
-
-
-    // =========================================================
-    // 5. FILTROS
-    // =========================================================
+    // --- FILTROS, BUSCA & CONTROLES ---
     function initFilters() {
         const filterContainers = document.querySelectorAll('.catalog-filters');
         filterContainers.forEach(container => {
@@ -505,93 +333,180 @@ document.addEventListener('DOMContentLoaded', () => {
                 const button = e.target;
                 const filterValue = button.dataset.filter;
                 updateURL('filtro', filterValue);
-                
-                trackEvent('filter', filterValue); // Analytics
+                trackEvent('filter', filterValue);
 
                 const searchInput = document.getElementById('js-search-input');
                 if (searchInput) searchInput.value = '';
 
                 const container = button.closest('.catalog-filters');
-                if(container) {
-                    container.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
-                    button.classList.add('active');
-                }
+                if(container) { container.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active')); button.classList.add('active'); }
 
-                if (filterValue === 'favorites') {
-                    activeData = productsData.filter(item => wishlist.includes(item.id));
-                } else if (filterValue === 'all') {
-                    activeData = productsData;
-                } else {
-                    activeData = productsData.filter(item => item.category === filterValue);
-                }
+                if (filterValue === 'favorites') activeData = productsData.filter(item => wishlist.includes(item.id));
+                else if (filterValue === 'all') activeData = productsData;
+                else activeData = productsData.filter(item => item.category === filterValue);
                 
                 activeData = applySort(activeData);
-
                 const modalContent = button.closest('.expansion-content');
                 const targetGallery = modalContent ? modalContent.querySelector('.gallery-5-cols') : document.querySelector('#gallery-door .gallery-5-cols');
-                
                 resetAndRender(targetGallery);
             }
         });
     }
 
+    function initControls() {
+        const filterContainer = document.querySelector('.catalog-filters');
+        if (!filterContainer) return;
 
-    // =========================================================
-    // 6. UX: MENU, SCROLL & PORTAIS
-    // =========================================================
+        const controlsWrapper = document.createElement('div');
+        controlsWrapper.className = 'controls-wrapper';
+
+        const input = document.createElement('input');
+        input.type = 'text'; input.id = 'js-search-input'; input.placeholder = 'Buscar joia...';
+        input.addEventListener('focus', () => input.style.borderColor = '#CD4A00');
+        input.addEventListener('blur', () => input.style.borderColor = '#241000');
+
+        const sortSelect = document.createElement('select');
+        sortSelect.id = 'js-sort-select';
+        sortSelect.innerHTML = `<option value="default">✨ Relevância</option><option value="az">A - Z</option><option value="za">Z - A</option><option value="random">🎲 Aleatório</option>`;
+
+        controlsWrapper.appendChild(input);
+        controlsWrapper.appendChild(sortSelect);
+        filterContainer.prepend(controlsWrapper);
+
+        const updateGridData = () => {
+            const term = input.value.toLowerCase();
+            const activeFilterBtn = document.querySelector('.filter-btn.active');
+            const filterValue = activeFilterBtn ? activeFilterBtn.dataset.filter : 'all';
+
+            let filtered = productsData;
+            if (filterValue === 'favorites') filtered = productsData.filter(item => wishlist.includes(item.id));
+            else if (filterValue !== 'all') filtered = productsData.filter(item => item.category === filterValue);
+
+            if (term) {
+                if(term.length > 3) trackEvent('search', term);
+                filtered = filtered.filter(item => item.title.toLowerCase().includes(term) || item.description.toLowerCase().includes(term) || item.category.toLowerCase().includes(term));
+            }
+
+            activeData = applySort(filtered);
+            const parentModal = input.closest('.expansion-content');
+            const targetGallery = parentModal ? parentModal.querySelector('.gallery-5-cols') : document.querySelector('#gallery-door .gallery-5-cols');
+            resetAndRender(targetGallery);
+        };
+
+        input.addEventListener('input', (e) => {
+            if(this.searchTimeout) clearTimeout(this.searchTimeout);
+            this.searchTimeout = setTimeout(() => { updateURL('busca', e.target.value.length > 0 ? e.target.value : null); }, 500);
+            updateGridData();
+        });
+
+        sortSelect.addEventListener('change', (e) => { currentSort = e.target.value; updateGridData(); });
+    }
+
+    function applySort(items) {
+        let sortedItems = [...items];
+        switch (currentSort) {
+            case 'az': sortedItems.sort((a, b) => a.title.localeCompare(b.title)); break;
+            case 'za': sortedItems.sort((a, b) => b.title.localeCompare(a.title)); break;
+            case 'random': sortedItems.sort(() => Math.random() - 0.5); break;
+            default: sortedItems.sort((a, b) => a.id - b.id);
+        }
+        return sortedItems;
+    }
+
+    // --- UX: KEYBOARD, SWIPE, MODALS ---
+    function initKeyboardNavigation() {
+        document.addEventListener('keydown', (e) => {
+            if (document.querySelector('.image-viewer-overlay.active')) {
+                if (e.key === 'ArrowRight') navigateViewer(1);
+                if (e.key === 'ArrowLeft') navigateViewer(-1);
+                return;
+            }
+            if (e.key === 'Enter' && document.activeElement.classList.contains('gold-framebox')) {
+                const card = document.activeElement;
+                const img = card.querySelector('img');
+                if (img) { trackEvent('product_click', card.dataset.title); openImageViewer(img.dataset.src || img.src, card.dataset.id); }
+            }
+        });
+    }
+
+    function navigateViewer(direction) {
+        if (activeData.length === 0 || currentViewerIndex === -1) return;
+        let newIndex = currentViewerIndex + direction;
+        if (newIndex >= activeData.length) newIndex = 0;
+        if (newIndex < 0) newIndex = activeData.length - 1;
+        const nextItem = activeData[newIndex];
+        currentViewerIndex = newIndex;
+        const viewerImg = document.querySelector('.image-viewer-content');
+        if (viewerImg) {
+            viewerImg.style.opacity = 0.5;
+            setTimeout(() => { viewerImg.src = nextItem.image; viewerImg.onload = () => viewerImg.style.opacity = 1; }, 200);
+        }
+    }
+
+    async function shareProduct(card) {
+        const title = card.dataset.title;
+        const category = card.dataset.category;
+        const shareUrl = `${window.location.origin}${window.location.pathname}?filtro=${category}`;
+        trackEvent('interaction', 'share');
+        const shareData = { title: `DaRafa: ${title}`, text: `Olha essa joia: ${title}`, url: shareUrl };
+        try { if (navigator.share) await navigator.share(shareData); else { await navigator.clipboard.writeText(shareUrl); showToast('Link copiado! 📋'); } } catch (err) { console.warn('Erro share', err); }
+    }
+
+    function toggleWishlist(id, btnElement) {
+        const index = wishlist.indexOf(id);
+        if (index === -1) {
+            wishlist.push(id);
+            btnElement.classList.add('active');
+            btnElement.style.transform = "scale(1.4)";
+            setTimeout(() => btnElement.style.transform = "scale(1)", 200);
+            showToast('Adicionado aos Favoritos ❤️');
+            trackEvent('interaction', 'wishlist_add');
+        } else {
+            wishlist.splice(index, 1);
+            btnElement.classList.remove('active');
+            showToast('Removido dos Favoritos 💔');
+            trackEvent('interaction', 'wishlist_remove');
+        }
+        localStorage.setItem('darafa_wishlist', JSON.stringify(wishlist));
+        
+        const activeFilter = document.querySelector('.filter-btn.active');
+        if (activeFilter && activeFilter.dataset.filter === 'favorites') {
+            activeData = productsData.filter(item => wishlist.includes(item.id));
+            activeData = applySort(activeData);
+            const parentContainer = btnElement.closest('.gallery-5-cols');
+            if(parentContainer) resetAndRender(parentContainer);
+        }
+    }
+
+    // --- MODAIS & PORTAIS ---
     function throttle(func, limit) {
         let inThrottle;
         return function() {
             const args = arguments;
             const context = this;
-            if (!inThrottle) {
-                func.apply(context, args);
-                inThrottle = true;
-                setTimeout(() => inThrottle = false, limit);
-            }
+            if (!inThrottle) { func.apply(context, args); inThrottle = true; setTimeout(() => inThrottle = false, limit); }
         }
     }
 
     const backToTopBtn = document.getElementById('backToTop');
-    if(backToTopBtn) {
-        window.addEventListener('scroll', throttle(() => {
-            if (window.scrollY > 300) backToTopBtn.classList.add('visible');
-            else backToTopBtn.classList.remove('visible');
-        }, 100), { passive: true });
-    }
+    if(backToTopBtn) window.addEventListener('scroll', throttle(() => { if (window.scrollY > 300) backToTopBtn.classList.add('visible'); else backToTopBtn.classList.remove('visible'); }, 100), { passive: true });
 
     const navbarToggler = document.getElementById('navbar-toggler');
     const navbarMenu = document.getElementById('navbar-menu');
     const navLinks = document.querySelectorAll('.navbar-link');
-
-    function toggleMenu() {
-        if(navbarMenu && navbarToggler) {
-            navbarMenu.classList.toggle('active');
-            navbarToggler.classList.toggle('is-active');
-        }
-    }
-
+    function toggleMenu() { if(navbarMenu && navbarToggler) { navbarMenu.classList.toggle('active'); navbarToggler.classList.toggle('is-active'); } }
     if(navbarToggler) navbarToggler.addEventListener('click', (e) => { e.stopPropagation(); toggleMenu(); });
     navLinks.forEach(link => link.addEventListener('click', () => { if (navbarMenu.classList.contains('active')) toggleMenu(); }));
-    document.addEventListener('click', (e) => {
-        if (navbarMenu && navbarMenu.classList.contains('active') && !navbarMenu.contains(e.target) && !navbarToggler.contains(e.target)) toggleMenu();
-    });
+    document.addEventListener('click', (e) => { if (navbarMenu && navbarMenu.classList.contains('active') && !navbarMenu.contains(e.target) && !navbarToggler.contains(e.target)) toggleMenu(); });
 
     const doors = document.querySelectorAll('.big-card-wrapper:not(.no-expand)');
     const body = document.body;
-
     doors.forEach(door => {
         door.addEventListener('click', function(e) {
-            if(e.target.classList.contains('filter-btn') || 
-               e.target.id === 'js-search-input' || 
-               e.target.id === 'js-sort-select' ||
-               e.target.classList.contains('action-btn')) return;
-               
+            if(e.target.classList.contains('filter-btn') || e.target.id === 'js-search-input' || e.target.id === 'js-sort-select' || e.target.classList.contains('action-btn')) return;
             e.preventDefault();
             const hiddenContentDiv = this.querySelector('.hidden-content');
-            if (hiddenContentDiv) {
-                openExpansionModal(hiddenContentDiv.innerHTML);
-            }
+            if (hiddenContentDiv) openExpansionModal(hiddenContentDiv.innerHTML);
         });
     });
 
@@ -603,8 +518,7 @@ document.addEventListener('DOMContentLoaded', () => {
         body.style.overflow = 'hidden'; 
         requestAnimationFrame(() => { overlay.classList.add('active'); });
 
-        let touchStartY = 0;
-        let touchEndY = 0;
+        let touchStartY = 0; let touchEndY = 0;
         overlay.addEventListener('touchstart', e => { touchStartY = e.changedTouches[0].screenY; }, {passive: true});
         overlay.addEventListener('touchend', e => { touchEndY = e.changedTouches[0].screenY; if (touchEndY - touchStartY > 60) close(); }, {passive: true});
 
@@ -633,12 +547,8 @@ document.addEventListener('DOMContentLoaded', () => {
                  const targetGallery = overlay.querySelector('.gallery-5-cols');
                  resetAndRender(targetGallery);
              };
-
              input.addEventListener('input', updateModal);
-             sortSelect.addEventListener('change', (e) => {
-                 currentSort = e.target.value;
-                 updateModal();
-             });
+             sortSelect.addEventListener('change', (e) => { currentSort = e.target.value; updateModal(); });
 
              if(!modalFilters.querySelector('[data-filter="favorites"]')) {
                 const favBtn = document.createElement('button');
@@ -673,16 +583,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         overlay.addEventListener('click', (e) => {
             const btn = e.target;
-            if (btn.classList.contains('wishlist-btn')) {
-                e.stopPropagation();
-                toggleWishlist(parseInt(btn.closest('.gold-framebox').dataset.id), btn);
-                return;
-            }
-            if (btn.classList.contains('share-btn')) {
-                e.stopPropagation();
-                shareProduct(btn.closest('.gold-framebox'));
-                return;
-            }
+            if (btn.classList.contains('wishlist-btn')) { e.stopPropagation(); toggleWishlist(parseInt(btn.closest('.gold-framebox').dataset.id), btn); return; }
+            if (btn.classList.contains('share-btn')) { e.stopPropagation(); shareProduct(btn.closest('.gold-framebox')); return; }
 
             const card = e.target.closest('.gold-framebox');
             if (card && overlay.contains(card)) {
@@ -691,7 +593,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (card.dataset.description && card.classList.contains('story-card')) {
                     openStoryMode(img.dataset.src || img.src, card.dataset.title, card.dataset.description);
                 } else {
-                    trackEvent('product_click', card.dataset.title); // Analytics
+                    trackEvent('product_click', card.dataset.title);
                     if(img) openImageViewer(img.dataset.src || img.src, card.dataset.id);
                 }
             }
@@ -702,14 +604,15 @@ document.addEventListener('DOMContentLoaded', () => {
             body.style.overflow = '';
             setTimeout(() => { if(overlay.parentNode) overlay.parentNode.removeChild(overlay); }, 400);
         };
-
         overlay.querySelector('.close-expansion').addEventListener('click', close);
         overlay.addEventListener('click', (e) => { if (e.target === overlay || e.target.classList.contains('expansion-content')) close(); });
         const closeOnEsc = (e) => { if (e.key === 'Escape') { close(); document.removeEventListener('keydown', closeOnEsc); } };
         document.addEventListener('keydown', closeOnEsc);
     }
 
-    function openImageViewer(imageSrc) {
+    function openImageViewer(imageSrc, id) {
+        const foundIndex = activeData.findIndex(item => item.id == id);
+        if (foundIndex !== -1) currentViewerIndex = foundIndex;
         createViewerOverlay(`<img src="${imageSrc}" class="image-viewer-content" style="max-height:90vh; max-width:90%; border:1px solid var(--color-gold-dark); box-shadow: 0 0 30px rgba(0,0,0,0.8);">`);
     }
 
@@ -729,8 +632,7 @@ document.addEventListener('DOMContentLoaded', () => {
         body.appendChild(viewer);
         requestAnimationFrame(() => viewer.classList.add('active'));
 
-        let touchStartY = 0;
-        let touchEndY = 0;
+        let touchStartY = 0; let touchEndY = 0;
         viewer.addEventListener('touchstart', e => { touchStartY = e.changedTouches[0].screenY; }, {passive: true});
         viewer.addEventListener('touchend', e => { touchEndY = e.changedTouches[0].screenY; if (touchEndY - touchStartY > 60) closeViewer(); }, {passive: true});
 
