@@ -1,8 +1,9 @@
 /**
- * DaRafa Acessórios - Main Script (Versão FASE 3 - Metadados Dinâmicos)
+ * DaRafa Acessórios - Main Script (Versão FASE 3 - Modo Offline PWA)
  * * NOVAS OTIMIZAÇÕES (FASE 3):
- * 1. Metadados Dinâmicos (Título da Aba/Descrição mudam ao abrir produto) - NOVO!
- * 2. SEO Avançado (JSON-LD)
+ * 1. Modo Offline (Detector de Conexão + UI Grayscale) - NOVO!
+ * 2. Metadados Dinâmicos (Título da Aba)
+ * 3. SEO Avançado (JSON-LD)
  * * * FUNCIONALIDADES MANTIDAS (FASE 2):
  * Analytics, Toast, Teclado, Infinite Scroll, Ordenação, Swipe, Share, URL, Wishlist, Busca.
  */
@@ -16,7 +17,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const POSTS_LIMIT = 50; 
     const ITEMS_PER_PAGE = 12;
     
-    // Estado Global
     let wishlist = JSON.parse(localStorage.getItem('darafa_wishlist')) || [];
     let analyticsData = JSON.parse(localStorage.getItem('darafa_analytics')) || {
         views: 0, searches: {}, categoryClicks: {}, productClicks: {}, interactions: { wishlist: 0, share: 0 }
@@ -69,10 +69,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     // =========================================================
-    // 1. SEO & METADADOS (NOVO!)
+    // 1. SEO & METADADOS
     // =========================================================
-    
-    // Injeção de JSON-LD
     function initSEO() {
         const baseUrl = window.location.origin + window.location.pathname.replace('index.html', '');
         const schema = {
@@ -104,7 +102,6 @@ document.addEventListener('DOMContentLoaded', () => {
         document.head.appendChild(script);
     }
 
-    // --- GERENCIADOR DE METADADOS DINÂMICOS (NOVO) ---
     function setPageMetadata(title, description) {
         document.title = `${title} | DaRafa`;
         const metaDesc = document.querySelector('meta[name="description"]');
@@ -119,7 +116,40 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     // =========================================================
-    // 2. INICIALIZAÇÃO
+    // 2. MODO OFFLINE (PWA) [NOVO!]
+    // =========================================================
+    function initOfflineMode() {
+        // Estilos para o modo offline (Filtro Grayscale)
+        const style = document.createElement('style');
+        style.innerHTML = `
+            body.offline-mode { filter: grayscale(0.8); } /* Deixa o site cinza */
+            body.offline-mode .toast-notification { filter: grayscale(0) !important; } /* Aviso continua colorido */
+        `;
+        document.head.appendChild(style);
+
+        // Listeners de Rede
+        window.addEventListener('offline', () => {
+            document.body.classList.add('offline-mode');
+            showToast('⚠️ Você está offline. Modo leitura ativado.');
+        });
+
+        window.addEventListener('online', () => {
+            document.body.classList.remove('offline-mode');
+            showToast('🟢 Conexão restaurada! Atualizando...');
+            // Tenta recarregar imagens que falharam (opcional)
+            setTimeout(() => {
+                document.querySelectorAll('img').forEach(img => {
+                    if (!img.complete || img.naturalWidth === 0) {
+                        const src = img.src; img.src = ''; img.src = src;
+                    }
+                });
+            }, 1000);
+        });
+    }
+
+
+    // =========================================================
+    // 3. INICIALIZAÇÃO GERAL
     // =========================================================
     const galleryContainer = document.querySelector('#gallery-door .gallery-5-cols');
     
@@ -142,6 +172,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Boot
     if (galleryContainer) {
         initSEO();
+        initOfflineMode(); // Inicia o detector offline
         initCatalog();
         initFilters();
         initControls(); 
@@ -153,7 +184,7 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('popstate', loadStateFromURL);
 
     // =========================================================
-    // 3. LÓGICA DE CATÁLOGO & INFINITE SCROLL
+    // 4. LÓGICA DE CATÁLOGO & INFINITE SCROLL
     // =========================================================
     function updateURL(param, value) {
         const url = new URL(window.location);
@@ -269,7 +300,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     // =========================================================
-    // 4. ESTILOS & INTERAÇÕES
+    // 5. ESTILOS & INTERAÇÕES
     // =========================================================
     function injectDynamicStyles() {
         const style = document.createElement('style');
@@ -445,7 +476,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (viewerImg) {
             viewerImg.style.opacity = 0.5;
             setTimeout(() => { viewerImg.src = nextItem.image; viewerImg.onload = () => viewerImg.style.opacity = 1; }, 200);
-            // ATUALIZA METADADOS AO NAVEGAR NO SLIDESHOW
             setPageMetadata(nextItem.title, nextItem.description);
         }
     }
