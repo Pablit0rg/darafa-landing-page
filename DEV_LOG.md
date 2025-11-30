@@ -72,4 +72,20 @@ Este documento narra a evolucao completa do desenvolvimento da Landing Page para
     * **Proximo Passo:** Criar uma branch de testes ("feature/red-design") para implementar o visual vermelho gradualmente sem afetar a producao.
 
 ---
-*Ultima atualizacao: 30/11/2025 - O projeto segue funcional e pronto para uso, aguardando nova rodada de design.*
+
+## 6. PROXIMOS PASSOS (BACKLOG IMEDIATO - JS PURO)
+Objetivo: Implementar 10 melhorias de alta performance e UX utilizando apenas Vanilla JS (sem alteracoes de CSS).
+
+1. **Busca em Tempo Real:** Campo de pesquisa para filtrar produtos instantaneamente.
+2. **Lista de Desejos (Wishlist):** Salvar produtos favoritos usando LocalStorage.
+3. **Links Compartilhaveis:** Manipulacao da URL para compartilhar filtros ativos.
+4. **Compartilhamento Nativo:** Uso da Web Share API para mobile.
+5. **Gestos de Swipe:** Navegacao por toque em modais e galerias.
+6. **Ordenacao Dinamica:** Botoes para ordenar produtos (A-Z, Aleatorio).
+7. **Infinite Scroll:** Carregamento progressivo de itens para performance.
+8. **Navegacao por Teclado:** Acessibilidade (A11y) para navegar na galeria.
+9. **Notificacoes Toast:** Feedback visual flutuante para acoes do usuario.
+10. **Analytics Caseiro:** Rastreamento basico de cliques e categorias populares.
+
+---
+*Ultima atualizacao: 30/11/2025 - O projeto segue funcional e pronto para expansao JavaScript.*
