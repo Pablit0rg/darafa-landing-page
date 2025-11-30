@@ -1,11 +1,11 @@
 /**
- * DaRafa Acessórios - Main Script (High Performance Edition)
+ * DaRafa Acessórios - Main Script (Versão com Busca em Tempo Real)
  * * OTIMIZAÇÕES APLICADAS:
- * 1. Throttle no Scroll (Economia de CPU)
- * 2. Passive Listeners (Scroll liso no mobile)
- * 3. Observer Singleton (Economia de Memória RAM)
- * 4. Smart Preload (Carregamento antecipado no hover)
- * 5. Renderização Atômica (Menos reflow no navegador)
+ * 1. Busca em Tempo Real (NOVO!)
+ * 2. Throttle no Scroll
+ * 3. Passive Listeners
+ * 4. Observer Singleton
+ * 5. Smart Preload
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -43,33 +43,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     // =========================================================
-    // 1. OBSERVER SINGLETON (PERFORMANCE DE MEMÓRIA)
-    // Criamos UM vigia para o site todo, em vez de vários.
+    // 1. OBSERVER SINGLETON (PERFORMANCE)
     // =========================================================
     const globalImageObserver = new IntersectionObserver((entries, observer) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
                 const img = entry.target;
-                
-                // Troca src falso pelo real
-                if(img.dataset.src) {
-                    img.src = img.dataset.src;
-                }
-
-                // Efeito Fade-In quando carregar
-                img.onload = () => {
-                    img.style.opacity = 1;
-                    img.classList.add('loaded');
-                };
-                
-                // Para de vigiar esta imagem (missão cumprida)
+                if(img.dataset.src) img.src = img.dataset.src;
+                img.onload = () => { img.style.opacity = 1; img.classList.add('loaded'); };
                 observer.unobserve(img);
             }
         });
-    }, {
-        rootMargin: "100px 0px", // Carrega 100px antes de aparecer
-        threshold: 0.01
-    });
+    }, { rootMargin: "100px 0px", threshold: 0.01 });
 
 
     // =========================================================
@@ -80,37 +65,32 @@ document.addEventListener('DOMContentLoaded', () => {
     if (galleryContainer) {
         initCatalog();
         initFilters();
+        initSearchBar(); // Inicializa a nova busca
     }
 
     async function initCatalog() {
         if (INSTAGRAM_TOKEN) {
             try {
                 await fetchInstagramPosts();
-            } catch (error) {
-                renderLocalCatalog(productsData);
-            }
+            } catch (error) { renderLocalCatalog(productsData); }
         } else {
             renderLocalCatalog(productsData);
         }
     }
 
-    // --- RENDERIZADOR OTIMIZADO ---
     function renderLocalCatalog(items) {
         if (!galleryContainer) return;
         
-        // Constrói HTML na memória (mais rápido que tocar no DOM várias vezes)
+        if (items.length === 0) {
+            galleryContainer.innerHTML = '<p style="color:#241000; text-align:center; width:100%; grid-column: 1/-1;">Nenhuma joia encontrada com este termo.</p>';
+            return;
+        }
+
         let fullHTML = '';
-        
         items.forEach(item => {
             fullHTML += `
                 <div class="gold-framebox" data-category="${item.category}" data-title="${item.title}" data-description="${item.description}">
-                    <img 
-                        class="lazy-image" 
-                        src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
-                        data-src="${item.image}" 
-                        alt="${item.title}"
-                        style="transition: opacity 0.8s ease; opacity: 0;"
-                    >
+                    <img class="lazy-image" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-src="${item.image}" alt="${item.title}" style="transition: opacity 0.8s ease; opacity: 0;">
                     <div class="card-info-bar">
                         <h3 class="info-title">${item.title}</h3>
                         <p class="info-desc">${item.description}</p>
@@ -119,68 +99,109 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
         });
         
-        // Injeção Atômica (Uma única atualização de tela)
         galleryContainer.innerHTML = fullHTML;
-        
-        // Ativa os observadores e o Preload Inteligente nos novos elementos
         attachObserversAndPreload(galleryContainer);
     }
 
-    // Função auxiliar para ligar o Observer e o Preload
     function attachObserversAndPreload(container) {
         const images = container.querySelectorAll('.lazy-image');
         images.forEach(img => globalImageObserver.observe(img));
 
-        // SMART PRELOAD: Baixa a imagem no hover do mouse
         const cards = container.querySelectorAll('.gold-framebox');
         cards.forEach(card => {
             card.addEventListener('mouseenter', () => {
                 const img = card.querySelector('img');
                 const src = img.dataset.src || img.src;
-                // Cria um objeto de imagem fantasma para forçar o cache do navegador
                 const preload = new Image();
                 preload.src = src;
-            }, { once: true }); // Só precisa fazer isso na primeira vez que passa o mouse
+            }, { once: true });
         });
     }
 
 
     // =========================================================
-    // 3. FILTROS
+    // 3. BUSCA EM TEMPO REAL (NOVA TAREFA)
     // =========================================================
-    function initFilters() {
-        document.body.addEventListener('click', (e) => {
-            if (e.target.classList.contains('filter-btn')) {
-                const button = e.target;
-                const filterValue = button.dataset.filter;
-                
-                // UX: Troca classe active
-                const container = button.closest('.catalog-filters');
-                if(container) {
-                    container.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
-                    button.classList.add('active');
-                }
+    function initSearchBar() {
+        // Encontra onde colocar a barra (dentro dos filtros ou antes)
+        // Vamos colocar ANTES dos botões de filtro para ficar elegante
+        const filterContainer = document.querySelector('.catalog-filters');
+        if (!filterContainer) return;
 
-                // Lógica de Dados
-                let filteredData;
-                if (filterValue === 'all') {
-                    filteredData = productsData;
+        // 1. Criar o Elemento Input via JS (Sem mexer no HTML)
+        const searchContainer = document.createElement('div');
+        searchContainer.style.width = '100%';
+        searchContainer.style.display = 'flex';
+        searchContainer.style.justifyContent = 'center';
+        searchContainer.style.marginBottom = '20px';
+
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.id = 'js-search-input';
+        input.placeholder = 'Buscar joia (ex: solar, anel)...';
+        
+        // 2. Estilização via JS para não quebrar CSS (Tema Honey)
+        input.style.padding = '12px 25px';
+        input.style.width = '100%';
+        input.style.maxWidth = '400px';
+        input.style.borderRadius = '50px';
+        input.style.border = '2px solid #241000'; // Borda Chocolate
+        input.style.backgroundColor = 'rgba(255,255,255,0.9)';
+        input.style.color = '#241000';
+        input.style.fontFamily = 'inherit';
+        input.style.fontSize = '1rem';
+        input.style.outline = 'none';
+        input.style.boxShadow = '0 4px 10px rgba(36, 16, 0, 0.1)';
+        input.style.transition = 'all 0.3s ease';
+
+        // Efeito de Foco
+        input.addEventListener('focus', () => {
+            input.style.borderColor = '#CD4A00'; // Laranja ao focar
+            input.style.boxShadow = '0 6px 15px rgba(205, 74, 0, 0.2)';
+        });
+        input.addEventListener('blur', () => {
+            input.style.borderColor = '#241000';
+            input.style.boxShadow = '0 4px 10px rgba(36, 16, 0, 0.1)';
+        });
+
+        searchContainer.appendChild(input);
+        
+        // Insere no topo do container de filtros
+        filterContainer.prepend(searchContainer);
+
+        // 3. Lógica de Filtragem
+        input.addEventListener('input', (e) => {
+            const term = e.target.value.toLowerCase();
+            
+            // Reseta visual dos botões de filtro para "Todos" se estiver digitando
+            if (term.length > 0) {
+                document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            }
+
+            // Filtra o Array Original
+            const filtered = productsData.filter(item => {
+                return item.title.toLowerCase().includes(term) || 
+                       item.description.toLowerCase().includes(term) ||
+                       item.category.toLowerCase().includes(term);
+            });
+
+            // Encontra a galeria ativa (pode ser a do modal ou da home)
+            // Como o input está dentro do .catalog-filters, usamos ele como ref
+            const parentModal = input.closest('.expansion-content');
+            const targetGallery = parentModal 
+                ? parentModal.querySelector('.gallery-5-cols') 
+                : document.querySelector('#gallery-door .gallery-5-cols');
+
+            if (targetGallery) {
+                // Renderiza
+                let html = '';
+                if (filtered.length === 0) {
+                    html = '<p style="color:#241000; text-align:center; width:100%; grid-column: 1/-1; padding: 20px;">Nenhuma joia encontrada com este termo.</p>';
                 } else {
-                    filteredData = productsData.filter(item => item.category === filterValue);
-                }
-
-                // Renderização no Alvo
-                const modalContent = button.closest('.expansion-content');
-                const targetGallery = modalContent 
-                    ? modalContent.querySelector('.gallery-5-cols') 
-                    : document.querySelector('#gallery-door .gallery-5-cols');
-                
-                if(targetGallery) {
-                    let html = '';
-                    filteredData.forEach(item => {
+                    filtered.forEach(item => {
                         html += `
                             <div class="gold-framebox" data-category="${item.category}">
-                                <img class="lazy-image" src="${item.image}" alt="${item.title}" style="opacity: 0; transition: opacity 0.5s ease;">
+                                <img class="lazy-image" src="${item.image}" alt="${item.title}" style="opacity: 1;">
                                 <div class="card-info-bar">
                                     <h3 class="info-title">${item.title}</h3>
                                     <p class="info-desc">${item.description}</p>
@@ -188,10 +209,69 @@ document.addEventListener('DOMContentLoaded', () => {
                             </div>
                         `;
                     });
-                    targetGallery.innerHTML = html;
-                    
-                    // Reativa observadores para os itens filtrados
-                    attachObserversAndPreload(targetGallery);
+                }
+                targetGallery.innerHTML = html;
+                
+                // Reativa cliques para zoom
+                // Nota: O clique do modal usa delegação (event bubbling) configurada no initPortal, 
+                // então não precisamos re-adicionar listeners aqui se usarmos o html injection correto.
+            }
+        });
+    }
+
+
+    // =========================================================
+    // 4. FILTROS (INTEGRADO COM A BUSCA)
+    // =========================================================
+    function initFilters() {
+        document.body.addEventListener('click', (e) => {
+            if (e.target.classList.contains('filter-btn')) {
+                const button = e.target;
+                const filterValue = button.dataset.filter;
+                
+                // 1. Limpa a busca se clicar num filtro (UX)
+                const searchInput = document.getElementById('js-search-input');
+                if (searchInput) searchInput.value = '';
+
+                // 2. Visual do Botão
+                const container = button.closest('.catalog-filters');
+                if(container) {
+                    container.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+                }
+
+                // 3. Filtragem dos Dados
+                let filteredData;
+                if (filterValue === 'all') {
+                    filteredData = productsData;
+                } else {
+                    filteredData = productsData.filter(item => item.category === filterValue);
+                }
+
+                // 4. Renderização
+                const modalContent = button.closest('.expansion-content');
+                const targetGallery = modalContent 
+                    ? modalContent.querySelector('.gallery-5-cols') 
+                    : document.querySelector('#gallery-door .gallery-5-cols');
+                
+                if(targetGallery) {
+                    renderLocalCatalog(filteredData);
+                    // Como renderLocalCatalog busca o container global por ID, aqui forçamos o HTML no target correto se for modal
+                    if(modalContent) {
+                        let html = '';
+                        filteredData.forEach(item => {
+                            html += `
+                                <div class="gold-framebox" data-category="${item.category}">
+                                    <img class="lazy-image" src="${item.image}" alt="${item.title}" style="opacity: 1;"> 
+                                    <div class="card-info-bar">
+                                        <h3 class="info-title">${item.title}</h3>
+                                        <p class="info-desc">${item.description}</p>
+                                    </div>
+                                </div>
+                            `;
+                        });
+                        targetGallery.innerHTML = html;
+                    }
                 }
             }
         });
@@ -199,11 +279,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     // =========================================================
-    // 4. UX: MENU MOBILE & BOTÃO TOPO (THROTTLED)
+    // 5. UX: MENU & SCROLL
     // =========================================================
-    
-    // THROTTLE FUNCTION (O Limitador de Velocidade)
-    // Garante que uma função rode no máximo 1 vez a cada X milissegundos
     function throttle(func, limit) {
         let inThrottle;
         return function() {
@@ -217,16 +294,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Botão Voltar ao Topo com Throttle + Passive Listener
     const backToTopBtn = document.getElementById('backToTop');
     if(backToTopBtn) {
         window.addEventListener('scroll', throttle(() => {
             if (window.scrollY > 300) backToTopBtn.classList.add('visible');
             else backToTopBtn.classList.remove('visible');
-        }, 100), { passive: true }); // { passive: true } deixa o scroll liso no mobile
+        }, 100), { passive: true });
     }
 
-    // Menu Mobile
     const navbarToggler = document.getElementById('navbar-toggler');
     const navbarMenu = document.getElementById('navbar-menu');
     const navLinks = document.querySelectorAll('.navbar-link');
@@ -255,14 +330,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     // =========================================================
-    // 5. SISTEMA DE PORTAL & MODAIS
+    // 6. PORTAL & MODAIS
     // =========================================================
     const doors = document.querySelectorAll('.big-card-wrapper:not(.no-expand)');
     const body = document.body;
 
     doors.forEach(door => {
         door.addEventListener('click', function(e) {
-            if(e.target.classList.contains('filter-btn')) return;
+            if(e.target.classList.contains('filter-btn') || e.target.id === 'js-search-input') return;
             e.preventDefault();
             const hiddenContentDiv = this.querySelector('.hidden-content');
             if (hiddenContentDiv) {
@@ -279,12 +354,58 @@ document.addEventListener('DOMContentLoaded', () => {
         body.style.overflow = 'hidden'; 
         requestAnimationFrame(() => { overlay.classList.add('active'); });
 
-        // Reativa observadores DENTRO do Modal (pois é HTML novo)
-        // Usamos o mesmo observer global (Singleton)
-        const modalContainer = overlay.querySelector('.expansion-content');
-        if(modalContainer) attachObserversAndPreload(modalContainer);
+        // IMPORTANTE: Reativar a busca no novo HTML clonado
+        // Como o HTML foi clonado, o input perdeu os eventos. Precisamos re-inicializar a busca dentro do modal.
+        // Removemos o input antigo clonado para evitar duplicidade de IDs e criamos um novo limpo.
+        const oldInput = overlay.querySelector('#js-search-input');
+        if(oldInput && oldInput.parentNode) {
+            oldInput.parentNode.remove(); // Remove o container da busca clonado
+        }
+        // Recria a busca dentro do modal
+        const modalFilters = overlay.querySelector('.catalog-filters');
+        if(modalFilters) {
+             // Reutilizamos a lógica de criação, mas apontando para este container específico
+             const searchContainer = document.createElement('div');
+             searchContainer.style.cssText = "width:100%; display:flex; justify-content:center; margin-bottom:20px;";
+             
+             const input = document.createElement('input');
+             input.type = 'text';
+             input.placeholder = 'Buscar joia...';
+             input.style.cssText = "padding:12px 25px; width:100%; max-width:400px; border-radius:50px; border:2px solid #241000; background:rgba(255,255,255,0.9); color:#241000; font-size:1rem; outline:none;";
+             
+             input.addEventListener('input', (e) => {
+                 const term = e.target.value.toLowerCase();
+                 const filtered = productsData.filter(item => item.title.toLowerCase().includes(term) || item.description.toLowerCase().includes(term) || item.category.includes(term));
+                 const targetGallery = overlay.querySelector('.gallery-5-cols');
+                 if(targetGallery) {
+                     let html = '';
+                     if(filtered.length === 0) html = '<p style="text-align:center; width:100%;">Nada encontrado.</p>';
+                     else filtered.forEach(item => {
+                         html += `<div class="gold-framebox" data-category="${item.category}"><img class="lazy-image" src="${item.image}" style="opacity:1;"><div class="card-info-bar"><h3 class="info-title">${item.title}</h3><p class="info-desc">${item.description}</p></div></div>`;
+                     });
+                     targetGallery.innerHTML = html;
+                 }
+             });
+             
+             searchContainer.appendChild(input);
+             modalFilters.prepend(searchContainer);
+        }
 
-        // Delegação de cliques para Zoom/História
+        const modalImages = overlay.querySelectorAll('.lazy-image');
+        if(modalImages.length > 0) {
+            const modalObserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const img = entry.target;
+                        if(img.dataset.src) img.src = img.dataset.src;
+                        img.onload = () => { img.style.opacity = 1; };
+                        observer.unobserve(img);
+                    }
+                });
+            }, { root: overlay, rootMargin: "50px" });
+            modalImages.forEach(img => modalObserver.observe(img));
+        }
+
         overlay.addEventListener('click', (e) => {
             const card = e.target.closest('.gold-framebox');
             if (card && overlay.contains(card)) {
@@ -316,7 +437,6 @@ document.addEventListener('DOMContentLoaded', () => {
         document.addEventListener('keydown', closeOnEsc);
     }
 
-    // VIEWER E STORY MODE
     function openImageViewer(imageSrc) {
         createViewerOverlay(`<img src="${imageSrc}" class="image-viewer-content" style="max-height:90vh; max-width:90%; border:1px solid var(--color-gold-dark); box-shadow: 0 0 30px rgba(0,0,0,0.8);">`);
     }
