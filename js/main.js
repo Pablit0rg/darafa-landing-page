@@ -1,11 +1,11 @@
 /**
- * DaRafa Acessórios - Main Script (Versão com Compartilhamento Nativo)
+ * DaRafa Acessórios - Main Script (Versão com Swipe Gestures)
  * * OTIMIZAÇÕES APLICADAS:
- * 1. Compartilhamento Nativo (Web Share API) - NOVO!
- * 2. Links Compartilháveis (URL State)
- * 3. Lista de Desejos (Wishlist)
- * 4. Busca em Tempo Real
- * 5. Performance (Throttle, Passive, Observer)
+ * 1. Gestos de Swipe (Arrastar para fechar) - NOVO!
+ * 2. Compartilhamento Nativo (Web Share API)
+ * 3. Links Compartilháveis (URL State)
+ * 4. Lista de Desejos (Wishlist)
+ * 5. Busca em Tempo Real
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -18,7 +18,6 @@ document.addEventListener('DOMContentLoaded', () => {
     
     let wishlist = JSON.parse(localStorage.getItem('darafa_wishlist')) || [];
 
-    // LISTA MANUAL (Core)
     const productsData = [
         { id: 1, category: 'nose-cuff', title: 'Nose Cuff Spirals', description: 'Design espiral em arame dourado, ajuste anatômico sem furos.', image: 'assets/images/darafa-catalogo.jpg' },
         { id: 2, category: 'brincos', title: 'Brinco Solar', description: 'Peça statement inspirada no sol, leve e marcante.', image: 'assets/images/darafa-catalogo.jpg' },
@@ -30,7 +29,6 @@ document.addEventListener('DOMContentLoaded', () => {
         { id: 8, category: 'brincos', title: 'Maxi Brinco', description: 'Para quem não tem medo de brilhar.', image: 'assets/images/darafa-catalogo.jpg' }
     ];
 
-    // COMPLETADOR DE LISTA
     const categoriasExemplo = ['nose-cuff', 'brincos', 'aneis', 'colar'];
     for (let i = productsData.length + 1; i <= 50; i++) {
         const cat = categoriasExemplo[i % categoriasExemplo.length];
@@ -68,8 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
         initCatalog();
         initFilters();
         initSearchBar(); 
-        injectDynamicStyles(); // Injeta estilos de Wishlist e Share
-        
+        injectDynamicStyles(); 
         setTimeout(loadStateFromURL, 100);
     }
 
@@ -109,7 +106,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-
     async function initCatalog() {
         if (INSTAGRAM_TOKEN) {
             try {
@@ -133,12 +129,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const isFav = wishlist.includes(item.id) ? 'active' : '';
             fullHTML += `
                 <div class="gold-framebox" data-id="${item.id}" data-category="${item.category}" data-title="${item.title}" data-description="${item.description}">
-                    
                     <div class="card-actions">
                         <button class="action-btn share-btn" aria-label="Compartilhar" onclick="event.stopPropagation()">➦</button>
                         <button class="action-btn wishlist-btn ${isFav}" aria-label="Favoritar" onclick="event.stopPropagation()">♥</button>
                     </div>
-
                     <img class="lazy-image" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-src="${item.image}" alt="${item.title}" style="transition: opacity 0.8s ease; opacity: 0;">
                     <div class="card-info-bar">
                         <h3 class="info-title">${item.title}</h3>
@@ -150,7 +144,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         galleryContainer.innerHTML = fullHTML;
         attachObserversAndPreload(galleryContainer);
-        attachCardEvents(galleryContainer); // Liga cliques (Wishlist + Share)
+        attachCardEvents(galleryContainer); 
     }
 
     function attachObserversAndPreload(container) {
@@ -172,52 +166,15 @@ document.addEventListener('DOMContentLoaded', () => {
     // =========================================================
     // 3. LÓGICA DE AÇÕES (WISHLIST + SHARE)
     // =========================================================
-    
-    // Injeta CSS dinâmico para os botões
     function injectDynamicStyles() {
         const style = document.createElement('style');
         style.innerHTML = `
-            .card-actions {
-                position: absolute;
-                top: 10px;
-                right: 10px;
-                z-index: 10;
-                display: flex;
-                gap: 8px;
-            }
-            .action-btn {
-                background: rgba(36, 16, 0, 0.6);
-                border: none;
-                color: #fff;
-                font-size: 1.1rem;
-                width: 35px;
-                height: 35px;
-                border-radius: 50%;
-                cursor: pointer;
-                transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                padding-top: 2px;
-                backdrop-filter: blur(4px);
-            }
-            .action-btn:hover {
-                background: #241000;
-                transform: scale(1.1);
-            }
-            /* Estilo Específico Wishlist */
-            .wishlist-btn.active {
-                color: #D00000;
-                background: #fff;
-                box-shadow: 0 0 10px rgba(208,0,0,0.5);
-            }
-            /* Estilo Específico Share */
-            .share-btn {
-                font-size: 1rem;
-            }
-            .share-btn:active {
-                transform: scale(0.9);
-            }
+            .card-actions { position: absolute; top: 10px; right: 10px; z-index: 10; display: flex; gap: 8px; }
+            .action-btn { background: rgba(36, 16, 0, 0.6); border: none; color: #fff; font-size: 1.1rem; width: 35px; height: 35px; border-radius: 50%; cursor: pointer; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: flex; align-items: center; justify-content: center; padding-top: 2px; backdrop-filter: blur(4px); }
+            .action-btn:hover { background: #241000; transform: scale(1.1); }
+            .wishlist-btn.active { color: #D00000; background: #fff; box-shadow: 0 0 10px rgba(208,0,0,0.5); }
+            .share-btn { font-size: 1rem; }
+            .share-btn:active { transform: scale(0.9); }
         `;
         document.head.appendChild(style);
     }
@@ -225,16 +182,12 @@ document.addEventListener('DOMContentLoaded', () => {
     function attachCardEvents(container) {
         container.addEventListener('click', (e) => {
             const btn = e.target;
-            
-            // Lógica Wishlist
             if (btn.classList.contains('wishlist-btn')) {
                 e.stopPropagation();
                 const card = btn.closest('.gold-framebox');
                 const id = parseInt(card.dataset.id);
                 toggleWishlist(id, btn);
             }
-            
-            // Lógica Share (NOVO)
             if (btn.classList.contains('share-btn')) {
                 e.stopPropagation();
                 const card = btn.closest('.gold-framebox');
@@ -243,33 +196,17 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- FUNÇÃO DE COMPARTILHAMENTO NATIVO ---
     async function shareProduct(card) {
         const title = card.dataset.title;
         const description = card.dataset.description;
         const category = card.dataset.category;
-        
-        // Gera um link direto com filtro se possível, senão manda para a home
         const shareUrl = `${window.location.origin}${window.location.pathname}?filtro=${category}`;
-
-        const shareData = {
-            title: `DaRafa Acessórios: ${title}`,
-            text: `Olha essa joia incrível: ${title} - ${description}`,
-            url: shareUrl
-        };
+        const shareData = { title: `DaRafa: ${title}`, text: `Olha essa joia: ${title}`, url: shareUrl };
 
         try {
-            // Tenta usar API Nativa (Mobile/Tablets modernos)
-            if (navigator.share) {
-                await navigator.share(shareData);
-            } else {
-                // Fallback para PC: Copia para área de transferência
-                await navigator.clipboard.writeText(shareUrl);
-                alert('Link copiado para a área de transferência!');
-            }
-        } catch (err) {
-            console.warn('Erro ao compartilhar:', err);
-        }
+            if (navigator.share) await navigator.share(shareData);
+            else { await navigator.clipboard.writeText(shareUrl); alert('Link copiado!'); }
+        } catch (err) { console.warn('Erro share', err); }
     }
 
     function toggleWishlist(id, btnElement) {
@@ -290,9 +227,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const filtered = productsData.filter(item => wishlist.includes(item.id));
             const parentContainer = btnElement.closest('.gallery-5-cols');
             if(parentContainer) {
-               if(filtered.length === 0) {
-                   parentContainer.innerHTML = '<p style="color:#241000; text-align:center; width:100%; grid-column: 1/-1; padding:20px;">Você ainda não tem favoritos.</p>';
-               } else {
+               if(filtered.length === 0) parentContainer.innerHTML = '<p style="color:#241000; text-align:center; width:100%; grid-column: 1/-1; padding:20px;">Você ainda não tem favoritos.</p>';
+               else {
                    const card = btnElement.closest('.gold-framebox');
                    card.style.opacity = '0';
                    setTimeout(() => card.remove(), 300);
@@ -326,7 +262,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         input.addEventListener('input', (e) => {
             const term = e.target.value.toLowerCase();
-            
             if(this.searchTimeout) clearTimeout(this.searchTimeout);
             this.searchTimeout = setTimeout(() => {
                 if(term.length > 0) updateURL('busca', term);
@@ -344,9 +279,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const parentModal = input.closest('.expansion-content');
             const targetGallery = parentModal ? parentModal.querySelector('.gallery-5-cols') : document.querySelector('#gallery-door .gallery-5-cols');
 
-            if (targetGallery) {
-                renderLocalCatalogWrapper(targetGallery, filtered);
-            }
+            if (targetGallery) renderLocalCatalogWrapper(targetGallery, filtered);
         });
     }
 
@@ -422,16 +355,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 const modalContent = button.closest('.expansion-content');
                 const targetGallery = modalContent ? modalContent.querySelector('.gallery-5-cols') : document.querySelector('#gallery-door .gallery-5-cols');
                 
-                if(targetGallery) {
-                    renderLocalCatalogWrapper(targetGallery, filteredData);
-                }
+                if(targetGallery) renderLocalCatalogWrapper(targetGallery, filteredData);
             }
         });
     }
 
 
     // =========================================================
-    // 6. UX & PORTAIS
+    // 6. UX: SWIPE GESTURES & PORTAIS
     // =========================================================
     function throttle(func, limit) {
         let inThrottle;
@@ -471,6 +402,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (navbarMenu && navbarMenu.classList.contains('active') && !navbarMenu.contains(e.target) && !navbarToggler.contains(e.target)) toggleMenu();
     });
 
+    // SISTEMA DE PORTAL (OPEN MODAL)
     const doors = document.querySelectorAll('.big-card-wrapper:not(.no-expand)');
     const body = document.body;
 
@@ -478,7 +410,7 @@ document.addEventListener('DOMContentLoaded', () => {
         door.addEventListener('click', function(e) {
             if(e.target.classList.contains('filter-btn') || 
                e.target.id === 'js-search-input' || 
-               e.target.classList.contains('action-btn')) return; // Bloqueia clique nos botões
+               e.target.classList.contains('action-btn')) return;
                
             e.preventDefault();
             const hiddenContentDiv = this.querySelector('.hidden-content');
@@ -495,6 +427,28 @@ document.addEventListener('DOMContentLoaded', () => {
         body.appendChild(overlay);
         body.style.overflow = 'hidden'; 
         requestAnimationFrame(() => { overlay.classList.add('active'); });
+
+        // --- SWIPE GESTURE (NOVO) ---
+        let touchStartY = 0;
+        let touchEndY = 0;
+        
+        // Passive listener para não travar o scroll normal
+        overlay.addEventListener('touchstart', e => {
+            touchStartY = e.changedTouches[0].screenY;
+        }, {passive: true});
+
+        overlay.addEventListener('touchend', e => {
+            touchEndY = e.changedTouches[0].screenY;
+            handleSwipe();
+        }, {passive: true});
+
+        function handleSwipe() {
+            // Se arrastou para baixo mais de 60px
+            if (touchEndY - touchStartY > 60) {
+                close();
+            }
+        }
+        // ---------------------------
 
         const oldInput = overlay.querySelector('#js-search-input');
         if(oldInput && oldInput.parentNode) oldInput.parentNode.remove();
@@ -570,6 +524,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.addEventListener('keydown', closeOnEsc);
     }
 
+    // VISUALIZADORES (Também com Swipe)
     function openImageViewer(imageSrc) {
         createViewerOverlay(`<img src="${imageSrc}" class="image-viewer-content" style="max-height:90vh; max-width:90%; border:1px solid var(--color-gold-dark); box-shadow: 0 0 30px rgba(0,0,0,0.8);">`);
     }
@@ -589,6 +544,16 @@ document.addEventListener('DOMContentLoaded', () => {
         viewer.innerHTML = `<button class="close-viewer" style="position:absolute; top:20px; right:30px; color:#fff; font-size:2rem; background:none; border:none; cursor:pointer; z-index:3001;">&times;</button>${innerContent}`;
         body.appendChild(viewer);
         requestAnimationFrame(() => viewer.classList.add('active'));
+
+        // --- SWIPE GESTURE NO VIEWER ---
+        let touchStartY = 0;
+        let touchEndY = 0;
+        viewer.addEventListener('touchstart', e => { touchStartY = e.changedTouches[0].screenY; }, {passive: true});
+        viewer.addEventListener('touchend', e => {
+            touchEndY = e.changedTouches[0].screenY;
+            if (touchEndY - touchStartY > 60) closeViewer();
+        }, {passive: true});
+        // ------------------------------
 
         const closeViewer = () => {
             viewer.classList.remove('active');
