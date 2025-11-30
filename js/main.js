@@ -1,9 +1,10 @@
 /**
- * DaRafa Acessórios - Main Script (Versão FASE 3 - Modo Offline PWA)
+ * DaRafa Acessórios - Main Script (Versão FASE 3 - Histórico Recente)
  * * NOVAS OTIMIZAÇÕES (FASE 3):
- * 1. Modo Offline (Detector de Conexão + UI Grayscale) - NOVO!
- * 2. Metadados Dinâmicos (Título da Aba)
- * 3. SEO Avançado (JSON-LD)
+ * 1. Histórico "Visto Recentemente" (Widget + Filtro) - NOVO!
+ * 2. Modo Offline (PWA)
+ * 3. Metadados Dinâmicos
+ * 4. SEO Avançado (JSON-LD)
  * * * FUNCIONALIDADES MANTIDAS (FASE 2):
  * Analytics, Toast, Teclado, Infinite Scroll, Ordenação, Swipe, Share, URL, Wishlist, Busca.
  */
@@ -17,17 +18,21 @@ document.addEventListener('DOMContentLoaded', () => {
     const POSTS_LIMIT = 50; 
     const ITEMS_PER_PAGE = 12;
     
+    // Estados Persistentes
     let wishlist = JSON.parse(localStorage.getItem('darafa_wishlist')) || [];
+    let recentHistory = JSON.parse(localStorage.getItem('darafa_history')) || []; // NOVO
+    
     let analyticsData = JSON.parse(localStorage.getItem('darafa_analytics')) || {
         views: 0, searches: {}, categoryClicks: {}, productClicks: {}, interactions: { wishlist: 0, share: 0 }
     };
+    
     let currentSort = 'default';
     let activeData = []; 
     let loadedCount = 0; 
     let scrollSentinel;
     let currentViewerIndex = -1;
 
-    // Variáveis para Metadados (SEO Dinâmico)
+    // Variáveis para Metadados
     let originalTitle = document.title;
     let originalDesc = document.querySelector('meta[name="description"]')?.getAttribute('content') || '';
 
@@ -116,18 +121,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     // =========================================================
-    // 2. MODO OFFLINE (PWA) [NOVO!]
+    // 2. MODO OFFLINE (PWA)
     // =========================================================
     function initOfflineMode() {
-        // Estilos para o modo offline (Filtro Grayscale)
         const style = document.createElement('style');
         style.innerHTML = `
-            body.offline-mode { filter: grayscale(0.8); } /* Deixa o site cinza */
-            body.offline-mode .toast-notification { filter: grayscale(0) !important; } /* Aviso continua colorido */
+            body.offline-mode { filter: grayscale(0.8); }
+            body.offline-mode .toast-notification { filter: grayscale(0) !important; }
         `;
         document.head.appendChild(style);
 
-        // Listeners de Rede
         window.addEventListener('offline', () => {
             document.body.classList.add('offline-mode');
             showToast('⚠️ Você está offline. Modo leitura ativado.');
@@ -136,12 +139,9 @@ document.addEventListener('DOMContentLoaded', () => {
         window.addEventListener('online', () => {
             document.body.classList.remove('offline-mode');
             showToast('🟢 Conexão restaurada! Atualizando...');
-            // Tenta recarregar imagens que falharam (opcional)
             setTimeout(() => {
                 document.querySelectorAll('img').forEach(img => {
-                    if (!img.complete || img.naturalWidth === 0) {
-                        const src = img.src; img.src = ''; img.src = src;
-                    }
+                    if (!img.complete || img.naturalWidth === 0) { const src = img.src; img.src = ''; img.src = src; }
                 });
             }, 1000);
         });
@@ -153,7 +153,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // =========================================================
     const galleryContainer = document.querySelector('#gallery-door .gallery-5-cols');
     
-    // Observers
     const globalImageObserver = new IntersectionObserver((entries, observer) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
@@ -169,10 +168,9 @@ document.addEventListener('DOMContentLoaded', () => {
         if (entries[0].isIntersecting) loadNextBatch();
     }, { rootMargin: "200px" });
 
-    // Boot
     if (galleryContainer) {
         initSEO();
-        initOfflineMode(); // Inicia o detector offline
+        initOfflineMode();
         initCatalog();
         initFilters();
         initControls(); 
@@ -184,8 +182,31 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('popstate', loadStateFromURL);
 
     // =========================================================
-    // 4. LÓGICA DE CATÁLOGO & INFINITE SCROLL
+    // 4. LÓGICA DE CATÁLOGO & HISTÓRICO (NOVO!)
     // =========================================================
+    
+    // --- FUNÇÃO PARA ADICIONAR AO HISTÓRICO ---
+    function addToHistory(id) {
+        // Remove se já existe para colocar no topo
+        recentHistory = recentHistory.filter(itemId => itemId !== id);
+        recentHistory.unshift(id); // Adiciona no início
+        
+        // Limita a 6 itens
+        if (recentHistory.length > 6) recentHistory.pop();
+        
+        localStorage.setItem('darafa_history', JSON.stringify(recentHistory));
+        
+        // Se o usuário estiver no filtro "Vistos", atualiza a tela
+        const activeFilter = document.querySelector('.filter-btn.active');
+        if (activeFilter && activeFilter.dataset.filter === 'history') {
+            activeData = productsData.filter(item => recentHistory.includes(item.id));
+            // Ordena pela ordem do histórico (mais recente primeiro)
+            activeData.sort((a, b) => recentHistory.indexOf(a.id) - recentHistory.indexOf(b.id));
+            const container = document.querySelector('.gallery-5-cols'); // Ou modal
+            if(container) resetAndRender(container);
+        }
+    }
+
     function updateURL(param, value) {
         const url = new URL(window.location);
         if (value && value !== 'all') url.searchParams.set(param, value);
@@ -233,7 +254,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if(scrollSentinel) { infiniteScrollObserver.unobserve(scrollSentinel); scrollSentinel.remove(); scrollSentinel = null; }
         
         if (activeData.length === 0) {
-            container.innerHTML = '<p style="color:#241000; text-align:center; width:100%; grid-column: 1/-1; padding: 20px;">Nada encontrado.</p>';
+            container.innerHTML = '<p style="color:#241000; text-align:center; width:100%; grid-column: 1/-1; padding: 20px;">Nada encontrado aqui ainda.</p>';
             return;
         }
         loadNextBatch(container);
@@ -349,10 +370,11 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- FILTROS, BUSCA & CONTROLES ---
+    // --- FILTROS (ATUALIZADO COM HISTÓRICO) ---
     function initFilters() {
         const filterContainers = document.querySelectorAll('.catalog-filters');
         filterContainers.forEach(container => {
+            // Botão Favoritos
             if(!container.querySelector('[data-filter="favorites"]')) {
                 const favBtn = document.createElement('button');
                 favBtn.className = 'filter-btn';
@@ -361,6 +383,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 favBtn.style.color = '#D00000';
                 favBtn.style.borderColor = '#D00000';
                 container.appendChild(favBtn);
+            }
+            // Botão Histórico (NOVO!)
+            if(!container.querySelector('[data-filter="history"]')) {
+                const histBtn = document.createElement('button');
+                histBtn.className = 'filter-btn';
+                histBtn.dataset.filter = 'history';
+                histBtn.innerText = '🕒 Vistos';
+                histBtn.style.color = '#241000';
+                histBtn.style.borderColor = '#241000';
+                container.appendChild(histBtn);
             }
         });
 
@@ -377,11 +409,21 @@ document.addEventListener('DOMContentLoaded', () => {
                 const container = button.closest('.catalog-filters');
                 if(container) { container.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active')); button.classList.add('active'); }
 
-                if (filterValue === 'favorites') activeData = productsData.filter(item => wishlist.includes(item.id));
-                else if (filterValue === 'all') activeData = productsData;
-                else activeData = productsData.filter(item => item.category === filterValue);
+                if (filterValue === 'favorites') {
+                    activeData = productsData.filter(item => wishlist.includes(item.id));
+                } else if (filterValue === 'history') {
+                    // Lógica do Histórico
+                    activeData = productsData.filter(item => recentHistory.includes(item.id));
+                    // Ordena para mostrar o último visto primeiro
+                    activeData.sort((a, b) => recentHistory.indexOf(a.id) - recentHistory.indexOf(b.id));
+                } else if (filterValue === 'all') {
+                    activeData = productsData;
+                } else {
+                    activeData = productsData.filter(item => item.category === filterValue);
+                }
                 
-                activeData = applySort(activeData);
+                if (filterValue !== 'history') activeData = applySort(activeData); // Não reordena histórico para manter cronologia
+
                 const modalContent = button.closest('.expansion-content');
                 const targetGallery = modalContent ? modalContent.querySelector('.gallery-5-cols') : document.querySelector('#gallery-door .gallery-5-cols');
                 resetAndRender(targetGallery);
@@ -416,6 +458,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             let filtered = productsData;
             if (filterValue === 'favorites') filtered = productsData.filter(item => wishlist.includes(item.id));
+            else if (filterValue === 'history') filtered = productsData.filter(item => recentHistory.includes(item.id));
             else if (filterValue !== 'all') filtered = productsData.filter(item => item.category === filterValue);
 
             if (term) {
@@ -423,7 +466,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 filtered = filtered.filter(item => item.title.toLowerCase().includes(term) || item.description.toLowerCase().includes(term) || item.category.toLowerCase().includes(term));
             }
 
-            activeData = applySort(filtered);
+            if (filterValue !== 'history') filtered = applySort(filtered);
+            activeData = filtered;
+
             const parentModal = input.closest('.expansion-content');
             const targetGallery = parentModal ? parentModal.querySelector('.gallery-5-cols') : document.querySelector('#gallery-door .gallery-5-cols');
             resetAndRender(targetGallery);
@@ -477,6 +522,8 @@ document.addEventListener('DOMContentLoaded', () => {
             viewerImg.style.opacity = 0.5;
             setTimeout(() => { viewerImg.src = nextItem.image; viewerImg.onload = () => viewerImg.style.opacity = 1; }, 200);
             setPageMetadata(nextItem.title, nextItem.description);
+            // Ao navegar, também adiciona ao histórico
+            addToHistory(nextItem.id); 
         }
     }
 
@@ -596,6 +643,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 favBtn.style.borderColor = '#D00000';
                 modalFilters.appendChild(favBtn);
              }
+             // INJETAR O BOTÃO DE HISTÓRICO TAMBÉM NO MODAL
+             if(!modalFilters.querySelector('[data-filter="history"]')) {
+                const histBtn = document.createElement('button');
+                histBtn.className = 'filter-btn';
+                histBtn.dataset.filter = 'history';
+                histBtn.innerText = '🕒 Vistos';
+                histBtn.style.color = '#241000';
+                histBtn.style.borderColor = '#241000';
+                modalFilters.appendChild(histBtn);
+             }
+
              const targetGallery = overlay.querySelector('.gallery-5-cols');
              resetAndRender(targetGallery);
         }
@@ -637,7 +695,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         const close = () => {
-            restorePageMetadata(); // Restaura título original ao fechar
+            restorePageMetadata(); 
             overlay.classList.remove('active');
             body.style.overflow = '';
             setTimeout(() => { if(overlay.parentNode) overlay.parentNode.removeChild(overlay); }, 400);
@@ -649,7 +707,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function openImageViewer(imageSrc, id) {
-        // Encontra produto para metadados
+        // Salva no histórico ao abrir
+        addToHistory(id);
+
         const product = productsData.find(p => p.id == id);
         if (product) setPageMetadata(product.title, product.description);
 
@@ -659,7 +719,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function openStoryMode(imageSrc, title, description) {
-        setPageMetadata(title, description); // Metadados da história
+        setPageMetadata(title, description); 
         createViewerOverlay(`
             <div class="story-viewer-content">
                 <div class="story-image-col"><img src="${imageSrc}" alt="${title}"></div>
@@ -680,7 +740,7 @@ document.addEventListener('DOMContentLoaded', () => {
         viewer.addEventListener('touchend', e => { touchEndY = e.changedTouches[0].screenY; if (touchEndY - touchStartY > 60) closeViewer(); }, {passive: true});
 
         const closeViewer = () => {
-            restorePageMetadata(); // Restaura título original
+            restorePageMetadata(); 
             viewer.classList.remove('active');
             setTimeout(() => { if(viewer.parentNode) viewer.parentNode.removeChild(viewer); }, 300);
         };
