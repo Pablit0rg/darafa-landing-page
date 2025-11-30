@@ -1,8 +1,8 @@
 /**
- * DaRafa Acessorios - Main Script (Versao com Wishlist e Busca)
- * * OTIMIZACOES APLICADAS:
- * 1. Lista de Desejos (Wishlist) com LocalStorage (NOVO!)
- * 2. Filtro "Favoritos" Dinamico (NOVO!)
+ * DaRafa Acessórios - Main Script (Versão com URL Shareable)
+ * * OTIMIZAÇÕES APLICADAS:
+ * 1. Links Compartilháveis (URL State) - NOVO!
+ * 2. Lista de Desejos (Wishlist)
  * 3. Busca em Tempo Real
  * 4. Performance (Throttle, Passive, Observer)
  */
@@ -10,24 +10,24 @@
 document.addEventListener('DOMContentLoaded', () => {
 
     // =========================================================
-    // 0. DADOS & CONFIGURACOES
+    // 0. DADOS & CONFIGURAÇÕES
     // =========================================================
     const INSTAGRAM_TOKEN = ''; 
     const POSTS_LIMIT = 50; 
     
-    // Carrega favoritos salvos ou cria lista vazia
+    // Carrega favoritos salvos
     let wishlist = JSON.parse(localStorage.getItem('darafa_wishlist')) || [];
 
     // LISTA MANUAL (Core)
     const productsData = [
-        { id: 1, category: 'nose-cuff', title: 'Nose Cuff Spirals', description: 'Design espiral em arame dourado, ajuste anatomico sem furos.', image: 'assets/images/darafa-catalogo.jpg' },
-        { id: 2, category: 'brincos', title: 'Brinco Solar', description: 'Peca statement inspirada no sol, leve e marcante.', image: 'assets/images/darafa-catalogo.jpg' },
-        { id: 3, category: 'body', title: 'Body Chain Lux', description: 'Corrente corporal para realcar a beleza natural.', image: 'assets/images/darafa-catalogo.jpg' },
+        { id: 1, category: 'nose-cuff', title: 'Nose Cuff Spirals', description: 'Design espiral em arame dourado, ajuste anatômico sem furos.', image: 'assets/images/darafa-catalogo.jpg' },
+        { id: 2, category: 'brincos', title: 'Brinco Solar', description: 'Peça statement inspirada no sol, leve e marcante.', image: 'assets/images/darafa-catalogo.jpg' },
+        { id: 3, category: 'body', title: 'Body Chain Lux', description: 'Corrente corporal para realçar a beleza natural.', image: 'assets/images/darafa-catalogo.jpg' },
         { id: 4, category: 'aneis', title: 'Anel Flow', description: 'Adapta-se a qualquer dedo com conforto e movimento.', image: 'assets/images/darafa-catalogo.jpg' },
-        { id: 5, category: 'aneis', title: 'Anel Regulavel Flow', description: 'Design organico que abraca o dedo com elegancia.', image: 'assets/images/darafa-catalogo.jpg' },
-        { id: 6, category: 'colar', title: 'Choker Minimal', description: 'Aro rigido dourado, elegancia instantanea.', image: 'assets/images/darafa-catalogo.jpg' },
+        { id: 5, category: 'aneis', title: 'Anel Regulável Flow', description: 'Design orgânico que abraça o dedo com elegância.', image: 'assets/images/darafa-catalogo.jpg' },
+        { id: 6, category: 'colar', title: 'Choker Minimal', description: 'Aro rígido dourado, elegância instantânea.', image: 'assets/images/darafa-catalogo.jpg' },
         { id: 7, category: 'nose-cuff', title: 'Nose Cuff Duplo', description: 'Duas voltas de arame para destaque extra.', image: 'assets/images/darafa-catalogo.jpg' },
-        { id: 8, category: 'brincos', title: 'Maxi Brinco', description: 'Para quem nao tem medo de brilhar.', image: 'assets/images/darafa-catalogo.jpg' }
+        { id: 8, category: 'brincos', title: 'Maxi Brinco', description: 'Para quem não tem medo de brilhar.', image: 'assets/images/darafa-catalogo.jpg' }
     ];
 
     // COMPLETADOR DE LISTA
@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
             id: i,
             category: cat,
             title: `Joia Exclusiva ${i}`,
-            description: 'Peca artesanal feita a mao com design exclusivo DaRafa.',
+            description: 'Peça artesanal feita à mão com design exclusivo DaRafa.',
             image: 'assets/images/darafa-catalogo.jpg'
         });
     }
@@ -60,7 +60,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     // =========================================================
-    // 2. INICIALIZACAO
+    // 2. INICIALIZAÇÃO E URL STATE (NOVO)
     // =========================================================
     const galleryContainer = document.querySelector('#gallery-door .gallery-5-cols');
     
@@ -68,8 +68,56 @@ document.addEventListener('DOMContentLoaded', () => {
         initCatalog();
         initFilters();
         initSearchBar(); 
-        injectWishlistStyles(); // Estilos do coracao via JS
+        injectWishlistStyles();
+        
+        // NOVO: Carrega o estado da URL ao iniciar
+        // Pequeno delay para garantir que os elementos HTML existam
+        setTimeout(loadStateFromURL, 100);
     }
+
+    // Escuta o botão "Voltar" do navegador para atualizar a tela
+    window.addEventListener('popstate', loadStateFromURL);
+
+    function updateURL(param, value) {
+        const url = new URL(window.location);
+        if (value && value !== 'all') {
+            url.searchParams.set(param, value);
+        } else {
+            url.searchParams.delete(param);
+        }
+        // Se mudou filtro, limpa busca e vice-versa para não conflitar
+        if (param === 'filtro') url.searchParams.delete('busca');
+        if (param === 'busca') url.searchParams.delete('filtro');
+        
+        window.history.pushState({}, '', url);
+    }
+
+    function loadStateFromURL() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const filtro = urlParams.get('filtro');
+        const busca = urlParams.get('busca');
+
+        if (filtro) {
+            // Simula clique no botão de filtro
+            const btn = document.querySelector(`.filter-btn[data-filter="${filtro}"]`);
+            if (btn) btn.click();
+        } else if (busca) {
+            // Simula digitação na busca
+            const input = document.getElementById('js-search-input');
+            if (input) {
+                input.value = busca;
+                // Dispara evento de input manualmente
+                input.dispatchEvent(new Event('input'));
+                // Rola suavemente até a galeria para o usuário ver o resultado
+                document.getElementById('gallery-section').scrollIntoView({behavior: 'smooth'});
+            }
+        } else {
+            // Se não tem nada, clica em "Todos"
+            const allBtn = document.querySelector('.filter-btn[data-filter="all"]');
+            if(allBtn) allBtn.click();
+        }
+    }
+
 
     async function initCatalog() {
         if (INSTAGRAM_TOKEN) {
@@ -81,7 +129,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // --- RENDERIZADOR (Agora com Coracao) ---
     function renderLocalCatalog(items) {
         if (!galleryContainer) return;
         
@@ -92,16 +139,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         let fullHTML = '';
         items.forEach(item => {
-            // Verifica se esta na wishlist para pintar o coracao
             const isFav = wishlist.includes(item.id) ? 'active' : '';
-            
             fullHTML += `
                 <div class="gold-framebox" data-id="${item.id}" data-category="${item.category}" data-title="${item.title}" data-description="${item.description}">
-                    
-                    <button class="wishlist-btn ${isFav}" aria-label="Favoritar" onclick="event.stopPropagation()">
-                        ♥
-                    </button>
-
+                    <button class="wishlist-btn ${isFav}" aria-label="Favoritar" onclick="event.stopPropagation()">♥</button>
                     <img class="lazy-image" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-src="${item.image}" alt="${item.title}" style="transition: opacity 0.8s ease; opacity: 0;">
                     <div class="card-info-bar">
                         <h3 class="info-title">${item.title}</h3>
@@ -113,7 +154,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         galleryContainer.innerHTML = fullHTML;
         attachObserversAndPreload(galleryContainer);
-        attachWishlistEvents(galleryContainer); // Liga os cliques nos coracoes
+        attachWishlistEvents(galleryContainer);
     }
 
     function attachObserversAndPreload(container) {
@@ -133,54 +174,31 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     // =========================================================
-    // 3. WISHLIST LOGICA & ESTILOS (JS PURO)
+    // 3. WISHLIST LÓGICA & ESTILOS
     // =========================================================
-    
-    // Injeta CSS do coracao dinamicamente (sem mexer no CSS externo)
     function injectWishlistStyles() {
         const style = document.createElement('style');
         style.innerHTML = `
             .wishlist-btn {
-                position: absolute;
-                top: 10px;
-                right: 10px;
-                background: rgba(36, 16, 0, 0.6);
-                border: none;
-                color: #fff;
-                font-size: 1.2rem;
-                width: 35px;
-                height: 35px;
-                border-radius: 50%;
-                cursor: pointer;
-                z-index: 10;
+                position: absolute; top: 10px; right: 10px; background: rgba(36, 16, 0, 0.6);
+                border: none; color: #fff; font-size: 1.2rem; width: 35px; height: 35px;
+                border-radius: 50%; cursor: pointer; z-index: 10;
                 transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                padding-top: 2px;
+                display: flex; align-items: center; justify-content: center; padding-top: 2px;
             }
-            .wishlist-btn:hover {
-                background: #241000;
-                transform: scale(1.1);
-            }
-            .wishlist-btn.active {
-                color: #D00000; /* Vermelho Chic */
-                background: #fff;
-                box-shadow: 0 0 10px rgba(208,0,0,0.5);
-            }
+            .wishlist-btn:hover { background: #241000; transform: scale(1.1); }
+            .wishlist-btn.active { color: #D00000; background: #fff; box-shadow: 0 0 10px rgba(208,0,0,0.5); }
         `;
         document.head.appendChild(style);
     }
 
     function attachWishlistEvents(container) {
-        // Delegacao de evento dentro do container (para pegar cliques novos)
         container.addEventListener('click', (e) => {
             if (e.target.classList.contains('wishlist-btn')) {
-                e.stopPropagation(); // Nao abre o modal
+                e.stopPropagation();
                 const btn = e.target;
                 const card = btn.closest('.gold-framebox');
                 const id = parseInt(card.dataset.id);
-
                 toggleWishlist(id, btn);
             }
         });
@@ -188,38 +206,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function toggleWishlist(id, btnElement) {
         const index = wishlist.indexOf(id);
-        
         if (index === -1) {
-            // Adiciona
             wishlist.push(id);
             btnElement.classList.add('active');
-            // Animacaozinha de pulso
             btnElement.style.transform = "scale(1.4)";
             setTimeout(() => btnElement.style.transform = "scale(1)", 200);
         } else {
-            // Remove
             wishlist.splice(index, 1);
             btnElement.classList.remove('active');
         }
-
-        // Salva no navegador
         localStorage.setItem('darafa_wishlist', JSON.stringify(wishlist));
         
-        // Se estivermos vendo a aba "Favoritos", remove o item da tela instantaneamente
         const activeFilter = document.querySelector('.filter-btn.active');
         if (activeFilter && activeFilter.dataset.filter === 'favorites') {
-            // Re-renderiza a lista de favoritos
             const filtered = productsData.filter(item => wishlist.includes(item.id));
-            // Acha o container pai (Modal ou Home)
             const parentContainer = btnElement.closest('.gallery-5-cols');
-            // Pequeno hack: chama o renderizador direto naquele container
-            // Mas para simplificar, simulamos um clique no filtro de novo
             if(parentContainer) {
-               // Renderiza manualmente apenas no container atual para nao piscar tudo
                if(filtered.length === 0) {
-                   parentContainer.innerHTML = '<p style="color:#241000; text-align:center; width:100%; grid-column: 1/-1; padding:20px;">Voce ainda nao tem favoritos.</p>';
+                   parentContainer.innerHTML = '<p style="color:#241000; text-align:center; width:100%; grid-column: 1/-1; padding:20px;">Você ainda não tem favoritos.</p>';
                } else {
-                   // Remove apenas o card da tela (mais elegante)
                    const card = btnElement.closest('.gold-framebox');
                    card.style.opacity = '0';
                    setTimeout(() => card.remove(), 300);
@@ -230,7 +235,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     // =========================================================
-    // 4. BUSCA EM TEMPO REAL
+    // 4. BUSCA EM TEMPO REAL (INTEGRADA COM URL)
     // =========================================================
     function initSearchBar() {
         const filterContainer = document.querySelector('.catalog-filters');
@@ -253,6 +258,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
         input.addEventListener('input', (e) => {
             const term = e.target.value.toLowerCase();
+            
+            // NOVO: Atualiza a URL com o termo de busca
+            // Usamos um pequeno debounce (delay) para não atualizar a URL a cada letra
+            if(this.searchTimeout) clearTimeout(this.searchTimeout);
+            this.searchTimeout = setTimeout(() => {
+                if(term.length > 0) updateURL('busca', term);
+                else updateURL('busca', null);
+            }, 500);
+
             if (term.length > 0) document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
 
             const filtered = productsData.filter(item => 
@@ -270,15 +284,12 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Wrapper para reutilizar a renderizacao em elementos especificos
     function renderLocalCatalogWrapper(container, data) {
         if (!container) return;
-        
         if (data.length === 0) {
             container.innerHTML = '<p style="color:#241000; text-align:center; width:100%; grid-column: 1/-1; padding:20px;">Nada encontrado.</p>';
             return;
         }
-
         let fullHTML = '';
         data.forEach(item => {
             const isFav = wishlist.includes(item.id) ? 'active' : '';
@@ -294,15 +305,14 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
         });
         container.innerHTML = fullHTML;
-        attachWishlistEvents(container); // Reativa coracoes nos filtrados
+        attachWishlistEvents(container);
     }
 
 
     // =========================================================
-    // 5. FILTROS (Com Botao Favoritos Extra)
+    // 5. FILTROS (INTEGRADOS COM URL)
     // =========================================================
     function initFilters() {
-        // Injeta o botao "Favoritos" dinamicamente se nao existir
         const filterContainers = document.querySelectorAll('.catalog-filters');
         filterContainers.forEach(container => {
             if(!container.querySelector('[data-filter="favorites"]')) {
@@ -310,7 +320,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 favBtn.className = 'filter-btn';
                 favBtn.dataset.filter = 'favorites';
                 favBtn.innerText = '♥ Favoritos';
-                favBtn.style.color = '#D00000'; // Destaque vermelho
+                favBtn.style.color = '#D00000';
                 favBtn.style.borderColor = '#D00000';
                 container.appendChild(favBtn);
             }
@@ -321,6 +331,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 const button = e.target;
                 const filterValue = button.dataset.filter;
                 
+                // NOVO: Atualiza URL
+                updateURL('filtro', filterValue);
+
                 const searchInput = document.getElementById('js-search-input');
                 if (searchInput) searchInput.value = '';
 
@@ -331,8 +344,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
 
                 let filteredData;
-                
-                // Logica Especial para Favoritos
                 if (filterValue === 'favorites') {
                     filteredData = productsData.filter(item => wishlist.includes(item.id));
                 } else if (filterValue === 'all') {
@@ -393,13 +404,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (navbarMenu && navbarMenu.classList.contains('active') && !navbarMenu.contains(e.target) && !navbarToggler.contains(e.target)) toggleMenu();
     });
 
-    // PORTAL
     const doors = document.querySelectorAll('.big-card-wrapper:not(.no-expand)');
     const body = document.body;
 
     doors.forEach(door => {
         door.addEventListener('click', function(e) {
-            // Ignora cliques em elementos interativos dentro do card
             if(e.target.classList.contains('filter-btn') || 
                e.target.id === 'js-search-input' || 
                e.target.classList.contains('wishlist-btn')) return;
@@ -420,14 +429,9 @@ document.addEventListener('DOMContentLoaded', () => {
         body.style.overflow = 'hidden'; 
         requestAnimationFrame(() => { overlay.classList.add('active'); });
 
-        // Remove input antigo duplicado e reinjeta busca + favoritos no modal
         const oldInput = overlay.querySelector('#js-search-input');
         if(oldInput && oldInput.parentNode) oldInput.parentNode.remove();
         
-        // Re-inject search logic into modal (simplified for brevity, re-using logic would be ideal)
-        // Por hora, apenas chamamos initSearchBar novamente que ele acha o container certo
-        // Mas como initSearchBar busca por classe, pode pegar o errado.
-        // Vamos forcar a injecao manual aqui para garantir:
         const modalFilters = overlay.querySelector('.catalog-filters');
         if(modalFilters) {
              const searchContainer = document.createElement('div');
@@ -444,7 +448,6 @@ document.addEventListener('DOMContentLoaded', () => {
              searchContainer.appendChild(input);
              modalFilters.prepend(searchContainer);
 
-             // Injeta botao favoritos no modal tambem
              if(!modalFilters.querySelector('[data-filter="favorites"]')) {
                 const favBtn = document.createElement('button');
                 favBtn.className = 'filter-btn';
@@ -456,7 +459,6 @@ document.addEventListener('DOMContentLoaded', () => {
              }
         }
 
-        // Reativa Lazy Load
         const modalImages = overlay.querySelectorAll('.lazy-image');
         if(modalImages.length > 0) {
             const modalObserver = new IntersectionObserver((entries, observer) => {
@@ -472,15 +474,11 @@ document.addEventListener('DOMContentLoaded', () => {
             modalImages.forEach(img => modalObserver.observe(img));
         }
         
-        // Liga eventos de wishlist no modal
         const modalGallery = overlay.querySelector('.gallery-5-cols');
         if(modalGallery) attachWishlistEvents(modalGallery);
 
-        // Cliques gerais
         overlay.addEventListener('click', (e) => {
-            // Se clicou no coracao, ja foi tratado pelo attachWishlistEvents
             if (e.target.classList.contains('wishlist-btn')) return;
-
             const card = e.target.closest('.gold-framebox');
             if (card && overlay.contains(card)) {
                 e.stopPropagation();
