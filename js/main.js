@@ -1,10 +1,11 @@
 /**
- * DaRafa Acessórios - Main Script (Versão com URL Shareable)
+ * DaRafa Acessórios - Main Script (Versão com Compartilhamento Nativo)
  * * OTIMIZAÇÕES APLICADAS:
- * 1. Links Compartilháveis (URL State) - NOVO!
- * 2. Lista de Desejos (Wishlist)
- * 3. Busca em Tempo Real
- * 4. Performance (Throttle, Passive, Observer)
+ * 1. Compartilhamento Nativo (Web Share API) - NOVO!
+ * 2. Links Compartilháveis (URL State)
+ * 3. Lista de Desejos (Wishlist)
+ * 4. Busca em Tempo Real
+ * 5. Performance (Throttle, Passive, Observer)
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -15,7 +16,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const INSTAGRAM_TOKEN = ''; 
     const POSTS_LIMIT = 50; 
     
-    // Carrega favoritos salvos
     let wishlist = JSON.parse(localStorage.getItem('darafa_wishlist')) || [];
 
     // LISTA MANUAL (Core)
@@ -60,7 +60,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     // =========================================================
-    // 2. INICIALIZAÇÃO E URL STATE (NOVO)
+    // 2. INICIALIZAÇÃO
     // =========================================================
     const galleryContainer = document.querySelector('#gallery-door .gallery-5-cols');
     
@@ -68,14 +68,11 @@ document.addEventListener('DOMContentLoaded', () => {
         initCatalog();
         initFilters();
         initSearchBar(); 
-        injectWishlistStyles();
+        injectDynamicStyles(); // Injeta estilos de Wishlist e Share
         
-        // NOVO: Carrega o estado da URL ao iniciar
-        // Pequeno delay para garantir que os elementos HTML existam
         setTimeout(loadStateFromURL, 100);
     }
 
-    // Escuta o botão "Voltar" do navegador para atualizar a tela
     window.addEventListener('popstate', loadStateFromURL);
 
     function updateURL(param, value) {
@@ -85,7 +82,6 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             url.searchParams.delete(param);
         }
-        // Se mudou filtro, limpa busca e vice-versa para não conflitar
         if (param === 'filtro') url.searchParams.delete('busca');
         if (param === 'busca') url.searchParams.delete('filtro');
         
@@ -98,21 +94,16 @@ document.addEventListener('DOMContentLoaded', () => {
         const busca = urlParams.get('busca');
 
         if (filtro) {
-            // Simula clique no botão de filtro
             const btn = document.querySelector(`.filter-btn[data-filter="${filtro}"]`);
             if (btn) btn.click();
         } else if (busca) {
-            // Simula digitação na busca
             const input = document.getElementById('js-search-input');
             if (input) {
                 input.value = busca;
-                // Dispara evento de input manualmente
                 input.dispatchEvent(new Event('input'));
-                // Rola suavemente até a galeria para o usuário ver o resultado
                 document.getElementById('gallery-section').scrollIntoView({behavior: 'smooth'});
             }
         } else {
-            // Se não tem nada, clica em "Todos"
             const allBtn = document.querySelector('.filter-btn[data-filter="all"]');
             if(allBtn) allBtn.click();
         }
@@ -142,7 +133,12 @@ document.addEventListener('DOMContentLoaded', () => {
             const isFav = wishlist.includes(item.id) ? 'active' : '';
             fullHTML += `
                 <div class="gold-framebox" data-id="${item.id}" data-category="${item.category}" data-title="${item.title}" data-description="${item.description}">
-                    <button class="wishlist-btn ${isFav}" aria-label="Favoritar" onclick="event.stopPropagation()">♥</button>
+                    
+                    <div class="card-actions">
+                        <button class="action-btn share-btn" aria-label="Compartilhar" onclick="event.stopPropagation()">➦</button>
+                        <button class="action-btn wishlist-btn ${isFav}" aria-label="Favoritar" onclick="event.stopPropagation()">♥</button>
+                    </div>
+
                     <img class="lazy-image" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-src="${item.image}" alt="${item.title}" style="transition: opacity 0.8s ease; opacity: 0;">
                     <div class="card-info-bar">
                         <h3 class="info-title">${item.title}</h3>
@@ -154,7 +150,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         galleryContainer.innerHTML = fullHTML;
         attachObserversAndPreload(galleryContainer);
-        attachWishlistEvents(galleryContainer);
+        attachCardEvents(galleryContainer); // Liga cliques (Wishlist + Share)
     }
 
     function attachObserversAndPreload(container) {
@@ -174,34 +170,106 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     // =========================================================
-    // 3. WISHLIST LÓGICA & ESTILOS
+    // 3. LÓGICA DE AÇÕES (WISHLIST + SHARE)
     // =========================================================
-    function injectWishlistStyles() {
+    
+    // Injeta CSS dinâmico para os botões
+    function injectDynamicStyles() {
         const style = document.createElement('style');
         style.innerHTML = `
-            .wishlist-btn {
-                position: absolute; top: 10px; right: 10px; background: rgba(36, 16, 0, 0.6);
-                border: none; color: #fff; font-size: 1.2rem; width: 35px; height: 35px;
-                border-radius: 50%; cursor: pointer; z-index: 10;
-                transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-                display: flex; align-items: center; justify-content: center; padding-top: 2px;
+            .card-actions {
+                position: absolute;
+                top: 10px;
+                right: 10px;
+                z-index: 10;
+                display: flex;
+                gap: 8px;
             }
-            .wishlist-btn:hover { background: #241000; transform: scale(1.1); }
-            .wishlist-btn.active { color: #D00000; background: #fff; box-shadow: 0 0 10px rgba(208,0,0,0.5); }
+            .action-btn {
+                background: rgba(36, 16, 0, 0.6);
+                border: none;
+                color: #fff;
+                font-size: 1.1rem;
+                width: 35px;
+                height: 35px;
+                border-radius: 50%;
+                cursor: pointer;
+                transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding-top: 2px;
+                backdrop-filter: blur(4px);
+            }
+            .action-btn:hover {
+                background: #241000;
+                transform: scale(1.1);
+            }
+            /* Estilo Específico Wishlist */
+            .wishlist-btn.active {
+                color: #D00000;
+                background: #fff;
+                box-shadow: 0 0 10px rgba(208,0,0,0.5);
+            }
+            /* Estilo Específico Share */
+            .share-btn {
+                font-size: 1rem;
+            }
+            .share-btn:active {
+                transform: scale(0.9);
+            }
         `;
         document.head.appendChild(style);
     }
 
-    function attachWishlistEvents(container) {
+    function attachCardEvents(container) {
         container.addEventListener('click', (e) => {
-            if (e.target.classList.contains('wishlist-btn')) {
+            const btn = e.target;
+            
+            // Lógica Wishlist
+            if (btn.classList.contains('wishlist-btn')) {
                 e.stopPropagation();
-                const btn = e.target;
                 const card = btn.closest('.gold-framebox');
                 const id = parseInt(card.dataset.id);
                 toggleWishlist(id, btn);
             }
+            
+            // Lógica Share (NOVO)
+            if (btn.classList.contains('share-btn')) {
+                e.stopPropagation();
+                const card = btn.closest('.gold-framebox');
+                shareProduct(card);
+            }
         });
+    }
+
+    // --- FUNÇÃO DE COMPARTILHAMENTO NATIVO ---
+    async function shareProduct(card) {
+        const title = card.dataset.title;
+        const description = card.dataset.description;
+        const category = card.dataset.category;
+        
+        // Gera um link direto com filtro se possível, senão manda para a home
+        const shareUrl = `${window.location.origin}${window.location.pathname}?filtro=${category}`;
+
+        const shareData = {
+            title: `DaRafa Acessórios: ${title}`,
+            text: `Olha essa joia incrível: ${title} - ${description}`,
+            url: shareUrl
+        };
+
+        try {
+            // Tenta usar API Nativa (Mobile/Tablets modernos)
+            if (navigator.share) {
+                await navigator.share(shareData);
+            } else {
+                // Fallback para PC: Copia para área de transferência
+                await navigator.clipboard.writeText(shareUrl);
+                alert('Link copiado para a área de transferência!');
+            }
+        } catch (err) {
+            console.warn('Erro ao compartilhar:', err);
+        }
     }
 
     function toggleWishlist(id, btnElement) {
@@ -235,7 +303,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     // =========================================================
-    // 4. BUSCA EM TEMPO REAL (INTEGRADA COM URL)
+    // 4. BUSCA EM TEMPO REAL
     // =========================================================
     function initSearchBar() {
         const filterContainer = document.querySelector('.catalog-filters');
@@ -259,8 +327,6 @@ document.addEventListener('DOMContentLoaded', () => {
         input.addEventListener('input', (e) => {
             const term = e.target.value.toLowerCase();
             
-            // NOVO: Atualiza a URL com o termo de busca
-            // Usamos um pequeno debounce (delay) para não atualizar a URL a cada letra
             if(this.searchTimeout) clearTimeout(this.searchTimeout);
             this.searchTimeout = setTimeout(() => {
                 if(term.length > 0) updateURL('busca', term);
@@ -294,8 +360,11 @@ document.addEventListener('DOMContentLoaded', () => {
         data.forEach(item => {
             const isFav = wishlist.includes(item.id) ? 'active' : '';
             fullHTML += `
-                <div class="gold-framebox" data-id="${item.id}" data-category="${item.category}">
-                    <button class="wishlist-btn ${isFav}" aria-label="Favoritar" onclick="event.stopPropagation()">♥</button>
+                <div class="gold-framebox" data-id="${item.id}" data-category="${item.category}" data-title="${item.title}" data-description="${item.description}">
+                    <div class="card-actions">
+                        <button class="action-btn share-btn" aria-label="Compartilhar" onclick="event.stopPropagation()">➦</button>
+                        <button class="action-btn wishlist-btn ${isFav}" aria-label="Favoritar" onclick="event.stopPropagation()">♥</button>
+                    </div>
                     <img class="lazy-image" src="${item.image}" alt="${item.title}" style="opacity: 1;">
                     <div class="card-info-bar">
                         <h3 class="info-title">${item.title}</h3>
@@ -305,12 +374,12 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
         });
         container.innerHTML = fullHTML;
-        attachWishlistEvents(container);
+        attachCardEvents(container);
     }
 
 
     // =========================================================
-    // 5. FILTROS (INTEGRADOS COM URL)
+    // 5. FILTROS
     // =========================================================
     function initFilters() {
         const filterContainers = document.querySelectorAll('.catalog-filters');
@@ -330,8 +399,6 @@ document.addEventListener('DOMContentLoaded', () => {
             if (e.target.classList.contains('filter-btn')) {
                 const button = e.target;
                 const filterValue = button.dataset.filter;
-                
-                // NOVO: Atualiza URL
                 updateURL('filtro', filterValue);
 
                 const searchInput = document.getElementById('js-search-input');
@@ -364,7 +431,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     // =========================================================
-    // 6. UX & PORTAIS (Mantido)
+    // 6. UX & PORTAIS
     // =========================================================
     function throttle(func, limit) {
         let inThrottle;
@@ -411,7 +478,7 @@ document.addEventListener('DOMContentLoaded', () => {
         door.addEventListener('click', function(e) {
             if(e.target.classList.contains('filter-btn') || 
                e.target.id === 'js-search-input' || 
-               e.target.classList.contains('wishlist-btn')) return;
+               e.target.classList.contains('action-btn')) return; // Bloqueia clique nos botões
                
             e.preventDefault();
             const hiddenContentDiv = this.querySelector('.hidden-content');
@@ -475,10 +542,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         
         const modalGallery = overlay.querySelector('.gallery-5-cols');
-        if(modalGallery) attachWishlistEvents(modalGallery);
+        if(modalGallery) attachCardEvents(modalGallery);
 
         overlay.addEventListener('click', (e) => {
-            if (e.target.classList.contains('wishlist-btn')) return;
+            if (e.target.classList.contains('action-btn')) return;
             const card = e.target.closest('.gold-framebox');
             if (card && overlay.contains(card)) {
                 e.stopPropagation();
