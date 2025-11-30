@@ -1,7 +1,7 @@
 # DaRafa Acessorios - O Dossie Completo do Projeto (MASTER LOG)
 
 **Resumo Executivo:**
-Este documento narra a evolucao completa do desenvolvimento da Landing Page para "DaRafa Acessorios". O projeto evoluiu de uma pagina estatica para uma Progressive Web App (PWA) simulada (Versao 2.0), e agora avanca para a Fase 3 com foco em SEO Tecnico, Escalabilidade e Performance Empresarial.
+Este documento narra a evolucao completa do desenvolvimento da Landing Page para "DaRafa Acessorios". O projeto evoluiu para uma Progressive Web App (PWA) simulada (Versao 2.1), operando com funcionalidades avancadas de SEO e UX, mantendo a estabilidade visual do tema "Red Chic".
 
 ---
 
@@ -41,6 +41,8 @@ Este documento narra a evolucao completa do desenvolvimento da Landing Page para
 
 ### Inteligencia de Dados (Data-Driven)
 * Substituimos loops simples por uma **Estrutura de Dados (Array de Objetos)** no JavaScript.
+* **Busca em Tempo Real:** Campo de pesquisa instantanea por titulo ou categoria.
+* **Filtros Dinamicos:** O usuario pode filtrar o catalogo por categoria sem recarregar.
 * **Scroll Reveal:** As imagens aparecem suavemente conforme o usuario rola a pagina.
 
 ---
@@ -52,42 +54,37 @@ Este documento narra a evolucao completa do desenvolvimento da Landing Page para
 * **styles/_components/_highlights.css:** Cards com bordas vermelhas fixas.
 * **styles/_components/_footer.css:** Rodape organizado com hierarquia visual.
 * **styles/_base/_global.css:** Tipografia editorial e titulos impactantes.
-* **js/main.js:** Motor completo da aplicacao (Fase 2 concluida).
+* **js/main.js:** Motor completo (Fase 2 Completa + SEO/Offline/Historico da Fase 3).
 
 ---
 
 ## 5. Historico de Atualizacoes (CHANGELOG)
 
-### [30/11/2025] - A Revolucao JavaScript (Fase 2 - Concluida)
-**Status: CONCLUIDO (Versao 2.0)**
+### [30/11/2025] - Fase 3: Performance & SEO
+**Status: EM ANDAMENTO (Funcionalidades Criticas Ativas)**
 
-**Funcionalidades Implementadas (10/10):**
-1.  **Busca em Tempo Real:** Campo de pesquisa instantanea por titulo ou categoria.
-2.  **Lista de Desejos (Wishlist):** Persistencia de favoritos usando LocalStorage.
-3.  **Links Compartilhaveis (URL State):** A URL muda dinamicamente ao filtrar ou buscar.
-4.  **Compartilhamento Nativo:** Uso da Web Share API para mobile.
-5.  **Gestos de Swipe:** Fechamento de modais arrastando o dedo para baixo (Mobile UX).
-6.  **Ordenacao Dinamica:** Opcoes para ordenar produtos (A-Z, Z-A, Aleatorio, Relevancia).
-7.  **Infinite Scroll:** Carregamento progressivo de itens (lotes de 12) para performance.
-8.  **Navegacao por Teclado:** Acessibilidade total (Setas, Enter, Esc).
-9.  **Notificacoes Toast:** Feedback visual flutuante para acoes do usuario.
-10. **Analytics Caseiro:** Rastreamento local de visualizacoes, buscas e cliques.
+**Funcionalidades Entregues e Estaveis (Sucesso):**
+1.  **SEO Avancado (Dados Estruturados):** Injecao de JSON-LD para Rich Snippets.
+2.  **Metadados Dinamicos:** Titulo da aba muda conforme o produto visualizado.
+3.  **Modo Offline (PWA):** Deteccao de queda de internet com feedback visual (Grayscale).
+4.  **Historico "Visto Recentemente":** Rastreamento e filtro automatico dos ultimos produtos acessados.
+
+**Incidentes (CORRIGIDOS/REVERTIDOS):**
+1.  **Focus Trap (Acessibilidade):** A implementacao da "armadilha de foco" gerou conflito com o layout dos modais, impedindo a navegacao correta.
+    * **Acao:** Rollback imediato (Ctrl+Z) para a versao estavel anterior.
+    * **Decisao:** Funcionalidade movida para o final da fila de prioridades para depuracao isolada.
 
 ---
 
-## 6. PROXIMOS PASSOS (BACKLOG FASE 3 - PERFORMANCE & SEO)
-Objetivo: Implementar 10 melhorias de nivel empresarial focadas em Google, Velocidade e Retencao.
+## 6. PROXIMOS PASSOS (BACKLOG AJUSTADO - FASE 3)
+Objetivo: Concluir as otimizacoes de performance restante antes de revisitar a acessibilidade complexa.
 
-1.  **SEO Avancado (Dados Estruturados):** Injecao de JSON-LD para Rich Snippets no Google.
-2.  **Metadados Dinamicos:** Alteracao do titulo da aba e descricao conforme o produto visualizado.
-3.  **Modo Offline (PWA):** Deteccao de queda de internet e adaptacao da interface.
-4.  **Historico "Visto Recentemente":** Widget para lembrar o usuario dos ultimos produtos acessados.
-5.  **Focus Trap (Acessibilidade):** Prender o foco do teclado dentro dos modais abertos.
-6.  **Pre-carregamento Preditivo:** Baixar recursos antes do clique do usuario (Prefetch).
-7.  **Carregamento Adaptativo:** Ajustar a qualidade de midia baseada na velocidade da rede (4G/Wifi).
-8.  **Favicon Dinamico:** Notificacao visual na aba do navegador (bolinha vermelha) ao favoritar.
-9.  **Exit Intent (Marketing):** Modal de recuperacao quando o mouse do usuario sai da tela (Desktop).
-10. **Blindagem de Links:** Automacao de seguranca (noopener noreferrer) para links externos.
+1.  **Pre-carregamento Preditivo (Prefetch):** Baixar recursos antes do clique do usuario.
+2.  **Carregamento Adaptativo:** Ajustar qualidade de midia baseada na rede (4G/Wifi).
+3.  **Favicon Dinamico:** Notificacao visual na aba do navegador ao favoritar.
+4.  **Exit Intent (Marketing):** Modal de recuperacao de saida (Desktop).
+5.  **Blindagem de Links:** Automacao de seguranca para links externos.
+6.  **Focus Trap (Acessibilidade):** *Adiado para revisao tecnica aprofundada.*
 
 ---
 
@@ -99,4 +96,4 @@ Objetivo: Implementar 10 melhorias de nivel empresarial focadas em Google, Veloc
 3.  **Checkout:** Integracao com gateway de pagamento.
 
 ---
-*Ultima atualizacao: 30/11/2025 - Fase 2 entregue com sucesso. Iniciando planejamento da Fase 3.*
+*Ultima atualizacao: 30/11/2025 - Rollback de Acessibilidade realizado com sucesso. Sistema estavel.*
