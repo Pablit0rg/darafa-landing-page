@@ -1,42 +1,43 @@
 /*
- * ARQUIVO DE VARIÁVEIS
- * Design: DaRafa Honey (Mel Líquido & Chocolate)
+ * ARQUIVO DE VARIÁVEIS - VERSÃO "RED CHIC"
+ * Design: DaRafa Honey (Mel Líquido & Chocolate) com Detalhes em Vermelho Luxo
  */
 
 :root {
-    /* --- 1. Paleta de Cores "Mel & Chocolate" --- */
+    /* --- 1. Paleta de Cores --- */
 
-    /* COR DE DESTAQUE (Texto, Bordas, Títulos) 
-       Usamos um Marrom Café quase preto para contraste máximo sobre o mel.
-    */
-    --color-gold-medium: #241000;  /* Chocolate Amargo */
+    /* COR DE DESTAQUE (Texto, Bordas, Títulos) */
+    --color-gold-medium: #241000;  /* Chocolate Amargo (Base) */
     
     /* COR DE BRILHO (Detalhes acesos) */
-    --color-gold-light: #FFFF12;   /* O amarelo mais forte da sua lista */
-    --color-gold-dark: #CD4A00;    /* O tom mais avermelhado da sua lista */
+    --color-gold-light: #FFFF12;   /* Amarelo Brilho */
+    --color-gold-dark: #CD4A00;    /* Laranja Queimado */
     
-    /* COR DE FUNDO BASE (Fallback) */
+    /* A COR DO PODER (NOVO) - Vermelho Sola de Sapato de Luxo */
+    --color-red-chic: #D00000;     /* Vermelho Sangue Intenso */
+    
+    /* COR DE FUNDO BASE */
     --color-black-pure: #FDB90C;   /* O tom principal do mel */
     
-    /* COR DOS CARDS (Fundo semi-transparente para leitura) */
-    --color-black-deep: rgba(255, 255, 255, 0.2); /* Vidro claro sutil */
+    /* COR DOS CARDS (Fundo semi-transparente) */
+    --color-black-deep: rgba(255, 255, 255, 0.2); 
     
     --color-gray-dark: #BB6302;    /* Detalhes secundários */
 
     /* TEXTOS */
     --color-text-main: #241000;    /* Texto Principal Escuro */
-    --color-text-muted: #4a2500;   /* Texto Secundário (Caramelo escuro) */
+    --color-text-muted: #4a2500;   /* Texto Secundário */
 
 
-    /* --- 2. Tipografia --- */
-    --font-serif: 'Playfair Display', serif;
-    --font-sans: 'Poppins', sans-serif;
+    /* --- 2. Tipografia "Artística & Profissional" --- */
+    --font-serif: 'Playfair Display', serif; /* Títulos (Elegância) */
+    --font-sans: 'Poppins', sans-serif;      /* Corpo (Modernidade) */
 
-    /* Tamanhos Base */
+    /* Tamanhos Base (Aumentados para impacto) */
     --font-size-base: 16px;
-    --font-size-h1: 3.5rem;
-    --font-size-h2: 2.2rem;
-    --font-size-p: 1rem;
+    --font-size-h1: 4rem;   /* Impacto Máximo */
+    --font-size-h2: 2.5rem; /* Subtítulos Fortes */
+    --font-size-p: 1.05rem; /* Leitura Confortável */
 
     /* --- 3. Layout --- */
     --container-width: 1200px;
@@ -48,6 +49,6 @@
     /* --- 4. Bordas e Efeitos --- */
     --border-radius-sm: 4px;
     --border-radius-pill: 50px;
-    /* Sombra quente para combinar com o mel */
+    /* Sombra quente */
     --shadow-gold: 0 5px 20px rgba(205, 74, 0, 0.4); 
 }
