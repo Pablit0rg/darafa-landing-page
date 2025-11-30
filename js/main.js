@@ -1,11 +1,11 @@
 /**
- * DaRafa Acessórios - Main Script (Versão com Navegação por Teclado)
+ * DaRafa Acessórios - Main Script (Versão com Toasts)
  * * OTIMIZAÇÕES APLICADAS:
- * 1. Navegação por Teclado (A11y + Slideshow) - NOVO!
- * 2. Infinite Scroll Real
- * 3. Ordenação Dinâmica
- * 4. Gestos de Swipe
- * 5. Compartilhamento Nativo & Links
+ * 1. Notificações Toast (Feedback Visual) - NOVO!
+ * 2. Navegação por Teclado
+ * 3. Infinite Scroll Real
+ * 4. Ordenação Dinâmica
+ * 5. Swipe, Share, URL, Wishlist & Busca
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let activeData = []; 
     let loadedCount = 0; 
     let scrollSentinel;
-    let currentViewerIndex = -1; // Para o Slideshow
+    let currentViewerIndex = -1;
 
     const productsData = [
         { id: 1, category: 'nose-cuff', title: 'Nose Cuff Spirals', description: 'Design espiral em arame dourado, ajuste anatômico sem furos.', image: 'assets/images/darafa-catalogo.jpg' },
@@ -80,7 +80,7 @@ document.addEventListener('DOMContentLoaded', () => {
         initControls(); 
         injectDynamicStyles(); 
         setTimeout(loadStateFromURL, 100);
-        initKeyboardNavigation(); // Inicializa listeners de teclado
+        initKeyboardNavigation();
     }
 
     window.addEventListener('popstate', loadStateFromURL);
@@ -152,7 +152,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         nextBatch.forEach(item => {
             const isFav = wishlist.includes(item.id) ? 'active' : '';
-            // NOVO: tabindex="0" para focar com teclado
             htmlBuffer += `
                 <div class="gold-framebox" tabindex="0" data-id="${item.id}" data-category="${item.category}" data-title="${item.title}" data-description="${item.description}">
                     <div class="card-actions">
@@ -215,7 +214,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     // =========================================================
-    // 3. ESTILOS DINÂMICOS
+    // 3. ESTILOS DINÂMICOS (TOAST INCLUÍDO)
     // =========================================================
     function injectDynamicStyles() {
         const style = document.createElement('style');
@@ -232,48 +231,99 @@ document.addEventListener('DOMContentLoaded', () => {
             #js-search-input { padding: 12px 25px; width: 100%; max-width: 300px; border-radius: 50px; border: 2px solid #241000; background: rgba(255,255,255,0.9); color: #241000; font-size: 1rem; outline: none; box-shadow: 0 4px 10px rgba(36,16,0,0.1); transition: all 0.3s ease; }
             #js-sort-select { padding: 12px 20px; border-radius: 50px; border: 2px solid #241000; background: #241000; color: #FDB90C; font-size: 0.9rem; font-weight: 600; cursor: pointer; outline: none; appearance: none; -webkit-appearance: none; text-align: center; box-shadow: 0 4px 10px rgba(36,16,0,0.2); }
             #js-sort-select:hover { background: #3a1a00; }
+            
+            /* TOAST STYLES */
+            .toast-notification {
+                position: fixed;
+                bottom: 30px;
+                left: 50%;
+                transform: translateX(-50%) translateY(100px);
+                background-color: #241000;
+                color: #FDB90C;
+                padding: 12px 24px;
+                border-radius: 50px;
+                box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+                font-family: 'Poppins', sans-serif;
+                font-size: 0.9rem;
+                font-weight: 500;
+                z-index: 5000;
+                opacity: 0;
+                transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                border: 1px solid #FDB90C;
+            }
+            .toast-notification.show {
+                transform: translateX(-50%) translateY(0);
+                opacity: 1;
+            }
         `;
         document.head.appendChild(style);
     }
 
     function attachCardEvents(container) {
-        // Eventos de clique já são tratados via delegação global, 
-        // mas precisamos garantir que ações de teclado funcionem.
+        container.addEventListener('click', (e) => {
+            const btn = e.target;
+            if (btn.classList.contains('wishlist-btn')) {
+                e.stopPropagation();
+                const card = btn.closest('.gold-framebox');
+                const id = parseInt(card.dataset.id);
+                toggleWishlist(id, btn);
+            }
+            if (btn.classList.contains('share-btn')) {
+                e.stopPropagation();
+                const card = btn.closest('.gold-framebox');
+                shareProduct(card);
+            }
+        });
     }
 
-    // --- KEYBOARD NAVIGATION (NOVO) ---
+    // --- TOAST SYSTEM (NOVO) ---
+    function showToast(message) {
+        // Remove toast antigo se existir
+        const oldToast = document.querySelector('.toast-notification');
+        if(oldToast) oldToast.remove();
+
+        const toast = document.createElement('div');
+        toast.className = 'toast-notification';
+        toast.innerHTML = message;
+        document.body.appendChild(toast);
+
+        // Força reflow para animação funcionar
+        requestAnimationFrame(() => {
+            toast.classList.add('show');
+        });
+
+        // Remove após 3 segundos
+        setTimeout(() => {
+            toast.classList.remove('show');
+            setTimeout(() => toast.remove(), 400);
+        }, 3000);
+    }
+
     function initKeyboardNavigation() {
         document.addEventListener('keydown', (e) => {
-            // Se estiver no Viewer (Zoom)
             if (document.querySelector('.image-viewer-overlay.active')) {
                 if (e.key === 'ArrowRight') navigateViewer(1);
                 if (e.key === 'ArrowLeft') navigateViewer(-1);
                 return;
             }
-
-            // Se for Enter num card focado
             if (e.key === 'Enter' && document.activeElement.classList.contains('gold-framebox')) {
                 const card = document.activeElement;
                 const img = card.querySelector('img');
-                // Abre viewer
                 if (img) openImageViewer(img.dataset.src || img.src, card.dataset.id);
             }
         });
     }
 
-    // Função para navegar no slideshow
     function navigateViewer(direction) {
         if (activeData.length === 0 || currentViewerIndex === -1) return;
-
         let newIndex = currentViewerIndex + direction;
-        // Loop infinito
         if (newIndex >= activeData.length) newIndex = 0;
         if (newIndex < 0) newIndex = activeData.length - 1;
-
         const nextItem = activeData[newIndex];
         currentViewerIndex = newIndex;
-
-        // Atualiza a imagem do viewer aberto
         const viewerImg = document.querySelector('.image-viewer-content');
         if (viewerImg) {
             viewerImg.style.opacity = 0.5;
@@ -289,7 +339,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const category = card.dataset.category;
         const shareUrl = `${window.location.origin}${window.location.pathname}?filtro=${category}`;
         const shareData = { title: `DaRafa: ${title}`, text: `Olha essa joia: ${title}`, url: shareUrl };
-        try { if (navigator.share) await navigator.share(shareData); else { await navigator.clipboard.writeText(shareUrl); alert('Link copiado!'); } } catch (err) { console.warn('Erro share', err); }
+        try { 
+            if (navigator.share) {
+                await navigator.share(shareData);
+            } else { 
+                await navigator.clipboard.writeText(shareUrl); 
+                showToast('Link copiado para a área de transferência! 📋');
+            } 
+        } catch (err) { console.warn('Erro share', err); }
     }
 
     function toggleWishlist(id, btnElement) {
@@ -299,9 +356,11 @@ document.addEventListener('DOMContentLoaded', () => {
             btnElement.classList.add('active');
             btnElement.style.transform = "scale(1.4)";
             setTimeout(() => btnElement.style.transform = "scale(1)", 200);
+            showToast('Adicionado aos Favoritos ❤️');
         } else {
             wishlist.splice(index, 1);
             btnElement.classList.remove('active');
+            showToast('Removido dos Favoritos 💔');
         }
         localStorage.setItem('darafa_wishlist', JSON.stringify(wishlist));
         
@@ -524,9 +583,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if(modalFilters) {
              const controlsWrapper = document.createElement('div');
              controlsWrapper.className = 'controls-wrapper';
+             
              const input = document.createElement('input');
              input.placeholder = 'Buscar joia...';
              input.style.cssText = "padding:12px 25px; width:100%; max-width:300px; border-radius:50px; border:2px solid #241000; background:rgba(255,255,255,0.9); color:#241000; font-size:1rem; outline:none;";
+             
              const sortSelect = document.createElement('select');
              sortSelect.innerHTML = `<option value="default">✨ Relevância</option><option value="az">A - Z</option><option value="za">Z - A</option><option value="random">🎲 Aleatório</option>`;
              sortSelect.style.cssText = "padding:12px 20px; border-radius:50px; border:2px solid #241000; background:#241000; color:#FDB90C; font-size:0.9rem; font-weight:600; cursor:pointer;";
@@ -577,7 +638,9 @@ document.addEventListener('DOMContentLoaded', () => {
             modalImages.forEach(img => modalObserver.observe(img));
         }
         
-        // Delegação no Modal
+        const modalGallery = overlay.querySelector('.gallery-5-cols');
+        if(modalGallery) attachCardEvents(modalGallery);
+
         overlay.addEventListener('click', (e) => {
             const btn = e.target;
             if (btn.classList.contains('wishlist-btn')) {
@@ -615,12 +678,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.addEventListener('keydown', closeOnEsc);
     }
 
-    // UPDATED VIEWER TO SUPPORT ID FOR SLIDESHOW
-    function openImageViewer(imageSrc, id) {
-        // Encontra o index deste item no activeData
-        const foundIndex = activeData.findIndex(item => item.id == id);
-        if (foundIndex !== -1) currentViewerIndex = foundIndex;
-
+    function openImageViewer(imageSrc) {
         createViewerOverlay(`<img src="${imageSrc}" class="image-viewer-content" style="max-height:90vh; max-width:90%; border:1px solid var(--color-gold-dark); box-shadow: 0 0 30px rgba(0,0,0,0.8);">`);
     }
 
