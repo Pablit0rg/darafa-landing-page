@@ -1,99 +1,79 @@
 /**
- * DaRafa Acessórios - Main Script (Versão Final 50 Itens)
- * * CORREÇÃO:
- * - Adicionado loop automático para garantir 50 cards na tela.
- * - Mantida a imagem padrão das 4 peças para todos.
- * - Filtros e Scroll Reveal funcionando.
+ * DaRafa Acessórios - Main Script (High Performance Edition)
+ * * OTIMIZAÇÕES APLICADAS:
+ * 1. Throttle no Scroll (Economia de CPU)
+ * 2. Passive Listeners (Scroll liso no mobile)
+ * 3. Observer Singleton (Economia de Memória RAM)
+ * 4. Smart Preload (Carregamento antecipado no hover)
+ * 5. Renderização Atômica (Menos reflow no navegador)
  */
 
 document.addEventListener('DOMContentLoaded', () => {
 
     // =========================================================
-    // 0. CONFIGURAÇÕES & DADOS
+    // 0. DADOS & CONFIGURAÇÕES
     // =========================================================
     const INSTAGRAM_TOKEN = ''; 
     const POSTS_LIMIT = 50; 
 
-    // 1. LISTA MANUAL (Os seus itens principais)
+    // LISTA MANUAL (Core)
     const productsData = [
-        {
-            id: 1,
-            category: 'nose-cuff',
-            title: 'Nose Cuff Spirals',
-            description: 'Design espiral em arame dourado, ajuste anatômico sem furos.',
-            image: 'assets/images/darafa-catalogo.jpg'
-        },
-        {
-            id: 2,
-            category: 'brincos',
-            title: 'Brinco Solar',
-            description: 'Peça statement inspirada no sol, leve e marcante.',
-            image: 'assets/images/darafa-catalogo.jpg'
-        },
-        {
-            id: 3,
-            category: 'body',
-            title: 'Body Chain Lux',
-            description: 'Corrente corporal para realçar a beleza natural.',
-            image: 'assets/images/darafa-catalogo.jpg'
-        },
-        {
-            id: 4,
-            category: 'aneis',
-            title: 'Anel Flow',
-            description: 'Adapta-se a qualquer dedo com conforto e movimento.',
-            image: 'assets/images/darafa-catalogo.jpg'
-        },
-        {
-            id: 5,
-            category: 'aneis',
-            title: 'Anel Regulável Flow',
-            description: 'Design orgânico que abraça o dedo com elegância.',
-            image: 'assets/images/darafa-catalogo.jpg'
-        },
-        {
-            id: 6,
-            category: 'colar',
-            title: 'Choker Minimal',
-            description: 'Aro rígido dourado, elegância instantânea.',
-            image: 'assets/images/darafa-catalogo.jpg'
-        },
-        {
-            id: 7,
-            category: 'nose-cuff',
-            title: 'Nose Cuff Duplo',
-            description: 'Duas voltas de arame para destaque extra.',
-            image: 'assets/images/darafa-catalogo.jpg'
-        },
-        {
-            id: 8,
-            category: 'brincos',
-            title: 'Maxi Brinco',
-            description: 'Para quem não tem medo de brilhar.',
-            image: 'assets/images/darafa-catalogo.jpg'
-        }
+        { id: 1, category: 'nose-cuff', title: 'Nose Cuff Spirals', description: 'Design espiral em arame dourado, ajuste anatômico sem furos.', image: 'assets/images/darafa-catalogo.jpg' },
+        { id: 2, category: 'brincos', title: 'Brinco Solar', description: 'Peça statement inspirada no sol, leve e marcante.', image: 'assets/images/darafa-catalogo.jpg' },
+        { id: 3, category: 'body', title: 'Body Chain Lux', description: 'Corrente corporal para realçar a beleza natural.', image: 'assets/images/darafa-catalogo.jpg' },
+        { id: 4, category: 'aneis', title: 'Anel Flow', description: 'Adapta-se a qualquer dedo com conforto e movimento.', image: 'assets/images/darafa-catalogo.jpg' },
+        { id: 5, category: 'aneis', title: 'Anel Regulável Flow', description: 'Design orgânico que abraça o dedo com elegância.', image: 'assets/images/darafa-catalogo.jpg' },
+        { id: 6, category: 'colar', title: 'Choker Minimal', description: 'Aro rígido dourado, elegância instantânea.', image: 'assets/images/darafa-catalogo.jpg' },
+        { id: 7, category: 'nose-cuff', title: 'Nose Cuff Duplo', description: 'Duas voltas de arame para destaque extra.', image: 'assets/images/darafa-catalogo.jpg' },
+        { id: 8, category: 'brincos', title: 'Maxi Brinco', description: 'Para quem não tem medo de brilhar.', image: 'assets/images/darafa-catalogo.jpg' }
     ];
 
-    // 2. O COMPLETADOR DE LISTA (GERA OS 42 RESTANTES)
-    // Isso garante que você tenha 50 itens na tela
+    // COMPLETADOR DE LISTA (GERA ATÉ 50 ITENS)
     const categoriasExemplo = ['nose-cuff', 'brincos', 'aneis', 'colar'];
-    
     for (let i = productsData.length + 1; i <= 50; i++) {
-        // Escolhe uma categoria rotativa para os filtros funcionarem
         const cat = categoriasExemplo[i % categoriasExemplo.length];
-        
         productsData.push({
             id: i,
             category: cat,
             title: `Joia Exclusiva ${i}`,
             description: 'Peça artesanal feita à mão com design exclusivo DaRafa.',
-            image: 'assets/images/darafa-catalogo.jpg' // A imagem das 4 peças
+            image: 'assets/images/darafa-catalogo.jpg'
         });
     }
 
 
     // =========================================================
-    // 3. INICIALIZAÇÃO DO CATÁLOGO
+    // 1. OBSERVER SINGLETON (PERFORMANCE DE MEMÓRIA)
+    // Criamos UM vigia para o site todo, em vez de vários.
+    // =========================================================
+    const globalImageObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const img = entry.target;
+                
+                // Troca src falso pelo real
+                if(img.dataset.src) {
+                    img.src = img.dataset.src;
+                }
+
+                // Efeito Fade-In quando carregar
+                img.onload = () => {
+                    img.style.opacity = 1;
+                    img.classList.add('loaded');
+                };
+                
+                // Para de vigiar esta imagem (missão cumprida)
+                observer.unobserve(img);
+            }
+        });
+    }, {
+        rootMargin: "100px 0px", // Carrega 100px antes de aparecer
+        threshold: 0.01
+    });
+
+
+    // =========================================================
+    // 2. INICIALIZAÇÃO
     // =========================================================
     const galleryContainer = document.querySelector('#gallery-door .gallery-5-cols');
     
@@ -112,13 +92,13 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             renderLocalCatalog(productsData);
         }
-        initLazyObserver();
     }
 
-    // --- RENDERIZADOR ---
+    // --- RENDERIZADOR OTIMIZADO ---
     function renderLocalCatalog(items) {
         if (!galleryContainer) return;
         
+        // Constrói HTML na memória (mais rápido que tocar no DOM várias vezes)
         let fullHTML = '';
         
         items.forEach(item => {
@@ -139,42 +119,34 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
         });
         
+        // Injeção Atômica (Uma única atualização de tela)
         galleryContainer.innerHTML = fullHTML;
+        
+        // Ativa os observadores e o Preload Inteligente nos novos elementos
+        attachObserversAndPreload(galleryContainer);
     }
 
+    // Função auxiliar para ligar o Observer e o Preload
+    function attachObserversAndPreload(container) {
+        const images = container.querySelectorAll('.lazy-image');
+        images.forEach(img => globalImageObserver.observe(img));
 
-    // =========================================================
-    // 4. SCROLL REVEAL (LAZY LOADER)
-    // =========================================================
-    function initLazyObserver() {
-        const lazyImages = document.querySelectorAll('.lazy-image');
-
-        const imageObserver = new IntersectionObserver((entries, observer) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    const img = entry.target;
-                    
-                    if(img.dataset.src) img.src = img.dataset.src;
-
-                    img.onload = () => {
-                        img.style.opacity = 1;
-                        img.classList.add('loaded');
-                    };
-                    
-                    observer.unobserve(img);
-                }
-            });
-        }, {
-            rootMargin: "100px 0px", // Carrega um pouco antes de aparecer
-            threshold: 0.01
+        // SMART PRELOAD: Baixa a imagem no hover do mouse
+        const cards = container.querySelectorAll('.gold-framebox');
+        cards.forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                const img = card.querySelector('img');
+                const src = img.dataset.src || img.src;
+                // Cria um objeto de imagem fantasma para forçar o cache do navegador
+                const preload = new Image();
+                preload.src = src;
+            }, { once: true }); // Só precisa fazer isso na primeira vez que passa o mouse
         });
-
-        lazyImages.forEach(image => imageObserver.observe(image));
     }
 
 
     // =========================================================
-    // 5. FILTROS INTERATIVOS
+    // 3. FILTROS
     // =========================================================
     function initFilters() {
         document.body.addEventListener('click', (e) => {
@@ -182,14 +154,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 const button = e.target;
                 const filterValue = button.dataset.filter;
                 
-                // Visual do Botão
+                // UX: Troca classe active
                 const container = button.closest('.catalog-filters');
                 if(container) {
                     container.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
                     button.classList.add('active');
                 }
 
-                // Lógica de Filtragem
+                // Lógica de Dados
                 let filteredData;
                 if (filterValue === 'all') {
                     filteredData = productsData;
@@ -197,7 +169,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     filteredData = productsData.filter(item => item.category === filterValue);
                 }
 
-                // Atualiza a Galeria
+                // Renderização no Alvo
                 const modalContent = button.closest('.expansion-content');
                 const targetGallery = modalContent 
                     ? modalContent.querySelector('.gallery-5-cols') 
@@ -218,11 +190,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     });
                     targetGallery.innerHTML = html;
                     
-                    // Animação rápida de entrada
-                    const newImages = targetGallery.querySelectorAll('.lazy-image');
-                    setTimeout(() => {
-                        newImages.forEach(img => img.style.opacity = 1);
-                    }, 100);
+                    // Reativa observadores para os itens filtrados
+                    attachObserversAndPreload(targetGallery);
                 }
             }
         });
@@ -230,8 +199,34 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     // =========================================================
-    // 6. MENU MOBILE E MODAIS
+    // 4. UX: MENU MOBILE & BOTÃO TOPO (THROTTLED)
     // =========================================================
+    
+    // THROTTLE FUNCTION (O Limitador de Velocidade)
+    // Garante que uma função rode no máximo 1 vez a cada X milissegundos
+    function throttle(func, limit) {
+        let inThrottle;
+        return function() {
+            const args = arguments;
+            const context = this;
+            if (!inThrottle) {
+                func.apply(context, args);
+                inThrottle = true;
+                setTimeout(() => inThrottle = false, limit);
+            }
+        }
+    }
+
+    // Botão Voltar ao Topo com Throttle + Passive Listener
+    const backToTopBtn = document.getElementById('backToTop');
+    if(backToTopBtn) {
+        window.addEventListener('scroll', throttle(() => {
+            if (window.scrollY > 300) backToTopBtn.classList.add('visible');
+            else backToTopBtn.classList.remove('visible');
+        }, 100), { passive: true }); // { passive: true } deixa o scroll liso no mobile
+    }
+
+    // Menu Mobile
     const navbarToggler = document.getElementById('navbar-toggler');
     const navbarMenu = document.getElementById('navbar-menu');
     const navLinks = document.querySelectorAll('.navbar-link');
@@ -258,15 +253,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    const backToTopBtn = document.getElementById('backToTop');
-    if(backToTopBtn) {
-        window.addEventListener('scroll', () => {
-            if (window.scrollY > 300) backToTopBtn.classList.add('visible');
-            else backToTopBtn.classList.remove('visible');
-        });
-    }
 
-    // PORTAL (EXPANSÃO)
+    // =========================================================
+    // 5. SISTEMA DE PORTAL & MODAIS
+    // =========================================================
     const doors = document.querySelectorAll('.big-card-wrapper:not(.no-expand)');
     const body = document.body;
 
@@ -289,22 +279,12 @@ document.addEventListener('DOMContentLoaded', () => {
         body.style.overflow = 'hidden'; 
         requestAnimationFrame(() => { overlay.classList.add('active'); });
 
-        // Reativar Lazy Load no Modal
-        const modalImages = overlay.querySelectorAll('.lazy-image');
-        if(modalImages.length > 0) {
-            const modalObserver = new IntersectionObserver((entries, observer) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        const img = entry.target;
-                        if(img.dataset.src) img.src = img.dataset.src;
-                        img.onload = () => { img.style.opacity = 1; };
-                        observer.unobserve(img);
-                    }
-                });
-            }, { root: overlay, rootMargin: "50px" });
-            modalImages.forEach(img => modalObserver.observe(img));
-        }
+        // Reativa observadores DENTRO do Modal (pois é HTML novo)
+        // Usamos o mesmo observer global (Singleton)
+        const modalContainer = overlay.querySelector('.expansion-content');
+        if(modalContainer) attachObserversAndPreload(modalContainer);
 
+        // Delegação de cliques para Zoom/História
         overlay.addEventListener('click', (e) => {
             const card = e.target.closest('.gold-framebox');
             if (card && overlay.contains(card)) {
