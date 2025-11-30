@@ -1,31 +1,74 @@
 /**
- * DaRafa Acessórios - Main Script (Versão com Toasts)
- * * OTIMIZAÇÕES APLICADAS:
- * 1. Notificações Toast (Feedback Visual) - NOVO!
- * 2. Navegação por Teclado
- * 3. Infinite Scroll Real
- * 4. Ordenação Dinâmica
- * 5. Swipe, Share, URL, Wishlist & Busca
+ * DaRafa Acessórios - Main Script (Versão FINAL - Analytics Edition)
+ * * OTIMIZAÇÕES APLICADAS (10/10):
+ * 1. Analytics Caseiro (Rastreamento de Dados) - NOVO!
+ * 2. Notificações Toast
+ * 3. Navegação por Teclado
+ * 4. Infinite Scroll Real
+ * 5. Ordenação Dinâmica
+ * 6. Swipe Gestures
+ * 7. Compartilhamento Nativo
+ * 8. URL State (Links)
+ * 9. Wishlist (Favoritos)
+ * 10. Busca em Tempo Real
  */
 
 document.addEventListener('DOMContentLoaded', () => {
 
     // =========================================================
-    // 0. DADOS & CONFIGURAÇÕES
+    // 0. DADOS, CONFIGURAÇÕES & ANALYTICS
     // =========================================================
     const INSTAGRAM_TOKEN = ''; 
     const POSTS_LIMIT = 50; 
     const ITEMS_PER_PAGE = 12;
     
     let wishlist = JSON.parse(localStorage.getItem('darafa_wishlist')) || [];
+    let analyticsData = JSON.parse(localStorage.getItem('darafa_analytics')) || {
+        views: 0,
+        searches: {},
+        categoryClicks: {},
+        productClicks: {},
+        interactions: { wishlist: 0, share: 0 }
+    };
     let currentSort = 'default';
-    
-    // Estado Global
     let activeData = []; 
     let loadedCount = 0; 
     let scrollSentinel;
     let currentViewerIndex = -1;
 
+    // --- SISTEMA DE ANALYTICS (NOVO) ---
+    function trackEvent(type, label) {
+        if (type === 'view') analyticsData.views++;
+        if (type === 'search' && label) {
+            analyticsData.searches[label] = (analyticsData.searches[label] || 0) + 1;
+        }
+        if (type === 'filter') {
+            analyticsData.categoryClicks[label] = (analyticsData.categoryClicks[label] || 0) + 1;
+        }
+        if (type === 'product_click') {
+            analyticsData.productClicks[label] = (analyticsData.productClicks[label] || 0) + 1;
+        }
+        if (type === 'interaction') {
+            analyticsData.interactions[label]++;
+        }
+        
+        localStorage.setItem('darafa_analytics', JSON.stringify(analyticsData));
+        // console.log(`[Analytics] ${type}: ${label}`); // Descomente para debugar
+    }
+
+    // Expõe função global para ver relatórios no console
+    window.showAnalytics = () => {
+        console.table(analyticsData.categoryClicks);
+        console.log('--- Buscas Populares ---', analyticsData.searches);
+        console.log('--- Produtos Mais Vistos ---', analyticsData.productClicks);
+        console.log('--- Engajamento ---', analyticsData.interactions);
+        return "Relatório gerado acima!";
+    };
+
+    // Registra visualização de página
+    trackEvent('view');
+
+    // --- DADOS DOS PRODUTOS ---
     const productsData = [
         { id: 1, category: 'nose-cuff', title: 'Nose Cuff Spirals', description: 'Design espiral em arame dourado, ajuste anatômico sem furos.', image: 'assets/images/darafa-catalogo.jpg' },
         { id: 2, category: 'brincos', title: 'Brinco Solar', description: 'Peça statement inspirada no sol, leve e marcante.', image: 'assets/images/darafa-catalogo.jpg' },
@@ -127,7 +170,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // --- INFINITE SCROLL CORE ---
     function resetAndRender(container = galleryContainer) {
         if (!container) return;
         container.innerHTML = ''; 
@@ -214,7 +256,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     // =========================================================
-    // 3. ESTILOS DINÂMICOS (TOAST INCLUÍDO)
+    // 3. ESTILOS DINÂMICOS & UI
     // =========================================================
     function injectDynamicStyles() {
         const style = document.createElement('style');
@@ -232,56 +274,20 @@ document.addEventListener('DOMContentLoaded', () => {
             #js-sort-select { padding: 12px 20px; border-radius: 50px; border: 2px solid #241000; background: #241000; color: #FDB90C; font-size: 0.9rem; font-weight: 600; cursor: pointer; outline: none; appearance: none; -webkit-appearance: none; text-align: center; box-shadow: 0 4px 10px rgba(36,16,0,0.2); }
             #js-sort-select:hover { background: #3a1a00; }
             
-            /* TOAST STYLES */
             .toast-notification {
-                position: fixed;
-                bottom: 30px;
-                left: 50%;
-                transform: translateX(-50%) translateY(100px);
-                background-color: #241000;
-                color: #FDB90C;
-                padding: 12px 24px;
-                border-radius: 50px;
-                box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-                font-family: 'Poppins', sans-serif;
-                font-size: 0.9rem;
-                font-weight: 500;
-                z-index: 5000;
-                opacity: 0;
-                transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-                display: flex;
-                align-items: center;
-                gap: 8px;
-                border: 1px solid #FDB90C;
+                position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px);
+                background-color: #241000; color: #FDB90C; padding: 12px 24px;
+                border-radius: 50px; box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+                font-family: 'Poppins', sans-serif; font-size: 0.9rem; font-weight: 500;
+                z-index: 5000; opacity: 0; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                display: flex; align-items: center; gap: 8px; border: 1px solid #FDB90C;
             }
-            .toast-notification.show {
-                transform: translateX(-50%) translateY(0);
-                opacity: 1;
-            }
+            .toast-notification.show { transform: translateX(-50%) translateY(0); opacity: 1; }
         `;
         document.head.appendChild(style);
     }
 
-    function attachCardEvents(container) {
-        container.addEventListener('click', (e) => {
-            const btn = e.target;
-            if (btn.classList.contains('wishlist-btn')) {
-                e.stopPropagation();
-                const card = btn.closest('.gold-framebox');
-                const id = parseInt(card.dataset.id);
-                toggleWishlist(id, btn);
-            }
-            if (btn.classList.contains('share-btn')) {
-                e.stopPropagation();
-                const card = btn.closest('.gold-framebox');
-                shareProduct(card);
-            }
-        });
-    }
-
-    // --- TOAST SYSTEM (NOVO) ---
     function showToast(message) {
-        // Remove toast antigo se existir
         const oldToast = document.querySelector('.toast-notification');
         if(oldToast) oldToast.remove();
 
@@ -290,18 +296,32 @@ document.addEventListener('DOMContentLoaded', () => {
         toast.innerHTML = message;
         document.body.appendChild(toast);
 
-        // Força reflow para animação funcionar
-        requestAnimationFrame(() => {
-            toast.classList.add('show');
-        });
-
-        // Remove após 3 segundos
+        requestAnimationFrame(() => { toast.classList.add('show'); });
         setTimeout(() => {
             toast.classList.remove('show');
             setTimeout(() => toast.remove(), 400);
         }, 3000);
     }
 
+    function attachCardEvents(container) {
+        container.addEventListener('click', (e) => {
+            const btn = e.target;
+            if (btn.classList.contains('wishlist-btn')) {
+                e.stopPropagation();
+                const card = btn.closest('.gold-framebox');
+                toggleWishlist(parseInt(card.dataset.id), btn);
+                return;
+            }
+            if (btn.classList.contains('share-btn')) {
+                e.stopPropagation();
+                const card = btn.closest('.gold-framebox');
+                shareProduct(card);
+                return;
+            }
+        });
+    }
+
+    // --- ACESSIBILIDADE E NAVEGAÇÃO ---
     function initKeyboardNavigation() {
         document.addEventListener('keydown', (e) => {
             if (document.querySelector('.image-viewer-overlay.active')) {
@@ -312,7 +332,10 @@ document.addEventListener('DOMContentLoaded', () => {
             if (e.key === 'Enter' && document.activeElement.classList.contains('gold-framebox')) {
                 const card = document.activeElement;
                 const img = card.querySelector('img');
-                if (img) openImageViewer(img.dataset.src || img.src, card.dataset.id);
+                if (img) {
+                    trackEvent('product_click', card.dataset.title); // Analytics
+                    openImageViewer(img.dataset.src || img.src, card.dataset.id);
+                }
             }
         });
     }
@@ -338,6 +361,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const title = card.dataset.title;
         const category = card.dataset.category;
         const shareUrl = `${window.location.origin}${window.location.pathname}?filtro=${category}`;
+        
+        trackEvent('interaction', 'share'); // Analytics
+
         const shareData = { title: `DaRafa: ${title}`, text: `Olha essa joia: ${title}`, url: shareUrl };
         try { 
             if (navigator.share) {
@@ -357,6 +383,7 @@ document.addEventListener('DOMContentLoaded', () => {
             btnElement.style.transform = "scale(1.4)";
             setTimeout(() => btnElement.style.transform = "scale(1)", 200);
             showToast('Adicionado aos Favoritos ❤️');
+            trackEvent('interaction', 'wishlist'); // Analytics Add
         } else {
             wishlist.splice(index, 1);
             btnElement.classList.remove('active');
@@ -375,7 +402,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     // =========================================================
-    // 4. CONTROLES UNIFICADOS
+    // 4. CONTROLES UNIFICADOS (ANALYTICS ATIVADO)
     // =========================================================
     function initControls() {
         const filterContainer = document.querySelector('.catalog-filters');
@@ -412,6 +439,9 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             if (term) {
+                // Analytics Search (debounce simples para não floodar)
+                if(term.length > 3) trackEvent('search', term); 
+                
                 filtered = filtered.filter(item => 
                     item.title.toLowerCase().includes(term) || 
                     item.description.toLowerCase().includes(term) ||
@@ -475,6 +505,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 const button = e.target;
                 const filterValue = button.dataset.filter;
                 updateURL('filtro', filterValue);
+                
+                trackEvent('filter', filterValue); // Analytics
 
                 const searchInput = document.getElementById('js-search-input');
                 if (searchInput) searchInput.value = '';
@@ -505,7 +537,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     // =========================================================
-    // 6. UX & PORTAIS
+    // 6. UX: MENU, SCROLL & PORTAIS
     // =========================================================
     function throttle(func, limit) {
         let inThrottle;
@@ -583,11 +615,9 @@ document.addEventListener('DOMContentLoaded', () => {
         if(modalFilters) {
              const controlsWrapper = document.createElement('div');
              controlsWrapper.className = 'controls-wrapper';
-             
              const input = document.createElement('input');
              input.placeholder = 'Buscar joia...';
              input.style.cssText = "padding:12px 25px; width:100%; max-width:300px; border-radius:50px; border:2px solid #241000; background:rgba(255,255,255,0.9); color:#241000; font-size:1rem; outline:none;";
-             
              const sortSelect = document.createElement('select');
              sortSelect.innerHTML = `<option value="default">✨ Relevância</option><option value="az">A - Z</option><option value="za">Z - A</option><option value="random">🎲 Aleatório</option>`;
              sortSelect.style.cssText = "padding:12px 20px; border-radius:50px; border:2px solid #241000; background:#241000; color:#FDB90C; font-size:0.9rem; font-weight:600; cursor:pointer;";
@@ -661,6 +691,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (card.dataset.description && card.classList.contains('story-card')) {
                     openStoryMode(img.dataset.src || img.src, card.dataset.title, card.dataset.description);
                 } else {
+                    trackEvent('product_click', card.dataset.title); // Analytics
                     if(img) openImageViewer(img.dataset.src || img.src, card.dataset.id);
                 }
             }
