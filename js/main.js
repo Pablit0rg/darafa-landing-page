@@ -1,11 +1,11 @@
 /**
- * DaRafa Acessórios - Main Script (Versão com Swipe Gestures)
+ * DaRafa Acessórios - Main Script (Versão com Ordenação Dinâmica)
  * * OTIMIZAÇÕES APLICADAS:
- * 1. Gestos de Swipe (Arrastar para fechar) - NOVO!
- * 2. Compartilhamento Nativo (Web Share API)
- * 3. Links Compartilháveis (URL State)
- * 4. Lista de Desejos (Wishlist)
- * 5. Busca em Tempo Real
+ * 1. Ordenação Dinâmica (A-Z, Z-A, Aleatório) - NOVO!
+ * 2. Gestos de Swipe (Mobile)
+ * 3. Compartilhamento Nativo
+ * 4. Links Compartilháveis (URL)
+ * 5. Wishlist & Busca
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -17,6 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const POSTS_LIMIT = 50; 
     
     let wishlist = JSON.parse(localStorage.getItem('darafa_wishlist')) || [];
+    let currentSort = 'default'; // Estado atual da ordenação
 
     const productsData = [
         { id: 1, category: 'nose-cuff', title: 'Nose Cuff Spirals', description: 'Design espiral em arame dourado, ajuste anatômico sem furos.', image: 'assets/images/darafa-catalogo.jpg' },
@@ -65,7 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (galleryContainer) {
         initCatalog();
         initFilters();
-        initSearchBar(); 
+        initControls(); // Inicializa Busca + Ordenação
         injectDynamicStyles(); 
         setTimeout(loadStateFromURL, 100);
     }
@@ -118,33 +119,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderLocalCatalog(items) {
         if (!galleryContainer) return;
-        
-        if (items.length === 0) {
-            galleryContainer.innerHTML = '<p style="color:#241000; text-align:center; width:100%; grid-column: 1/-1; padding: 20px; font-weight:600;">Nenhuma joia encontrada.</p>';
-            return;
-        }
-
-        let fullHTML = '';
-        items.forEach(item => {
-            const isFav = wishlist.includes(item.id) ? 'active' : '';
-            fullHTML += `
-                <div class="gold-framebox" data-id="${item.id}" data-category="${item.category}" data-title="${item.title}" data-description="${item.description}">
-                    <div class="card-actions">
-                        <button class="action-btn share-btn" aria-label="Compartilhar" onclick="event.stopPropagation()">➦</button>
-                        <button class="action-btn wishlist-btn ${isFav}" aria-label="Favoritar" onclick="event.stopPropagation()">♥</button>
-                    </div>
-                    <img class="lazy-image" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-src="${item.image}" alt="${item.title}" style="transition: opacity 0.8s ease; opacity: 0;">
-                    <div class="card-info-bar">
-                        <h3 class="info-title">${item.title}</h3>
-                        <p class="info-desc">${item.description}</p>
-                    </div>
-                </div>
-            `;
-        });
-        
-        galleryContainer.innerHTML = fullHTML;
-        attachObserversAndPreload(galleryContainer);
-        attachCardEvents(galleryContainer); 
+        renderLocalCatalogWrapper(galleryContainer, items);
     }
 
     function attachObserversAndPreload(container) {
@@ -164,7 +139,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     // =========================================================
-    // 3. LÓGICA DE AÇÕES (WISHLIST + SHARE)
+    // 3. ESTILOS DINÂMICOS
     // =========================================================
     function injectDynamicStyles() {
         const style = document.createElement('style');
@@ -175,6 +150,12 @@ document.addEventListener('DOMContentLoaded', () => {
             .wishlist-btn.active { color: #D00000; background: #fff; box-shadow: 0 0 10px rgba(208,0,0,0.5); }
             .share-btn { font-size: 1rem; }
             .share-btn:active { transform: scale(0.9); }
+            
+            /* Estilos dos Controles (Busca + Sort) */
+            .controls-wrapper { width: 100%; display: flex; justify-content: center; gap: 15px; margin-bottom: 20px; flex-wrap: wrap; }
+            #js-search-input { padding: 12px 25px; width: 100%; max-width: 300px; border-radius: 50px; border: 2px solid #241000; background: rgba(255,255,255,0.9); color: #241000; font-size: 1rem; outline: none; box-shadow: 0 4px 10px rgba(36,16,0,0.1); transition: all 0.3s ease; }
+            #js-sort-select { padding: 12px 20px; border-radius: 50px; border: 2px solid #241000; background: #241000; color: #FDB90C; font-size: 0.9rem; font-weight: 600; cursor: pointer; outline: none; appearance: none; -webkit-appearance: none; text-align: center; box-shadow: 0 4px 10px rgba(36,16,0,0.2); }
+            #js-sort-select:hover { background: #3a1a00; }
         `;
         document.head.appendChild(style);
     }
@@ -226,40 +207,45 @@ document.addEventListener('DOMContentLoaded', () => {
         if (activeFilter && activeFilter.dataset.filter === 'favorites') {
             const filtered = productsData.filter(item => wishlist.includes(item.id));
             const parentContainer = btnElement.closest('.gallery-5-cols');
-            if(parentContainer) {
-               if(filtered.length === 0) parentContainer.innerHTML = '<p style="color:#241000; text-align:center; width:100%; grid-column: 1/-1; padding:20px;">Você ainda não tem favoritos.</p>';
-               else {
-                   const card = btnElement.closest('.gold-framebox');
-                   card.style.opacity = '0';
-                   setTimeout(() => card.remove(), 300);
-               }
-            }
+            if(parentContainer) renderLocalCatalogWrapper(parentContainer, filtered);
         }
     }
 
 
     // =========================================================
-    // 4. BUSCA EM TEMPO REAL
+    // 4. CONTROLES UNIFICADOS (BUSCA + ORDENAÇÃO)
     // =========================================================
-    function initSearchBar() {
+    function initControls() {
         const filterContainer = document.querySelector('.catalog-filters');
         if (!filterContainer) return;
 
-        const searchContainer = document.createElement('div');
-        searchContainer.style.cssText = "width:100%; display:flex; justify-content:center; margin-bottom:20px;";
+        // Container Flex para alinhar Search e Sort
+        const controlsWrapper = document.createElement('div');
+        controlsWrapper.className = 'controls-wrapper';
 
+        // 4.1 Input de Busca
         const input = document.createElement('input');
         input.type = 'text';
         input.id = 'js-search-input';
         input.placeholder = 'Buscar joia...';
-        input.style.cssText = "padding:12px 25px; width:100%; max-width:400px; border-radius:50px; border:2px solid #241000; background:rgba(255,255,255,0.9); color:#241000; font-size:1rem; outline:none; box-shadow:0 4px 10px rgba(36,16,0,0.1); transition:all 0.3s ease;";
-
         input.addEventListener('focus', () => input.style.borderColor = '#CD4A00');
         input.addEventListener('blur', () => input.style.borderColor = '#241000');
 
-        searchContainer.appendChild(input);
-        filterContainer.prepend(searchContainer);
+        // 4.2 Select de Ordenação (NOVO)
+        const sortSelect = document.createElement('select');
+        sortSelect.id = 'js-sort-select';
+        sortSelect.innerHTML = `
+            <option value="default">✨ Relevância</option>
+            <option value="az">A - Z</option>
+            <option value="za">Z - A</option>
+            <option value="random">🎲 Aleatório</option>
+        `;
 
+        controlsWrapper.appendChild(input);
+        controlsWrapper.appendChild(sortSelect);
+        filterContainer.prepend(controlsWrapper);
+
+        // Eventos
         input.addEventListener('input', (e) => {
             const term = e.target.value.toLowerCase();
             if(this.searchTimeout) clearTimeout(this.searchTimeout);
@@ -276,19 +262,73 @@ document.addEventListener('DOMContentLoaded', () => {
                 item.category.toLowerCase().includes(term)
             );
 
+            // Aplica a ordenação atual nos resultados da busca
+            const sorted = applySort(filtered);
+            
             const parentModal = input.closest('.expansion-content');
             const targetGallery = parentModal ? parentModal.querySelector('.gallery-5-cols') : document.querySelector('#gallery-door .gallery-5-cols');
 
-            if (targetGallery) renderLocalCatalogWrapper(targetGallery, filtered);
+            if (targetGallery) renderLocalCatalogWrapper(targetGallery, sorted);
         });
+
+        sortSelect.addEventListener('change', (e) => {
+            currentSort = e.target.value;
+            // Dispara um input na busca para re-renderizar mantendo o filtro atual
+            input.dispatchEvent(new Event('input'));
+            
+            // Se não tiver busca, precisamos forçar o re-render do filtro ativo
+            if(input.value === '') {
+                const activeFilter = document.querySelector('.filter-btn.active');
+                if(activeFilter) activeFilter.click();
+                else {
+                    // Fallback para 'todos'
+                    const allData = applySort([...productsData]);
+                    const targetGallery = document.querySelector('#gallery-door .gallery-5-cols');
+                    renderLocalCatalogWrapper(targetGallery, allData);
+                }
+            }
+        });
+    }
+
+    // --- FUNÇÃO DE ORDENAÇÃO (LÓGICA MATEMÁTICA) ---
+    function applySort(items) {
+        // Cria uma cópia para não estragar o array original
+        let sortedItems = [...items];
+        
+        switch (currentSort) {
+            case 'az':
+                sortedItems.sort((a, b) => a.title.localeCompare(b.title));
+                break;
+            case 'za':
+                sortedItems.sort((a, b) => b.title.localeCompare(a.title));
+                break;
+            case 'random':
+                sortedItems.sort(() => Math.random() - 0.5);
+                break;
+            default:
+                // Default usa a ordem original do ID (relevância)
+                sortedItems.sort((a, b) => a.id - b.id);
+        }
+        return sortedItems;
     }
 
     function renderLocalCatalogWrapper(container, data) {
         if (!container) return;
+        
+        // Garante que os dados estejam ordenados antes de renderizar
+        // (Caso a função tenha sido chamada diretamente sem passar pelo sort)
+        // Nota: Se a chamada veio do evento 'input' ou 'filter click' que já ordenou, isso é redundante mas seguro.
+        // O ideal é que o evento chame applySort. Aqui assumimos que 'data' já chega pré-processado 
+        // OU aplicamos o sort aqui se for uma chamada crua.
+        // Para garantir consistência, vamos aplicar o sort aqui se for o load inicial ou filtro.
+        // Mas cuidado com o 'random' re-embaralhando.
+        // Vamos confiar que quem chama o render já tratou os dados, exceto no filtro.
+        
         if (data.length === 0) {
             container.innerHTML = '<p style="color:#241000; text-align:center; width:100%; grid-column: 1/-1; padding:20px;">Nada encontrado.</p>';
             return;
         }
+
         let fullHTML = '';
         data.forEach(item => {
             const isFav = wishlist.includes(item.id) ? 'active' : '';
@@ -308,6 +348,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         container.innerHTML = fullHTML;
         attachCardEvents(container);
+        attachObserversAndPreload(container);
     }
 
 
@@ -352,6 +393,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     filteredData = productsData.filter(item => item.category === filterValue);
                 }
 
+                // APLICA ORDENAÇÃO NOS DADOS FILTRADOS
+                filteredData = applySort(filteredData);
+
                 const modalContent = button.closest('.expansion-content');
                 const targetGallery = modalContent ? modalContent.querySelector('.gallery-5-cols') : document.querySelector('#gallery-door .gallery-5-cols');
                 
@@ -362,7 +406,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     // =========================================================
-    // 6. UX: SWIPE GESTURES & PORTAIS
+    // 6. UX & PORTAIS (Mantido)
     // =========================================================
     function throttle(func, limit) {
         let inThrottle;
@@ -402,7 +446,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (navbarMenu && navbarMenu.classList.contains('active') && !navbarMenu.contains(e.target) && !navbarToggler.contains(e.target)) toggleMenu();
     });
 
-    // SISTEMA DE PORTAL (OPEN MODAL)
     const doors = document.querySelectorAll('.big-card-wrapper:not(.no-expand)');
     const body = document.body;
 
@@ -410,6 +453,7 @@ document.addEventListener('DOMContentLoaded', () => {
         door.addEventListener('click', function(e) {
             if(e.target.classList.contains('filter-btn') || 
                e.target.id === 'js-search-input' || 
+               e.target.id === 'js-sort-select' ||
                e.target.classList.contains('action-btn')) return;
                
             e.preventDefault();
@@ -428,46 +472,46 @@ document.addEventListener('DOMContentLoaded', () => {
         body.style.overflow = 'hidden'; 
         requestAnimationFrame(() => { overlay.classList.add('active'); });
 
-        // --- SWIPE GESTURE (NOVO) ---
         let touchStartY = 0;
         let touchEndY = 0;
-        
-        // Passive listener para não travar o scroll normal
-        overlay.addEventListener('touchstart', e => {
-            touchStartY = e.changedTouches[0].screenY;
-        }, {passive: true});
+        overlay.addEventListener('touchstart', e => { touchStartY = e.changedTouches[0].screenY; }, {passive: true});
+        overlay.addEventListener('touchend', e => { touchEndY = e.changedTouches[0].screenY; if (touchEndY - touchStartY > 60) close(); }, {passive: true});
 
-        overlay.addEventListener('touchend', e => {
-            touchEndY = e.changedTouches[0].screenY;
-            handleSwipe();
-        }, {passive: true});
-
-        function handleSwipe() {
-            // Se arrastou para baixo mais de 60px
-            if (touchEndY - touchStartY > 60) {
-                close();
-            }
-        }
-        // ---------------------------
-
-        const oldInput = overlay.querySelector('#js-search-input');
-        if(oldInput && oldInput.parentNode) oldInput.parentNode.remove();
+        // Limpa e recria controles dentro do modal
+        const oldControls = overlay.querySelector('.controls-wrapper');
+        if(oldControls) oldControls.remove();
         
         const modalFilters = overlay.querySelector('.catalog-filters');
         if(modalFilters) {
-             const searchContainer = document.createElement('div');
-             searchContainer.style.cssText = "width:100%; display:flex; justify-content:center; margin-bottom:20px;";
+             const controlsWrapper = document.createElement('div');
+             controlsWrapper.className = 'controls-wrapper';
+             
              const input = document.createElement('input');
              input.placeholder = 'Buscar joia...';
-             input.style.cssText = "padding:12px 25px; width:100%; max-width:400px; border-radius:50px; border:2px solid #241000; background:rgba(255,255,255,0.9); color:#241000; font-size:1rem; outline:none;";
-             input.addEventListener('input', (e) => {
-                 const term = e.target.value.toLowerCase();
+             input.style.cssText = "padding:12px 25px; width:100%; max-width:300px; border-radius:50px; border:2px solid #241000; background:rgba(255,255,255,0.9); color:#241000; font-size:1rem; outline:none;";
+             
+             const sortSelect = document.createElement('select');
+             sortSelect.innerHTML = `<option value="default">✨ Relevância</option><option value="az">A - Z</option><option value="za">Z - A</option><option value="random">🎲 Aleatório</option>`;
+             sortSelect.style.cssText = "padding:12px 20px; border-radius:50px; border:2px solid #241000; background:#241000; color:#FDB90C; font-size:0.9rem; font-weight:600; cursor:pointer;";
+             
+             controlsWrapper.appendChild(input);
+             controlsWrapper.appendChild(sortSelect);
+             modalFilters.prepend(controlsWrapper);
+
+             // Lógica Local do Modal (Replica da principal)
+             const updateModalGrid = () => {
+                 const term = input.value.toLowerCase();
                  const filtered = productsData.filter(item => item.title.toLowerCase().includes(term) || item.category.includes(term));
+                 const sorted = applySort(filtered); // Usa a função global applySort que lê currentSort
                  const targetGallery = overlay.querySelector('.gallery-5-cols');
-                 renderLocalCatalogWrapper(targetGallery, filtered);
+                 renderLocalCatalogWrapper(targetGallery, sorted);
+             };
+
+             input.addEventListener('input', updateModalGrid);
+             sortSelect.addEventListener('change', (e) => {
+                 currentSort = e.target.value;
+                 updateModalGrid();
              });
-             searchContainer.appendChild(input);
-             modalFilters.prepend(searchContainer);
 
              if(!modalFilters.querySelector('[data-filter="favorites"]')) {
                 const favBtn = document.createElement('button');
@@ -524,7 +568,6 @@ document.addEventListener('DOMContentLoaded', () => {
         document.addEventListener('keydown', closeOnEsc);
     }
 
-    // VISUALIZADORES (Também com Swipe)
     function openImageViewer(imageSrc) {
         createViewerOverlay(`<img src="${imageSrc}" class="image-viewer-content" style="max-height:90vh; max-width:90%; border:1px solid var(--color-gold-dark); box-shadow: 0 0 30px rgba(0,0,0,0.8);">`);
     }
@@ -545,15 +588,10 @@ document.addEventListener('DOMContentLoaded', () => {
         body.appendChild(viewer);
         requestAnimationFrame(() => viewer.classList.add('active'));
 
-        // --- SWIPE GESTURE NO VIEWER ---
         let touchStartY = 0;
         let touchEndY = 0;
         viewer.addEventListener('touchstart', e => { touchStartY = e.changedTouches[0].screenY; }, {passive: true});
-        viewer.addEventListener('touchend', e => {
-            touchEndY = e.changedTouches[0].screenY;
-            if (touchEndY - touchStartY > 60) closeViewer();
-        }, {passive: true});
-        // ------------------------------
+        viewer.addEventListener('touchend', e => { touchEndY = e.changedTouches[0].screenY; if (touchEndY - touchStartY > 60) closeViewer(); }, {passive: true});
 
         const closeViewer = () => {
             viewer.classList.remove('active');
