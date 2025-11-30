@@ -1,50 +1,38 @@
 /**
- * DaRafa Acessórios - Main Script (Versão MESTRE UNIFICADA - Fases 2 & 3)
- * * FUNCIONALIDADES ATIVAS:
- * --- FASE 2 (UX & App-like) ---
- * 1. Busca em Tempo Real
- * 2. Wishlist (Favoritos)
- * 3. Links Compartilháveis (URL)
- * 4. Compartilhamento Nativo
- * 5. Swipe Gestures
- * 6. Ordenação Dinâmica
- * 7. Infinite Scroll
- * 8. Navegação Teclado
- * 9. Toast Notifications
- * 10. Analytics Caseiro
- * --- FASE 3 (Performance & SEO) ---
- * 11. SEO Avançado (JSON-LD)
- * 12. Metadados Dinâmicos
- * 13. Modo Offline (PWA)
- * 14. Histórico Recente
- * 15. Focus Trap (Acessibilidade) - NOVO!
+ * DaRafa Acessórios - Main Script (Versão FASE 3 - Histórico Recente)
+ * * NOVAS OTIMIZAÇÕES (FASE 3):
+ * 1. Histórico "Visto Recentemente" (Widget + Filtro) - NOVO!
+ * 2. Modo Offline (PWA)
+ * 3. Metadados Dinâmicos
+ * 4. SEO Avançado (JSON-LD)
+ * * * FUNCIONALIDADES MANTIDAS (FASE 2):
+ * Analytics, Toast, Teclado, Infinite Scroll, Ordenação, Swipe, Share, URL, Wishlist, Busca.
  */
 
 document.addEventListener('DOMContentLoaded', () => {
 
     // =========================================================
-    // 0. DADOS, CONFIGURAÇÕES & ESTADO
+    // 0. DADOS, CONFIGURAÇÕES & ANALYTICS
     // =========================================================
     const INSTAGRAM_TOKEN = ''; 
     const POSTS_LIMIT = 50; 
     const ITEMS_PER_PAGE = 12;
     
-    // Persistência
+    // Estados Persistentes
     let wishlist = JSON.parse(localStorage.getItem('darafa_wishlist')) || [];
-    let recentHistory = JSON.parse(localStorage.getItem('darafa_history')) || [];
+    let recentHistory = JSON.parse(localStorage.getItem('darafa_history')) || []; // NOVO
+    
     let analyticsData = JSON.parse(localStorage.getItem('darafa_analytics')) || {
         views: 0, searches: {}, categoryClicks: {}, productClicks: {}, interactions: { wishlist: 0, share: 0 }
     };
-
-    // Estado da Sessão
+    
     let currentSort = 'default';
     let activeData = []; 
     let loadedCount = 0; 
     let scrollSentinel;
     let currentViewerIndex = -1;
-    let currentModal = null; // Para o Focus Trap
 
-    // SEO Backup
+    // Variáveis para Metadados
     let originalTitle = document.title;
     let originalDesc = document.querySelector('meta[name="description"]')?.getAttribute('content') || '';
 
@@ -57,7 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (type === 'interaction') analyticsData.interactions[label]++;
         localStorage.setItem('darafa_analytics', JSON.stringify(analyticsData));
     }
-    window.showAnalytics = () => analyticsData;
+    window.showAnalytics = () => { console.table(analyticsData.categoryClicks); return analyticsData; };
     trackEvent('view');
 
     // --- DADOS DOS PRODUTOS ---
@@ -72,12 +60,12 @@ document.addEventListener('DOMContentLoaded', () => {
         { id: 8, category: 'brincos', title: 'Maxi Brinco', description: 'Para quem não tem medo de brilhar.', image: 'assets/images/darafa-catalogo.jpg' }
     ];
 
-    // Gerador de Dados Mock
-    const categories = ['nose-cuff', 'brincos', 'aneis', 'colar'];
+    const categoriasExemplo = ['nose-cuff', 'brincos', 'aneis', 'colar'];
     for (let i = productsData.length + 1; i <= 50; i++) {
+        const cat = categoriasExemplo[i % categoriasExemplo.length];
         productsData.push({
             id: i,
-            category: categories[i % categories.length],
+            category: cat,
             title: `Joia Exclusiva ${i}`,
             description: 'Peça artesanal feita à mão com design exclusivo DaRafa.',
             image: 'assets/images/darafa-catalogo.jpg'
@@ -86,23 +74,32 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     // =========================================================
-    // 1. PHASE 3 FEATURES (SEO, OFFLINE, HISTORY)
+    // 1. SEO & METADADOS
     // =========================================================
     function initSEO() {
         const baseUrl = window.location.origin + window.location.pathname.replace('index.html', '');
         const schema = {
-            "@context": "https://schema.org", "@type": "JewelryStore",
-            "name": "DaRafa Acessórios", "url": baseUrl,
-            "description": "Joias artesanais feitas à mão em Curitiba.",
-            "logo": baseUrl + "assets/images/logo.darafa.oficial.logo.png",
-            "sameAs": ["https://www.instagram.com/darafa_cwb/"],
-            "address": { "@type": "PostalAddress", "addressLocality": "Curitiba", "addressRegion": "PR", "addressCountry": "BR" },
-            "hasOfferCatalog": {
-                "@type": "OfferCatalog", "name": "Catálogo DaRafa",
-                "itemListElement": productsData.slice(0, 10).map(p => ({
-                    "@type": "Offer", "itemOffered": { "@type": "Product", "name": p.title, "image": baseUrl + p.image }
-                }))
-            }
+            "@context": "https://schema.org", "@graph": [
+                {
+                    "@type": "JewelryStore", "name": "DaRafa Acessórios", "url": baseUrl,
+                    "description": "Joias artesanais feitas à mão em Curitiba.",
+                    "logo": baseUrl + "assets/images/logo.darafa.oficial.logo.png",
+                    "sameAs": ["https://www.instagram.com/darafa_cwb/"],
+                    "address": { "@type": "PostalAddress", "addressLocality": "Curitiba", "addressRegion": "PR", "addressCountry": "BR" }
+                },
+                {
+                    "@type": "ItemList", "numberOfItems": productsData.length,
+                    "itemListElement": productsData.map((item, index) => ({
+                        "@type": "ListItem", "position": index + 1,
+                        "item": {
+                            "@type": "Product", "name": item.title, "description": item.description,
+                            "image": baseUrl + item.image, "sku": `DARAF-${item.id}`,
+                            "brand": { "@type": "Brand", "name": "DaRafa" },
+                            "offers": { "@type": "Offer", "availability": "https://schema.org/InStock", "price": "0.00", "priceCurrency": "BRL" }
+                        }
+                    }))
+                }
+            ]
         };
         const script = document.createElement('script');
         script.type = 'application/ld+json';
@@ -110,49 +107,62 @@ document.addEventListener('DOMContentLoaded', () => {
         document.head.appendChild(script);
     }
 
-    function initOfflineMode() {
-        const style = document.createElement('style');
-        style.innerHTML = `body.offline-mode { filter: grayscale(0.8); } body.offline-mode .toast-notification { filter: grayscale(0) !important; }`;
-        document.head.appendChild(style);
-        window.addEventListener('offline', () => { document.body.classList.add('offline-mode'); showToast('⚠️ Você está offline. Modo leitura.'); });
-        window.addEventListener('online', () => { document.body.classList.remove('offline-mode'); showToast('🟢 Conexão restaurada!'); });
-    }
-
-    function addToHistory(id) {
-        recentHistory = recentHistory.filter(itemId => itemId !== id);
-        recentHistory.unshift(id);
-        if (recentHistory.length > 6) recentHistory.pop();
-        localStorage.setItem('darafa_history', JSON.stringify(recentHistory));
-    }
-
     function setPageMetadata(title, description) {
         document.title = `${title} | DaRafa`;
-        const meta = document.querySelector('meta[name="description"]');
-        if (meta) meta.setAttribute('content', description);
+        const metaDesc = document.querySelector('meta[name="description"]');
+        if (metaDesc) metaDesc.setAttribute('content', description);
     }
+
     function restorePageMetadata() {
         document.title = originalTitle;
-        const meta = document.querySelector('meta[name="description"]');
-        if (meta) meta.setAttribute('content', originalDesc);
+        const metaDesc = document.querySelector('meta[name="description"]');
+        if (metaDesc) metaDesc.setAttribute('content', originalDesc);
     }
 
 
     // =========================================================
-    // 2. INICIALIZAÇÃO CORE
+    // 2. MODO OFFLINE (PWA)
+    // =========================================================
+    function initOfflineMode() {
+        const style = document.createElement('style');
+        style.innerHTML = `
+            body.offline-mode { filter: grayscale(0.8); }
+            body.offline-mode .toast-notification { filter: grayscale(0) !important; }
+        `;
+        document.head.appendChild(style);
+
+        window.addEventListener('offline', () => {
+            document.body.classList.add('offline-mode');
+            showToast('⚠️ Você está offline. Modo leitura ativado.');
+        });
+
+        window.addEventListener('online', () => {
+            document.body.classList.remove('offline-mode');
+            showToast('🟢 Conexão restaurada! Atualizando...');
+            setTimeout(() => {
+                document.querySelectorAll('img').forEach(img => {
+                    if (!img.complete || img.naturalWidth === 0) { const src = img.src; img.src = ''; img.src = src; }
+                });
+            }, 1000);
+        });
+    }
+
+
+    // =========================================================
+    // 3. INICIALIZAÇÃO GERAL
     // =========================================================
     const galleryContainer = document.querySelector('#gallery-door .gallery-5-cols');
     
-    // Observers
     const globalImageObserver = new IntersectionObserver((entries, observer) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
                 const img = entry.target;
                 if(img.dataset.src) img.src = img.dataset.src;
-                img.onload = () => { img.style.opacity = 1; };
+                img.onload = () => { img.style.opacity = 1; img.classList.add('loaded'); };
                 observer.unobserve(img);
             }
         });
-    }, { rootMargin: "200px 0px" });
+    }, { rootMargin: "200px 0px", threshold: 0.01 });
 
     const infiniteScrollObserver = new IntersectionObserver((entries) => {
         if (entries[0].isIntersecting) loadNextBatch();
@@ -166,18 +176,35 @@ document.addEventListener('DOMContentLoaded', () => {
         initControls(); 
         injectDynamicStyles(); 
         setTimeout(loadStateFromURL, 100);
-        initGlobalEvents(); // Teclado e Focus Trap
+        initKeyboardNavigation();
     }
 
     window.addEventListener('popstate', loadStateFromURL);
 
-
     // =========================================================
-    // 3. LÓGICA DE DADOS & RENDER
+    // 4. LÓGICA DE CATÁLOGO & HISTÓRICO (NOVO!)
     // =========================================================
-    async function initCatalog() {
-        activeData = [...productsData];
-        resetAndRender();
+    
+    // --- FUNÇÃO PARA ADICIONAR AO HISTÓRICO ---
+    function addToHistory(id) {
+        // Remove se já existe para colocar no topo
+        recentHistory = recentHistory.filter(itemId => itemId !== id);
+        recentHistory.unshift(id); // Adiciona no início
+        
+        // Limita a 6 itens
+        if (recentHistory.length > 6) recentHistory.pop();
+        
+        localStorage.setItem('darafa_history', JSON.stringify(recentHistory));
+        
+        // Se o usuário estiver no filtro "Vistos", atualiza a tela
+        const activeFilter = document.querySelector('.filter-btn.active');
+        if (activeFilter && activeFilter.dataset.filter === 'history') {
+            activeData = productsData.filter(item => recentHistory.includes(item.id));
+            // Ordena pela ordem do histórico (mais recente primeiro)
+            activeData.sort((a, b) => recentHistory.indexOf(a.id) - recentHistory.indexOf(b.id));
+            const container = document.querySelector('.gallery-5-cols'); // Ou modal
+            if(container) resetAndRender(container);
+        }
     }
 
     function updateURL(param, value) {
@@ -190,15 +217,33 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function loadStateFromURL() {
-        const params = new URLSearchParams(window.location.search);
-        const filtro = params.get('filtro');
-        const busca = params.get('busca');
+        const urlParams = new URLSearchParams(window.location.search);
+        const filtro = urlParams.get('filtro');
+        const busca = urlParams.get('busca');
+
         if (filtro) {
             const btn = document.querySelector(`.filter-btn[data-filter="${filtro}"]`);
             if (btn) btn.click();
         } else if (busca) {
             const input = document.getElementById('js-search-input');
-            if (input) { input.value = busca; input.dispatchEvent(new Event('input')); }
+            if (input) {
+                input.value = busca;
+                input.dispatchEvent(new Event('input'));
+                document.getElementById('gallery-section').scrollIntoView({behavior: 'smooth'});
+            }
+        } else {
+            const allBtn = document.querySelector('.filter-btn[data-filter="all"]');
+            if(allBtn) allBtn.click();
+        }
+    }
+
+    async function initCatalog() {
+        if (INSTAGRAM_TOKEN) {
+            try { await fetchInstagramPosts(); } 
+            catch (error) { activeData = [...productsData]; resetAndRender(); }
+        } else {
+            activeData = [...productsData];
+            resetAndRender();
         }
     }
 
@@ -207,8 +252,9 @@ document.addEventListener('DOMContentLoaded', () => {
         container.innerHTML = ''; 
         loadedCount = 0; 
         if(scrollSentinel) { infiniteScrollObserver.unobserve(scrollSentinel); scrollSentinel.remove(); scrollSentinel = null; }
+        
         if (activeData.length === 0) {
-            container.innerHTML = '<p style="color:#241000; text-align:center; grid-column: 1/-1; padding: 20px;">Nada encontrado.</p>';
+            container.innerHTML = '<p style="color:#241000; text-align:center; width:100%; grid-column: 1/-1; padding: 20px;">Nada encontrado aqui ainda.</p>';
             return;
         }
         loadNextBatch(container);
@@ -217,325 +263,490 @@ document.addEventListener('DOMContentLoaded', () => {
     function loadNextBatch(container = galleryContainer) {
         if (loadedCount >= activeData.length) return;
         const nextBatch = activeData.slice(loadedCount, loadedCount + ITEMS_PER_PAGE);
-        let html = '';
+        let htmlBuffer = '';
+
         nextBatch.forEach(item => {
             const isFav = wishlist.includes(item.id) ? 'active' : '';
-            // tabindex="0" para Focus Trap funcionar
-            html += `
-                <div class="gold-framebox" tabindex="0" data-id="${item.id}" data-title="${item.title}" data-desc="${item.description}" data-cat="${item.category}">
+            htmlBuffer += `
+                <div class="gold-framebox" tabindex="0" data-id="${item.id}" data-category="${item.category}" data-title="${item.title}" data-description="${item.description}">
                     <div class="card-actions">
-                        <button class="action-btn share-btn" aria-label="Compartilhar" tabindex="0">➦</button>
-                        <button class="action-btn wishlist-btn ${isFav}" aria-label="Favoritar" tabindex="0">♥</button>
+                        <button class="action-btn share-btn" aria-label="Compartilhar" tabindex="-1">➦</button>
+                        <button class="action-btn wishlist-btn ${isFav}" aria-label="Favoritar" tabindex="-1">♥</button>
                     </div>
-                    <img class="lazy-image" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-src="${item.image}" style="opacity: 0; transition: opacity 0.5s;">
-                    <div class="card-info-bar"><h3 class="info-title">${item.title}</h3><p class="info-desc">${item.description}</p></div>
-                </div>`;
+                    <img class="lazy-image" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-src="${item.image}" alt="${item.title}" style="transition: opacity 0.8s ease; opacity: 0;">
+                    <div class="card-info-bar">
+                        <h3 class="info-title">${item.title}</h3>
+                        <p class="info-desc">${item.description}</p>
+                    </div>
+                </div>
+            `;
         });
-        container.insertAdjacentHTML('beforeend', html);
+
+        container.insertAdjacentHTML('beforeend', htmlBuffer);
         loadedCount += nextBatch.length;
-        
-        // Re-liga observers
-        container.querySelectorAll('.lazy-image:not(.observed)').forEach(img => {
-            globalImageObserver.observe(img); img.classList.add('observed');
-        });
-        
-        // Sentinela
+        attachCardEvents(container);
+        attachObserversAndPreload(container);
+        manageSentinel(container);
+    }
+
+    function manageSentinel(container) {
         if (loadedCount < activeData.length) {
             if (!scrollSentinel) {
                 scrollSentinel = document.createElement('div');
-                scrollSentinel.style.gridColumn = '1/-1'; scrollSentinel.style.height = '20px';
+                scrollSentinel.id = 'scroll-sentinel';
+                scrollSentinel.style.cssText = "width:100%; height:20px; grid-column: 1/-1;"; 
                 container.parentNode.appendChild(scrollSentinel);
                 infiniteScrollObserver.observe(scrollSentinel);
-            } else container.parentNode.appendChild(scrollSentinel);
+            } else container.parentNode.appendChild(scrollSentinel); 
+        } else if(scrollSentinel) {
+            infiniteScrollObserver.unobserve(scrollSentinel);
+            scrollSentinel.remove();
+            scrollSentinel = null;
         }
+    }
+
+    function attachObserversAndPreload(container) {
+        const images = container.querySelectorAll('.lazy-image:not(.observed)');
+        images.forEach(img => { globalImageObserver.observe(img); img.classList.add('observed'); });
+        const cards = container.querySelectorAll('.gold-framebox');
+        cards.forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                const img = card.querySelector('img');
+                const src = img.dataset.src || img.src;
+                const preload = new Image();
+                preload.src = src;
+            }, { once: true });
+        });
     }
 
 
     // =========================================================
-    // 4. UI: ESTILOS & CONTROLES
+    // 5. ESTILOS & INTERAÇÕES
     // =========================================================
     function injectDynamicStyles() {
         const style = document.createElement('style');
         style.innerHTML = `
-            .card-actions { position: absolute; top: 10px; right: 10px; z-index: 10; display: flex; gap: 8px; opacity: 0; transition: opacity 0.3s; }
+            .card-actions { position: absolute; top: 10px; right: 10px; z-index: 10; display: flex; gap: 8px; opacity: 0; transition: opacity 0.3s ease; }
             .gold-framebox:hover .card-actions, .gold-framebox:focus-within .card-actions { opacity: 1; }
             .gold-framebox:focus { outline: 2px solid #D00000; outline-offset: 2px; }
-            .action-btn { background: rgba(36, 16, 0, 0.6); border: none; color: #fff; font-size: 1.1rem; width: 35px; height: 35px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
+            .action-btn { background: rgba(36, 16, 0, 0.6); border: none; color: #fff; font-size: 1.1rem; width: 35px; height: 35px; border-radius: 50%; cursor: pointer; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: flex; align-items: center; justify-content: center; padding-top: 2px; backdrop-filter: blur(4px); }
             .action-btn:hover { background: #241000; transform: scale(1.1); }
-            .wishlist-btn.active { color: #D00000; background: #fff; }
+            .wishlist-btn.active { color: #D00000; background: #fff; box-shadow: 0 0 10px rgba(208,0,0,0.5); }
+            .share-btn { font-size: 1rem; }
+            .share-btn:active { transform: scale(0.9); }
             .controls-wrapper { width: 100%; display: flex; justify-content: center; gap: 15px; margin-bottom: 20px; flex-wrap: wrap; }
-            #js-search-input { padding: 12px 25px; width: 100%; max-width: 300px; border-radius: 50px; border: 2px solid #241000; background: rgba(255,255,255,0.9); outline: none; }
-            #js-sort-select { padding: 12px 20px; border-radius: 50px; border: 2px solid #241000; background: #241000; color: #FDB90C; cursor: pointer; }
-            .toast-notification { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px); background: #241000; color: #FDB90C; padding: 12px 24px; border-radius: 50px; z-index: 5000; opacity: 0; transition: all 0.4s; border: 1px solid #FDB90C; }
+            #js-search-input { padding: 12px 25px; width: 100%; max-width: 300px; border-radius: 50px; border: 2px solid #241000; background: rgba(255,255,255,0.9); color: #241000; font-size: 1rem; outline: none; box-shadow: 0 4px 10px rgba(36,16,0,0.1); transition: all 0.3s ease; }
+            #js-sort-select { padding: 12px 20px; border-radius: 50px; border: 2px solid #241000; background: #241000; color: #FDB90C; font-size: 0.9rem; font-weight: 600; cursor: pointer; outline: none; appearance: none; -webkit-appearance: none; text-align: center; box-shadow: 0 4px 10px rgba(36,16,0,0.2); }
+            #js-sort-select:hover { background: #3a1a00; }
+            .toast-notification {
+                position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px);
+                background-color: #241000; color: #FDB90C; padding: 12px 24px;
+                border-radius: 50px; box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+                font-family: 'Poppins', sans-serif; font-size: 0.9rem; font-weight: 500;
+                z-index: 5000; opacity: 0; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                display: flex; align-items: center; gap: 8px; border: 1px solid #FDB90C;
+            }
             .toast-notification.show { transform: translateX(-50%) translateY(0); opacity: 1; }
         `;
         document.head.appendChild(style);
     }
 
-    function initControls() {
-        const container = document.querySelector('.catalog-filters');
-        if (!container) return;
-        const wrapper = document.createElement('div'); wrapper.className = 'controls-wrapper';
-        
-        const input = document.createElement('input'); 
-        input.id = 'js-search-input'; input.placeholder = 'Buscar joia...';
-        
-        const select = document.createElement('select'); 
-        select.id = 'js-sort-select';
-        select.innerHTML = `<option value="default">✨ Relevância</option><option value="az">A - Z</option><option value="za">Z - A</option><option value="random">🎲 Aleatório</option>`;
-        
-        wrapper.append(input, select);
-        container.prepend(wrapper);
-
-        const updateData = () => {
-            const term = input.value.toLowerCase();
-            const filter = document.querySelector('.filter-btn.active')?.dataset.filter || 'all';
-            
-            let data = productsData;
-            if (filter === 'favorites') data = data.filter(p => wishlist.includes(p.id));
-            else if (filter === 'history') data = data.filter(p => recentHistory.includes(p.id));
-            else if (filter !== 'all') data = data.filter(p => p.category === filter);
-
-            if (term) data = data.filter(p => p.title.toLowerCase().includes(term) || p.category.includes(term));
-            
-            if (filter !== 'history') { // Ordenação
-                if (currentSort === 'az') data.sort((a,b) => a.title.localeCompare(b.title));
-                else if (currentSort === 'za') data.sort((a,b) => b.title.localeCompare(a.title));
-                else if (currentSort === 'random') data.sort(() => Math.random() - 0.5);
-                else data.sort((a,b) => a.id - b.id);
-            } else {
-                data.sort((a,b) => recentHistory.indexOf(a.id) - recentHistory.indexOf(b.id));
-            }
-            
-            activeData = data;
-            // Acha a galeria correta (Modal ou Home)
-            const modal = input.closest('.expansion-content');
-            resetAndRender(modal ? modal.querySelector('.gallery-5-cols') : galleryContainer);
-        };
-
-        input.addEventListener('input', () => { setTimeout(() => updateURL('busca', input.value || null), 500); updateData(); });
-        select.addEventListener('change', (e) => { currentSort = e.target.value; updateData(); });
-    }
-
-    function initFilters() {
-        const containers = document.querySelectorAll('.catalog-filters');
-        containers.forEach(c => {
-            if(!c.querySelector('[data-filter="favorites"]')) {
-                c.innerHTML += `<button class="filter-btn" data-filter="favorites" style="color:#D00000;border-color:#D00000">♥ Favoritos</button>`;
-                c.innerHTML += `<button class="filter-btn" data-filter="history" style="color:#241000;border-color:#241000">🕒 Vistos</button>`;
-            }
-        });
-
-        document.body.addEventListener('click', (e) => {
-            if (e.target.classList.contains('filter-btn')) {
-                const btn = e.target;
-                const filter = btn.dataset.filter;
-                updateURL('filtro', filter);
-                trackEvent('filter', filter);
-                
-                // Atualiza UI
-                const wrapper = btn.closest('.catalog-filters');
-                if(wrapper) { wrapper.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); }
-                
-                // Dispara atualização via input event para reaproveitar lógica
-                document.getElementById('js-search-input').dispatchEvent(new Event('input'));
-            }
-        });
-    }
-
-
-    // =========================================================
-    // 5. INTERAÇÕES & TOAST
-    // =========================================================
-    function showToast(msg) {
-        const old = document.querySelector('.toast-notification'); if(old) old.remove();
-        const toast = document.createElement('div'); toast.className = 'toast-notification'; toast.innerText = msg;
+    function showToast(message) {
+        const oldToast = document.querySelector('.toast-notification');
+        if(oldToast) oldToast.remove();
+        const toast = document.createElement('div');
+        toast.className = 'toast-notification';
+        toast.innerHTML = message;
         document.body.appendChild(toast);
         requestAnimationFrame(() => toast.classList.add('show'));
         setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 400); }, 3000);
     }
 
-    function toggleWishlist(id, btn) {
-        const idx = wishlist.indexOf(id);
-        if (idx === -1) {
-            wishlist.push(id); btn.classList.add('active'); showToast('Salvo em Favoritos ❤️');
-            btn.style.transform = "scale(1.4)"; setTimeout(() => btn.style.transform = "scale(1)", 200);
-            trackEvent('interaction', 'wishlist');
-        } else {
-            wishlist.splice(idx, 1); btn.classList.remove('active'); showToast('Removido dos Favoritos');
-        }
-        localStorage.setItem('darafa_wishlist', JSON.stringify(wishlist));
-        // Se estiver no filtro favoritos, atualiza
-        if(document.querySelector('.filter-btn.active')?.dataset.filter === 'favorites') {
-            document.getElementById('js-search-input').dispatchEvent(new Event('input'));
-        }
+    function attachCardEvents(container) {
+        container.addEventListener('click', (e) => {
+            const btn = e.target;
+            if (btn.classList.contains('wishlist-btn')) { e.stopPropagation(); toggleWishlist(parseInt(btn.closest('.gold-framebox').dataset.id), btn); return; }
+            if (btn.classList.contains('share-btn')) { e.stopPropagation(); shareProduct(btn.closest('.gold-framebox')); return; }
+        });
     }
 
-    // Delegação Global de Cliques
-    document.body.addEventListener('click', async (e) => {
-        const btn = e.target;
-        // Wishlist
-        if (btn.classList.contains('wishlist-btn')) {
-            e.stopPropagation();
-            toggleWishlist(parseInt(btn.closest('.gold-framebox').dataset.id), btn);
-            return;
-        }
-        // Share
-        if (btn.classList.contains('share-btn')) {
-            e.stopPropagation();
-            const card = btn.closest('.gold-framebox');
-            const url = `${window.location.origin}?filtro=${card.dataset.cat}`;
-            const data = { title: 'DaRafa', text: card.dataset.title, url: url };
-            try { if(navigator.share) await navigator.share(data); else { await navigator.clipboard.writeText(url); showToast('Link copiado!'); } } catch(err){}
-            trackEvent('interaction', 'share');
-            return;
-        }
-        // Card Click (Open Viewer)
-        const card = btn.closest('.gold-framebox');
-        if (card && !btn.closest('.expansion-overlay')) { // Se não for modal expandido
-            // Lógica para abrir o modal de expansão (Portal) já existe no initPortal
-            return; 
-        }
-        // Se já está no modal expandido e clica num card -> Zoom
-        if (card && btn.closest('.expansion-overlay')) {
-            const img = card.querySelector('img');
-            openImageViewer(img.dataset.src || img.src, card.dataset.id);
-            trackEvent('product_click', card.dataset.title);
-        }
-    });
+    // --- FILTROS (ATUALIZADO COM HISTÓRICO) ---
+    function initFilters() {
+        const filterContainers = document.querySelectorAll('.catalog-filters');
+        filterContainers.forEach(container => {
+            // Botão Favoritos
+            if(!container.querySelector('[data-filter="favorites"]')) {
+                const favBtn = document.createElement('button');
+                favBtn.className = 'filter-btn';
+                favBtn.dataset.filter = 'favorites';
+                favBtn.innerText = '♥ Favoritos';
+                favBtn.style.color = '#D00000';
+                favBtn.style.borderColor = '#D00000';
+                container.appendChild(favBtn);
+            }
+            // Botão Histórico (NOVO!)
+            if(!container.querySelector('[data-filter="history"]')) {
+                const histBtn = document.createElement('button');
+                histBtn.className = 'filter-btn';
+                histBtn.dataset.filter = 'history';
+                histBtn.innerText = '🕒 Vistos';
+                histBtn.style.color = '#241000';
+                histBtn.style.borderColor = '#241000';
+                container.appendChild(histBtn);
+            }
+        });
 
+        document.body.addEventListener('click', (e) => {
+            if (e.target.classList.contains('filter-btn')) {
+                const button = e.target;
+                const filterValue = button.dataset.filter;
+                updateURL('filtro', filterValue);
+                trackEvent('filter', filterValue);
 
-    // =========================================================
-    // 6. ACESSIBILIDADE GLOBAL (TECLADO & FOCUS TRAP) [NOVO]
-    // =========================================================
-    function initGlobalEvents() {
-        // Keyboard Nav
+                const searchInput = document.getElementById('js-search-input');
+                if (searchInput) searchInput.value = '';
+
+                const container = button.closest('.catalog-filters');
+                if(container) { container.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active')); button.classList.add('active'); }
+
+                if (filterValue === 'favorites') {
+                    activeData = productsData.filter(item => wishlist.includes(item.id));
+                } else if (filterValue === 'history') {
+                    // Lógica do Histórico
+                    activeData = productsData.filter(item => recentHistory.includes(item.id));
+                    // Ordena para mostrar o último visto primeiro
+                    activeData.sort((a, b) => recentHistory.indexOf(a.id) - recentHistory.indexOf(b.id));
+                } else if (filterValue === 'all') {
+                    activeData = productsData;
+                } else {
+                    activeData = productsData.filter(item => item.category === filterValue);
+                }
+                
+                if (filterValue !== 'history') activeData = applySort(activeData); // Não reordena histórico para manter cronologia
+
+                const modalContent = button.closest('.expansion-content');
+                const targetGallery = modalContent ? modalContent.querySelector('.gallery-5-cols') : document.querySelector('#gallery-door .gallery-5-cols');
+                resetAndRender(targetGallery);
+            }
+        });
+    }
+
+    function initControls() {
+        const filterContainer = document.querySelector('.catalog-filters');
+        if (!filterContainer) return;
+
+        const controlsWrapper = document.createElement('div');
+        controlsWrapper.className = 'controls-wrapper';
+
+        const input = document.createElement('input');
+        input.type = 'text'; input.id = 'js-search-input'; input.placeholder = 'Buscar joia...';
+        input.addEventListener('focus', () => input.style.borderColor = '#CD4A00');
+        input.addEventListener('blur', () => input.style.borderColor = '#241000');
+
+        const sortSelect = document.createElement('select');
+        sortSelect.id = 'js-sort-select';
+        sortSelect.innerHTML = `<option value="default">✨ Relevância</option><option value="az">A - Z</option><option value="za">Z - A</option><option value="random">🎲 Aleatório</option>`;
+
+        controlsWrapper.appendChild(input);
+        controlsWrapper.appendChild(sortSelect);
+        filterContainer.prepend(controlsWrapper);
+
+        const updateGridData = () => {
+            const term = input.value.toLowerCase();
+            const activeFilterBtn = document.querySelector('.filter-btn.active');
+            const filterValue = activeFilterBtn ? activeFilterBtn.dataset.filter : 'all';
+
+            let filtered = productsData;
+            if (filterValue === 'favorites') filtered = productsData.filter(item => wishlist.includes(item.id));
+            else if (filterValue === 'history') filtered = productsData.filter(item => recentHistory.includes(item.id));
+            else if (filterValue !== 'all') filtered = productsData.filter(item => item.category === filterValue);
+
+            if (term) {
+                if(term.length > 3) trackEvent('search', term);
+                filtered = filtered.filter(item => item.title.toLowerCase().includes(term) || item.description.toLowerCase().includes(term) || item.category.toLowerCase().includes(term));
+            }
+
+            if (filterValue !== 'history') filtered = applySort(filtered);
+            activeData = filtered;
+
+            const parentModal = input.closest('.expansion-content');
+            const targetGallery = parentModal ? parentModal.querySelector('.gallery-5-cols') : document.querySelector('#gallery-door .gallery-5-cols');
+            resetAndRender(targetGallery);
+        };
+
+        input.addEventListener('input', (e) => {
+            if(this.searchTimeout) clearTimeout(this.searchTimeout);
+            this.searchTimeout = setTimeout(() => { updateURL('busca', e.target.value.length > 0 ? e.target.value : null); }, 500);
+            updateGridData();
+        });
+
+        sortSelect.addEventListener('change', (e) => { currentSort = e.target.value; updateGridData(); });
+    }
+
+    function applySort(items) {
+        let sortedItems = [...items];
+        switch (currentSort) {
+            case 'az': sortedItems.sort((a, b) => a.title.localeCompare(b.title)); break;
+            case 'za': sortedItems.sort((a, b) => b.title.localeCompare(a.title)); break;
+            case 'random': sortedItems.sort(() => Math.random() - 0.5); break;
+            default: sortedItems.sort((a, b) => a.id - b.id);
+        }
+        return sortedItems;
+    }
+
+    // --- UX: KEYBOARD, SWIPE, MODALS ---
+    function initKeyboardNavigation() {
         document.addEventListener('keydown', (e) => {
             if (document.querySelector('.image-viewer-overlay.active')) {
                 if (e.key === 'ArrowRight') navigateViewer(1);
                 if (e.key === 'ArrowLeft') navigateViewer(-1);
-                if (e.key === 'Escape') return; // Fechamento já tratado
+                return;
             }
-            // Enter no card
             if (e.key === 'Enter' && document.activeElement.classList.contains('gold-framebox')) {
-                document.activeElement.click();
-            }
-            // Focus Trap Logic
-            if (currentModal && e.key === 'Tab') {
-                trapFocus(e, currentModal);
+                const card = document.activeElement;
+                const img = card.querySelector('img');
+                if (img) { trackEvent('product_click', card.dataset.title); openImageViewer(img.dataset.src || img.src, card.dataset.id); }
             }
         });
     }
 
-    // --- FOCUS TRAP (TAREFA 05) ---
-    function trapFocus(e, modal) {
-        const focusables = modal.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
-        if (focusables.length === 0) return;
-        
-        const first = focusables[0];
-        const last = focusables[focusables.length - 1];
+    function navigateViewer(direction) {
+        if (activeData.length === 0 || currentViewerIndex === -1) return;
+        let newIndex = currentViewerIndex + direction;
+        if (newIndex >= activeData.length) newIndex = 0;
+        if (newIndex < 0) newIndex = activeData.length - 1;
+        const nextItem = activeData[newIndex];
+        currentViewerIndex = newIndex;
+        const viewerImg = document.querySelector('.image-viewer-content');
+        if (viewerImg) {
+            viewerImg.style.opacity = 0.5;
+            setTimeout(() => { viewerImg.src = nextItem.image; viewerImg.onload = () => viewerImg.style.opacity = 1; }, 200);
+            setPageMetadata(nextItem.title, nextItem.description);
+            // Ao navegar, também adiciona ao histórico
+            addToHistory(nextItem.id); 
+        }
+    }
 
-        if (e.shiftKey) { 
-            if (document.activeElement === first) { last.focus(); e.preventDefault(); }
+    async function shareProduct(card) {
+        const title = card.dataset.title;
+        const category = card.dataset.category;
+        const shareUrl = `${window.location.origin}${window.location.pathname}?filtro=${category}`;
+        trackEvent('interaction', 'share');
+        const shareData = { title: `DaRafa: ${title}`, text: `Olha essa joia: ${title}`, url: shareUrl };
+        try { if (navigator.share) await navigator.share(shareData); else { await navigator.clipboard.writeText(shareUrl); showToast('Link copiado! 📋'); } } catch (err) { console.warn('Erro share', err); }
+    }
+
+    function toggleWishlist(id, btnElement) {
+        const index = wishlist.indexOf(id);
+        if (index === -1) {
+            wishlist.push(id);
+            btnElement.classList.add('active');
+            btnElement.style.transform = "scale(1.4)";
+            setTimeout(() => btnElement.style.transform = "scale(1)", 200);
+            showToast('Adicionado aos Favoritos ❤️');
+            trackEvent('interaction', 'wishlist_add');
         } else {
-            if (document.activeElement === last) { first.focus(); e.preventDefault(); }
+            wishlist.splice(index, 1);
+            btnElement.classList.remove('active');
+            showToast('Removido dos Favoritos 💔');
+            trackEvent('interaction', 'wishlist_remove');
+        }
+        localStorage.setItem('darafa_wishlist', JSON.stringify(wishlist));
+        
+        const activeFilter = document.querySelector('.filter-btn.active');
+        if (activeFilter && activeFilter.dataset.filter === 'favorites') {
+            activeData = productsData.filter(item => wishlist.includes(item.id));
+            activeData = applySort(activeData);
+            const parentContainer = btnElement.closest('.gallery-5-cols');
+            if(parentContainer) resetAndRender(parentContainer);
         }
     }
 
-    // =========================================================
-    // 7. MODAIS (UPDATED WITH TRAP & SWIPE)
-    // =========================================================
-    
-    // Viewer Image
-    function openImageViewer(src, id) {
-        addToHistory(id);
-        const product = productsData.find(p => p.id == id);
-        if(product) setPageMetadata(product.title, product.description);
-        
-        // Encontra indice para slideshow
-        const found = activeData.findIndex(p => p.id == id);
-        if(found !== -1) currentViewerIndex = found;
-
-        const content = `<img src="${src}" class="image-viewer-content" style="max-height:90vh;max-width:90%;border:1px solid #CD4A00;box-shadow:0 0 30px #000;">`;
-        createOverlay(content, 'image-viewer');
-    }
-
-    function navigateViewer(dir) {
-        if(activeData.length === 0) return;
-        let idx = currentViewerIndex + dir;
-        if(idx >= activeData.length) idx = 0;
-        if(idx < 0) idx = activeData.length -1;
-        currentViewerIndex = idx;
-        
-        const imgEl = document.querySelector('.image-viewer-content');
-        if(imgEl) {
-            imgEl.style.opacity = 0.5;
-            setTimeout(() => {
-                imgEl.src = activeData[idx].image;
-                imgEl.onload = () => imgEl.style.opacity = 1;
-                setPageMetadata(activeData[idx].title, activeData[idx].description);
-                addToHistory(activeData[idx].id);
-            }, 200);
+    // --- MODAIS & PORTAIS ---
+    function throttle(func, limit) {
+        let inThrottle;
+        return function() {
+            const args = arguments;
+            const context = this;
+            if (!inThrottle) { func.apply(context, args); inThrottle = true; setTimeout(() => inThrottle = false, limit); }
         }
     }
 
-    // Generic Overlay Creator
-    function createOverlay(contentHTML, type) {
-        const overlay = document.createElement('div');
-        overlay.className = type === 'image-viewer' ? 'image-viewer-overlay' : 'expansion-overlay';
-        overlay.innerHTML = `<button class="close-expansion" style="position:fixed;top:20px;right:30px;font-size:3rem;color:#D00000;background:none;border:none;cursor:pointer;z-index:2001;">&times;</button>
-                             <div class="${type === 'image-viewer' ? '' : 'expansion-content'}">${contentHTML}</div>`;
-        
-        document.body.appendChild(overlay);
-        document.body.style.overflow = 'hidden';
-        requestAnimationFrame(() => overlay.classList.add('active'));
-        
-        // Ativa Focus Trap
-        currentModal = overlay;
-        const closeBtn = overlay.querySelector('button');
-        if(closeBtn) closeBtn.focus();
+    const backToTopBtn = document.getElementById('backToTop');
+    if(backToTopBtn) window.addEventListener('scroll', throttle(() => { if (window.scrollY > 300) backToTopBtn.classList.add('visible'); else backToTopBtn.classList.remove('visible'); }, 100), { passive: true });
 
-        // Swipe Gesture
-        let ty = 0;
-        overlay.addEventListener('touchstart', e => ty = e.changedTouches[0].screenY, {passive:true});
-        overlay.addEventListener('touchend', e => { if(e.changedTouches[0].screenY - ty > 60) close(); }, {passive:true});
+    const navbarToggler = document.getElementById('navbar-toggler');
+    const navbarMenu = document.getElementById('navbar-menu');
+    const navLinks = document.querySelectorAll('.navbar-link');
+    function toggleMenu() { if(navbarMenu && navbarToggler) { navbarMenu.classList.toggle('active'); navbarToggler.classList.toggle('is-active'); } }
+    if(navbarToggler) navbarToggler.addEventListener('click', (e) => { e.stopPropagation(); toggleMenu(); });
+    navLinks.forEach(link => link.addEventListener('click', () => { if (navbarMenu.classList.contains('active')) toggleMenu(); }));
+    document.addEventListener('click', (e) => { if (navbarMenu && navbarMenu.classList.contains('active') && !navbarMenu.contains(e.target) && !navbarToggler.contains(e.target)) toggleMenu(); });
 
-        const close = () => {
-            restorePageMetadata();
-            overlay.classList.remove('active');
-            document.body.style.overflow = '';
-            currentModal = null; // Libera Trap
-            setTimeout(() => overlay.remove(), 400);
-        };
-
-        overlay.querySelector('.close-expansion').onclick = close;
-        overlay.onclick = (e) => { if(e.target === overlay) close(); };
-        
-        // Se for o modal de expansão, precisa reinicializar controles lá dentro
-        if (type !== 'image-viewer') {
-            // Remove controles antigos clonados e cria novos
-            const oldCtrls = overlay.querySelector('.controls-wrapper');
-            if(oldCtrls) oldCtrls.remove();
-            
-            // Injeta controles novamente no modal (reutiliza initControls lógica se adaptada, 
-            // mas aqui chamamos initControls que busca por classe e injeta. 
-            // Como agora temos 2 .catalog-filters, ele vai injetar no segundo também)
-            initControls(); // O script é inteligente para injetar onde falta
-            
-            // Inicia renderização do modal
-            const gallery = overlay.querySelector('.gallery-5-cols');
-            resetAndRender(gallery);
-        }
-    }
-
-    // Portal Trigger
-    document.querySelectorAll('.big-card-wrapper:not(.no-expand)').forEach(door => {
-        door.addEventListener('click', (e) => {
-            if(e.target.closest('.click-bar') || e.target.closest('.card-cover')) {
-                e.preventDefault();
-                const content = door.querySelector('.hidden-content').innerHTML;
-                createOverlay(content, 'expansion');
-            }
+    const doors = document.querySelectorAll('.big-card-wrapper:not(.no-expand)');
+    const body = document.body;
+    doors.forEach(door => {
+        door.addEventListener('click', function(e) {
+            if(e.target.classList.contains('filter-btn') || e.target.id === 'js-search-input' || e.target.id === 'js-sort-select' || e.target.classList.contains('action-btn')) return;
+            e.preventDefault();
+            const hiddenContentDiv = this.querySelector('.hidden-content');
+            if (hiddenContentDiv) openExpansionModal(hiddenContentDiv.innerHTML);
         });
     });
+
+    function openExpansionModal(contentHTML) {
+        const overlay = document.createElement('div');
+        overlay.className = 'expansion-overlay';
+        overlay.innerHTML = `<button class="close-expansion">&times;</button><div class="expansion-content">${contentHTML}</div>`;
+        body.appendChild(overlay);
+        body.style.overflow = 'hidden'; 
+        requestAnimationFrame(() => { overlay.classList.add('active'); });
+
+        let touchStartY = 0; let touchEndY = 0;
+        overlay.addEventListener('touchstart', e => { touchStartY = e.changedTouches[0].screenY; }, {passive: true});
+        overlay.addEventListener('touchend', e => { touchEndY = e.changedTouches[0].screenY; if (touchEndY - touchStartY > 60) close(); }, {passive: true});
+
+        const oldControls = overlay.querySelector('.controls-wrapper');
+        if(oldControls) oldControls.remove();
+        
+        const modalFilters = overlay.querySelector('.catalog-filters');
+        if(modalFilters) {
+             const controlsWrapper = document.createElement('div');
+             controlsWrapper.className = 'controls-wrapper';
+             const input = document.createElement('input');
+             input.placeholder = 'Buscar joia...';
+             input.style.cssText = "padding:12px 25px; width:100%; max-width:300px; border-radius:50px; border:2px solid #241000; background:rgba(255,255,255,0.9); color:#241000; font-size:1rem; outline:none;";
+             const sortSelect = document.createElement('select');
+             sortSelect.innerHTML = `<option value="default">✨ Relevância</option><option value="az">A - Z</option><option value="za">Z - A</option><option value="random">🎲 Aleatório</option>`;
+             sortSelect.style.cssText = "padding:12px 20px; border-radius:50px; border:2px solid #241000; background:#241000; color:#FDB90C; font-size:0.9rem; font-weight:600; cursor:pointer;";
+             
+             controlsWrapper.appendChild(input);
+             controlsWrapper.appendChild(sortSelect);
+             modalFilters.prepend(controlsWrapper);
+
+             const updateModal = () => {
+                 const term = input.value.toLowerCase();
+                 let filtered = productsData.filter(item => item.title.toLowerCase().includes(term) || item.category.includes(term));
+                 activeData = applySort(filtered);
+                 const targetGallery = overlay.querySelector('.gallery-5-cols');
+                 resetAndRender(targetGallery);
+             };
+             input.addEventListener('input', updateModal);
+             sortSelect.addEventListener('change', (e) => { currentSort = e.target.value; updateModal(); });
+
+             if(!modalFilters.querySelector('[data-filter="favorites"]')) {
+                const favBtn = document.createElement('button');
+                favBtn.className = 'filter-btn';
+                favBtn.dataset.filter = 'favorites';
+                favBtn.innerText = '♥ Favoritos';
+                favBtn.style.color = '#D00000';
+                favBtn.style.borderColor = '#D00000';
+                modalFilters.appendChild(favBtn);
+             }
+             // INJETAR O BOTÃO DE HISTÓRICO TAMBÉM NO MODAL
+             if(!modalFilters.querySelector('[data-filter="history"]')) {
+                const histBtn = document.createElement('button');
+                histBtn.className = 'filter-btn';
+                histBtn.dataset.filter = 'history';
+                histBtn.innerText = '🕒 Vistos';
+                histBtn.style.color = '#241000';
+                histBtn.style.borderColor = '#241000';
+                modalFilters.appendChild(histBtn);
+             }
+
+             const targetGallery = overlay.querySelector('.gallery-5-cols');
+             resetAndRender(targetGallery);
+        }
+
+        const modalImages = overlay.querySelectorAll('.lazy-image');
+        if(modalImages.length > 0) {
+            const modalObserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const img = entry.target;
+                        if(img.dataset.src) img.src = img.dataset.src;
+                        img.onload = () => { img.style.opacity = 1; };
+                        observer.unobserve(img);
+                    }
+                });
+            }, { root: overlay, rootMargin: "50px" });
+            modalImages.forEach(img => modalObserver.observe(img));
+        }
+        
+        const modalGallery = overlay.querySelector('.gallery-5-cols');
+        if(modalGallery) attachCardEvents(modalGallery);
+
+        overlay.addEventListener('click', (e) => {
+            const btn = e.target;
+            if (btn.classList.contains('wishlist-btn')) { e.stopPropagation(); toggleWishlist(parseInt(btn.closest('.gold-framebox').dataset.id), btn); return; }
+            if (btn.classList.contains('share-btn')) { e.stopPropagation(); shareProduct(btn.closest('.gold-framebox')); return; }
+
+            const card = e.target.closest('.gold-framebox');
+            if (card && overlay.contains(card)) {
+                e.stopPropagation();
+                const img = card.querySelector('img');
+                if (card.dataset.description && card.classList.contains('story-card')) {
+                    openStoryMode(img.dataset.src || img.src, card.dataset.title, card.dataset.description);
+                } else {
+                    trackEvent('product_click', card.dataset.title);
+                    if(img) openImageViewer(img.dataset.src || img.src, card.dataset.id);
+                }
+            }
+        });
+
+        const close = () => {
+            restorePageMetadata(); 
+            overlay.classList.remove('active');
+            body.style.overflow = '';
+            setTimeout(() => { if(overlay.parentNode) overlay.parentNode.removeChild(overlay); }, 400);
+        };
+        overlay.querySelector('.close-expansion').addEventListener('click', close);
+        overlay.addEventListener('click', (e) => { if (e.target === overlay || e.target.classList.contains('expansion-content')) close(); });
+        const closeOnEsc = (e) => { if (e.key === 'Escape') { close(); document.removeEventListener('keydown', closeOnEsc); } };
+        document.addEventListener('keydown', closeOnEsc);
+    }
+
+    function openImageViewer(imageSrc, id) {
+        // Salva no histórico ao abrir
+        addToHistory(id);
+
+        const product = productsData.find(p => p.id == id);
+        if (product) setPageMetadata(product.title, product.description);
+
+        const foundIndex = activeData.findIndex(item => item.id == id);
+        if (foundIndex !== -1) currentViewerIndex = foundIndex;
+        createViewerOverlay(`<img src="${imageSrc}" class="image-viewer-content" style="max-height:90vh; max-width:90%; border:1px solid var(--color-gold-dark); box-shadow: 0 0 30px rgba(0,0,0,0.8);">`);
+    }
+
+    function openStoryMode(imageSrc, title, description) {
+        setPageMetadata(title, description); 
+        createViewerOverlay(`
+            <div class="story-viewer-content">
+                <div class="story-image-col"><img src="${imageSrc}" alt="${title}"></div>
+                <div class="story-text-col"><h3 class="story-title">${title}</h3><p class="story-desc">${description}</p></div>
+            </div>
+        `);
+    }
+
+    function createViewerOverlay(innerContent) {
+        const viewer = document.createElement('div');
+        viewer.className = 'image-viewer-overlay';
+        viewer.innerHTML = `<button class="close-viewer" style="position:absolute; top:20px; right:30px; color:#fff; font-size:2rem; background:none; border:none; cursor:pointer; z-index:3001;">&times;</button>${innerContent}`;
+        body.appendChild(viewer);
+        requestAnimationFrame(() => viewer.classList.add('active'));
+
+        let touchStartY = 0; let touchEndY = 0;
+        viewer.addEventListener('touchstart', e => { touchStartY = e.changedTouches[0].screenY; }, {passive: true});
+        viewer.addEventListener('touchend', e => { touchEndY = e.changedTouches[0].screenY; if (touchEndY - touchStartY > 60) closeViewer(); }, {passive: true});
+
+        const closeViewer = () => {
+            restorePageMetadata(); 
+            viewer.classList.remove('active');
+            setTimeout(() => { if(viewer.parentNode) viewer.parentNode.removeChild(viewer); }, 300);
+        };
+        viewer.querySelector('.close-viewer').addEventListener('click', closeViewer);
+        viewer.addEventListener('click', (e) => { if(e.target === viewer) closeViewer(); });
+        const closeViewerOnEsc = (e) => { if (e.key === 'Escape') { closeViewer(); document.removeEventListener('keydown', closeViewerOnEsc); } };
+        document.addEventListener('keydown', closeViewerOnEsc);
+    }
 });
