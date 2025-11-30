@@ -1,12 +1,9 @@
 /**
- * DaRafa Acessórios - Main Script (Versão FASE 3 - Histórico Recente)
- * * NOVAS OTIMIZAÇÕES (FASE 3):
- * 1. Histórico "Visto Recentemente" (Widget + Filtro) - NOVO!
- * 2. Modo Offline (PWA)
- * 3. Metadados Dinâmicos
- * 4. SEO Avançado (JSON-LD)
- * * * FUNCIONALIDADES MANTIDAS (FASE 2):
- * Analytics, Toast, Teclado, Infinite Scroll, Ordenação, Swipe, Share, URL, Wishlist, Busca.
+ * DaRafa Acessórios - Main Script (Versão FASE 3 - Coração no Zoom)
+ * * ALTERAÇÃO ESPECÍFICA:
+ * - Botão de Favoritos movido dos mini-cards para o Modal de Zoom.
+ * * * FUNCIONALIDADES MANTIDAS:
+ * Analytics, Toast, Teclado, Infinite Scroll, Ordenação, Swipe, Share, URL, Busca, SEO.
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -18,14 +15,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const POSTS_LIMIT = 50; 
     const ITEMS_PER_PAGE = 12;
     
-    // Estados Persistentes
     let wishlist = JSON.parse(localStorage.getItem('darafa_wishlist')) || [];
-    let recentHistory = JSON.parse(localStorage.getItem('darafa_history')) || []; // NOVO
-    
     let analyticsData = JSON.parse(localStorage.getItem('darafa_analytics')) || {
         views: 0, searches: {}, categoryClicks: {}, productClicks: {}, interactions: { wishlist: 0, share: 0 }
     };
-    
     let currentSort = 'default';
     let activeData = []; 
     let loadedCount = 0; 
@@ -182,27 +175,19 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('popstate', loadStateFromURL);
 
     // =========================================================
-    // 4. LÓGICA DE CATÁLOGO & HISTÓRICO (NOVO!)
+    // 4. LÓGICA DE CATÁLOGO & HISTÓRICO
     // =========================================================
-    
-    // --- FUNÇÃO PARA ADICIONAR AO HISTÓRICO ---
     function addToHistory(id) {
-        // Remove se já existe para colocar no topo
         recentHistory = recentHistory.filter(itemId => itemId !== id);
-        recentHistory.unshift(id); // Adiciona no início
-        
-        // Limita a 6 itens
+        recentHistory.unshift(id);
         if (recentHistory.length > 6) recentHistory.pop();
-        
         localStorage.setItem('darafa_history', JSON.stringify(recentHistory));
         
-        // Se o usuário estiver no filtro "Vistos", atualiza a tela
         const activeFilter = document.querySelector('.filter-btn.active');
         if (activeFilter && activeFilter.dataset.filter === 'history') {
             activeData = productsData.filter(item => recentHistory.includes(item.id));
-            // Ordena pela ordem do histórico (mais recente primeiro)
             activeData.sort((a, b) => recentHistory.indexOf(a.id) - recentHistory.indexOf(b.id));
-            const container = document.querySelector('.gallery-5-cols'); // Ou modal
+            const container = document.querySelector('.gallery-5-cols');
             if(container) resetAndRender(container);
         }
     }
@@ -266,13 +251,11 @@ document.addEventListener('DOMContentLoaded', () => {
         let htmlBuffer = '';
 
         nextBatch.forEach(item => {
-            const isFav = wishlist.includes(item.id) ? 'active' : '';
             htmlBuffer += `
                 <div class="gold-framebox" tabindex="0" data-id="${item.id}" data-category="${item.category}" data-title="${item.title}" data-description="${item.description}">
                     <div class="card-actions">
                         <button class="action-btn share-btn" aria-label="Compartilhar" tabindex="-1">➦</button>
-                        <button class="action-btn wishlist-btn ${isFav}" aria-label="Favoritar" tabindex="-1">♥</button>
-                    </div>
+                        </div>
                     <img class="lazy-image" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-src="${item.image}" alt="${item.title}" style="transition: opacity 0.8s ease; opacity: 0;">
                     <div class="card-info-bar">
                         <h3 class="info-title">${item.title}</h3>
@@ -347,6 +330,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 display: flex; align-items: center; gap: 8px; border: 1px solid #FDB90C;
             }
             .toast-notification.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+            
+            /* CSS DO MODAL COM CORAÇÃO */
+            .viewer-actions { position: absolute; top: 20px; right: 80px; z-index: 3002; }
         `;
         document.head.appendChild(style);
     }
@@ -365,16 +351,14 @@ document.addEventListener('DOMContentLoaded', () => {
     function attachCardEvents(container) {
         container.addEventListener('click', (e) => {
             const btn = e.target;
-            if (btn.classList.contains('wishlist-btn')) { e.stopPropagation(); toggleWishlist(parseInt(btn.closest('.gold-framebox').dataset.id), btn); return; }
             if (btn.classList.contains('share-btn')) { e.stopPropagation(); shareProduct(btn.closest('.gold-framebox')); return; }
         });
     }
 
-    // --- FILTROS (ATUALIZADO COM HISTÓRICO) ---
+    // --- FILTROS, BUSCA & CONTROLES ---
     function initFilters() {
         const filterContainers = document.querySelectorAll('.catalog-filters');
         filterContainers.forEach(container => {
-            // Botão Favoritos
             if(!container.querySelector('[data-filter="favorites"]')) {
                 const favBtn = document.createElement('button');
                 favBtn.className = 'filter-btn';
@@ -384,7 +368,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 favBtn.style.borderColor = '#D00000';
                 container.appendChild(favBtn);
             }
-            // Botão Histórico (NOVO!)
             if(!container.querySelector('[data-filter="history"]')) {
                 const histBtn = document.createElement('button');
                 histBtn.className = 'filter-btn';
@@ -412,9 +395,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (filterValue === 'favorites') {
                     activeData = productsData.filter(item => wishlist.includes(item.id));
                 } else if (filterValue === 'history') {
-                    // Lógica do Histórico
                     activeData = productsData.filter(item => recentHistory.includes(item.id));
-                    // Ordena para mostrar o último visto primeiro
                     activeData.sort((a, b) => recentHistory.indexOf(a.id) - recentHistory.indexOf(b.id));
                 } else if (filterValue === 'all') {
                     activeData = productsData;
@@ -422,7 +403,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     activeData = productsData.filter(item => item.category === filterValue);
                 }
                 
-                if (filterValue !== 'history') activeData = applySort(activeData); // Não reordena histórico para manter cronologia
+                if (filterValue !== 'history') activeData = applySort(activeData);
 
                 const modalContent = button.closest('.expansion-content');
                 const targetGallery = modalContent ? modalContent.querySelector('.gallery-5-cols') : document.querySelector('#gallery-door .gallery-5-cols');
@@ -520,9 +501,22 @@ document.addEventListener('DOMContentLoaded', () => {
         const viewerImg = document.querySelector('.image-viewer-content');
         if (viewerImg) {
             viewerImg.style.opacity = 0.5;
-            setTimeout(() => { viewerImg.src = nextItem.image; viewerImg.onload = () => viewerImg.style.opacity = 1; }, 200);
+            setTimeout(() => { 
+                viewerImg.src = nextItem.image; 
+                viewerImg.onload = () => viewerImg.style.opacity = 1; 
+                
+                // ATUALIZA O ESTADO DO BOTÃO CORAÇÃO NO MODAL AO NAVEGAR
+                const heartBtn = document.querySelector('.image-viewer-overlay .wishlist-btn');
+                if(heartBtn) {
+                    const isFav = wishlist.includes(nextItem.id);
+                    if(isFav) heartBtn.classList.add('active');
+                    else heartBtn.classList.remove('active');
+                    // Atualiza o ID para o clique funcionar
+                    heartBtn.dataset.id = nextItem.id;
+                }
+
+            }, 200);
             setPageMetadata(nextItem.title, nextItem.description);
-            // Ao navegar, também adiciona ao histórico
             addToHistory(nextItem.id); 
         }
     }
@@ -557,7 +551,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (activeFilter && activeFilter.dataset.filter === 'favorites') {
             activeData = productsData.filter(item => wishlist.includes(item.id));
             activeData = applySort(activeData);
-            const parentContainer = btnElement.closest('.gallery-5-cols');
+            const parentContainer = document.querySelector('.gallery-5-cols'); // Procura genérico pois o btn pode estar no modal
             if(parentContainer) resetAndRender(parentContainer);
         }
     }
@@ -643,7 +637,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 favBtn.style.borderColor = '#D00000';
                 modalFilters.appendChild(favBtn);
              }
-             // INJETAR O BOTÃO DE HISTÓRICO TAMBÉM NO MODAL
+             
+             // BOTÃO HISTÓRICO NO MODAL
              if(!modalFilters.querySelector('[data-filter="history"]')) {
                 const histBtn = document.createElement('button');
                 histBtn.className = 'filter-btn';
@@ -678,7 +673,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         overlay.addEventListener('click', (e) => {
             const btn = e.target;
-            if (btn.classList.contains('wishlist-btn')) { e.stopPropagation(); toggleWishlist(parseInt(btn.closest('.gold-framebox').dataset.id), btn); return; }
             if (btn.classList.contains('share-btn')) { e.stopPropagation(); shareProduct(btn.closest('.gold-framebox')); return; }
 
             const card = e.target.closest('.gold-framebox');
@@ -706,16 +700,25 @@ document.addEventListener('DOMContentLoaded', () => {
         document.addEventListener('keydown', closeOnEsc);
     }
 
+    // --- MODAL DE ZOOM COM BOTÃO DE CORAÇÃO (NOVO) ---
     function openImageViewer(imageSrc, id) {
-        // Salva no histórico ao abrir
         addToHistory(id);
-
         const product = productsData.find(p => p.id == id);
         if (product) setPageMetadata(product.title, product.description);
 
         const foundIndex = activeData.findIndex(item => item.id == id);
         if (foundIndex !== -1) currentViewerIndex = foundIndex;
-        createViewerOverlay(`<img src="${imageSrc}" class="image-viewer-content" style="max-height:90vh; max-width:90%; border:1px solid var(--color-gold-dark); box-shadow: 0 0 30px rgba(0,0,0,0.8);">`);
+        
+        // Verifica se é favorito
+        const isFav = wishlist.includes(parseInt(id)) ? 'active' : '';
+
+        // Injeta o botão de coração dentro do HTML do modal
+        createViewerOverlay(`
+            <div style="position:relative; width:fit-content; height:fit-content;">
+                <button class="action-btn wishlist-btn ${isFav}" data-id="${id}" aria-label="Favoritar" style="position:absolute; top:15px; right:15px; z-index:10;">♥</button>
+                <img src="${imageSrc}" class="image-viewer-content" style="max-height:90vh; max-width:90%; border:1px solid var(--color-gold-dark); box-shadow: 0 0 30px rgba(0,0,0,0.8);">
+            </div>
+        `);
     }
 
     function openStoryMode(imageSrc, title, description) {
@@ -734,6 +737,16 @@ document.addEventListener('DOMContentLoaded', () => {
         viewer.innerHTML = `<button class="close-viewer" style="position:absolute; top:20px; right:30px; color:#fff; font-size:2rem; background:none; border:none; cursor:pointer; z-index:3001;">&times;</button>${innerContent}`;
         body.appendChild(viewer);
         requestAnimationFrame(() => viewer.classList.add('active'));
+        
+        // Lógica do botão coração DENTRO do modal
+        const heartBtn = viewer.querySelector('.wishlist-btn');
+        if(heartBtn) {
+            heartBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const id = parseInt(e.target.dataset.id);
+                toggleWishlist(id, e.target);
+            });
+        }
 
         let touchStartY = 0; let touchEndY = 0;
         viewer.addEventListener('touchstart', e => { touchStartY = e.changedTouches[0].screenY; }, {passive: true});
@@ -745,7 +758,11 @@ document.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => { if(viewer.parentNode) viewer.parentNode.removeChild(viewer); }, 300);
         };
         viewer.querySelector('.close-viewer').addEventListener('click', closeViewer);
-        viewer.addEventListener('click', (e) => { if(e.target === viewer) closeViewer(); });
+        viewer.addEventListener('click', (e) => { 
+            // Fecha se clicar fora da imagem (no overlay)
+            if(e.target === viewer || e.target.classList.contains('image-viewer-content')) return; // Click na imagem não fecha
+            if(e.target === viewer) closeViewer(); 
+        });
         const closeViewerOnEsc = (e) => { if (e.key === 'Escape') { closeViewer(); document.removeEventListener('keydown', closeViewerOnEsc); } };
         document.addEventListener('keydown', closeViewerOnEsc);
     }
