@@ -1,9 +1,9 @@
 /**
- * DaRafa Acessórios - Main Script (Versão FASE 3 - Coração no Zoom)
- * * ALTERAÇÃO ESPECÍFICA:
- * - Botão de Favoritos movido dos mini-cards para o Modal de Zoom.
+ * DaRafa Acessórios - Main Script (Versão CORRIGIDA - Clique no Card Restaurado)
+ * * CORREÇÃO:
+ * - O clique no mini-card agora abre o Zoom novamente.
  * * * FUNCIONALIDADES MANTIDAS:
- * Analytics, Toast, Teclado, Infinite Scroll, Ordenação, Swipe, Share, URL, Busca, SEO.
+ * Analytics, Toast, Teclado, Infinite Scroll, Ordenação, Swipe, Share, URL, Wishlist, Busca, SEO.
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -251,11 +251,12 @@ document.addEventListener('DOMContentLoaded', () => {
         let htmlBuffer = '';
 
         nextBatch.forEach(item => {
+            // Coração removido daqui e inserido no modal
             htmlBuffer += `
                 <div class="gold-framebox" tabindex="0" data-id="${item.id}" data-category="${item.category}" data-title="${item.title}" data-description="${item.description}">
                     <div class="card-actions">
                         <button class="action-btn share-btn" aria-label="Compartilhar" tabindex="-1">➦</button>
-                        </div>
+                    </div>
                     <img class="lazy-image" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-src="${item.image}" alt="${item.title}" style="transition: opacity 0.8s ease; opacity: 0;">
                     <div class="card-info-bar">
                         <h3 class="info-title">${item.title}</h3>
@@ -348,10 +349,36 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 400); }, 3000);
     }
 
+    // FUNÇÃO CRÍTICA CORRIGIDA: ATTACH CARD EVENTS
+    // Aqui garantimos que clicar no card (fora do botão share) abre o zoom
     function attachCardEvents(container) {
         container.addEventListener('click', (e) => {
             const btn = e.target;
-            if (btn.classList.contains('share-btn')) { e.stopPropagation(); shareProduct(btn.closest('.gold-framebox')); return; }
+            
+            // 1. Se clicou no botão de compartilhar
+            if (btn.classList.contains('share-btn')) { 
+                e.stopPropagation(); 
+                shareProduct(btn.closest('.gold-framebox')); 
+                return; 
+            }
+            
+            // 2. Se clicou no botão de coração (caso estivesse aqui, mas movemos pro modal)
+            if (btn.classList.contains('wishlist-btn')) { 
+                e.stopPropagation(); 
+                toggleWishlist(parseInt(btn.closest('.gold-framebox').dataset.id), btn); 
+                return; 
+            }
+
+            // 3. SE CLICOU NO CARD (IMAGEM OU CORPO) -> ABRE ZOOM
+            const card = btn.closest('.gold-framebox');
+            if (card) {
+                e.stopPropagation();
+                const img = card.querySelector('img');
+                if(img) {
+                    trackEvent('product_click', card.dataset.title);
+                    openImageViewer(img.dataset.src || img.src, card.dataset.id);
+                }
+            }
         });
     }
 
@@ -637,8 +664,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 favBtn.style.borderColor = '#D00000';
                 modalFilters.appendChild(favBtn);
              }
-             
-             // BOTÃO HISTÓRICO NO MODAL
+             // INJETAR O BOTÃO DE HISTÓRICO TAMBÉM NO MODAL
              if(!modalFilters.querySelector('[data-filter="history"]')) {
                 const histBtn = document.createElement('button');
                 histBtn.className = 'filter-btn';
@@ -673,7 +699,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
         overlay.addEventListener('click', (e) => {
             const btn = e.target;
-            if (btn.classList.contains('share-btn')) { e.stopPropagation(); shareProduct(btn.closest('.gold-framebox')); return; }
+            
+            // Se clicou em um botão de ação, a lógica já foi tratada em attachCardEvents 
+            // através da delegação direta no container.
+            // Mas, por segurança, se o evento borbulhar até aqui:
+            if (btn.classList.contains('share-btn')) { 
+                e.stopPropagation(); 
+                shareProduct(btn.closest('.gold-framebox')); 
+                return; 
+            }
+            if (btn.classList.contains('wishlist-btn')) {
+                // Se for o botão do modal de zoom, ele é tratado lá no createViewerOverlay
+                // Se for de um mini-card, já foi tratado pelo attachCardEvents
+                e.stopPropagation();
+                return;
+            }
 
             const card = e.target.closest('.gold-framebox');
             if (card && overlay.contains(card)) {
@@ -682,7 +722,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (card.dataset.description && card.classList.contains('story-card')) {
                     openStoryMode(img.dataset.src || img.src, card.dataset.title, card.dataset.description);
                 } else {
-                    trackEvent('product_click', card.dataset.title);
                     if(img) openImageViewer(img.dataset.src || img.src, card.dataset.id);
                 }
             }
