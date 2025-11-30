@@ -1,99 +1,64 @@
 # DaRafa Acessorios - O Dossie Completo do Projeto (MASTER LOG)
 
 **Resumo Executivo:**
-Este documento narra a evolucao completa do desenvolvimento da Landing Page para "DaRafa Acessorios". O projeto evoluiu para uma Progressive Web App (PWA) simulada (Versao 2.1), operando com funcionalidades avancadas de SEO e UX, mantendo a estabilidade visual do tema "Red Chic".
+Este documento narra a evolucao completa do desenvolvimento da Landing Page para "DaRafa Acessorios". O projeto encontra-se na Versao 2.1 (Estavel), operando com funcionalidades de PWA e SEO, mantendo a integridade visual e de navegacao.
 
 ---
 
 ## 1. A Filosofia Inicial: Modularizacao
-**O Problema:** Projetos anteriores cresciam demais e se tornavam dificeis de manter.
-**A Solucao:** Adotamos uma **Arquitetura CSS Modular**.
-* Nao existe um "style.css" gigante.
-* Existe um "Maestro" (styles/main.css) que importa pequenos arquivos especificos.
-* **Estrutura:** _base/ (Globais) e _components/ (Navbar, Hero, ZigZag, etc.).
+**Solucao:** Arquitetura CSS Modular (Maestro `main.css` importando componentes isolados).
 
 ---
 
-## 2. Evolucao Visual (Do Escuro ao Vermelho Luxo)
-
-### Fase 1: "Ouro na Noite"
-* Conceito inicial de fundo preto profundo com detalhes dourados.
-
-### Fase 2: "Honey Theme" (Legado)
-* Fundo Amarelo Mel Vibrante (#FDB90C) com contraste em Chocolate.
-
-### Fase 3: "Red Chic" (VERSAO ATUAL ESTAVEL)
-* **Conceito:** Elevacao da marca para um patamar de "Alta Costura" e exclusividade.
-* **A Cor do Poder:** Introducao do Vermelho Sangue (#D00000) em bordas, hovers e detalhes finos.
-* **Tipografia:** Titulos imponentes e paragrafos com espacamento editorial.
-* **Navbar:** Logo maximizada e interacao com icone de favo de mel.
+## 2. Evolucao Visual (Red Chic)
+* **Estilo Atual:** "Red Chic" (Fundo Chocolate, Bordas Vermelhas, Tipografia Editorial).
+* **Status:** Implementado e consolidado.
 
 ---
 
 ## 3. Evolucao Estrutural e Funcionalidade
-
-### Layout Zig-Zag e "Portais"
-* As secoes seguem fluxo alternado (Texto/Imagem).
-* **Cards Grandes (Portais):** Ao clicar, expandem para um **Modal de Tela Cheia** (com fundo escuro para leitura).
-* **Niveis de Profundidade:**
-    1.  **Zoom (Lightbox):** Para joias.
-    2.  **Modo Revista:** Para historias do atelier (Foto + Texto).
-
-### Inteligencia de Dados (Data-Driven)
-* Substituimos loops simples por uma **Estrutura de Dados (Array de Objetos)** no JavaScript.
-* **Busca em Tempo Real:** Campo de pesquisa instantanea por titulo ou categoria.
-* **Filtros Dinamicos:** O usuario pode filtrar o catalogo por categoria sem recarregar.
-* **Scroll Reveal:** As imagens aparecem suavemente conforme o usuario rola a pagina.
+* **Core:** Layout Zig-Zag com "Portais" (Cards que expandem para Modais).
+* **Navegacao:** Zoom de produto (Lightbox) e Modo Historia.
+* **Performance:** Infinite Scroll e Lazy Loading ativos.
 
 ---
 
 ## 4. Mapa Tecnico Atual (Status dos Arquivos)
-
-* **styles/_base/_variables.css:** Paleta de cores atualizada (Red Chic).
-* **styles/_components/_navbar.css:** Menu com logo gigante e hover vermelho.
-* **styles/_components/_highlights.css:** Cards com bordas vermelhas fixas.
-* **styles/_components/_footer.css:** Rodape organizado com hierarquia visual.
-* **styles/_base/_global.css:** Tipografia editorial e titulos impactantes.
-* **js/main.js:** Motor completo (Fase 2 Completa + SEO/Offline/Historico da Fase 3).
+* **css/**: Estilizacao completa e modular.
+* **js/main.js**: Motor da aplicacao contendo SEO, Metadados, Modo Offline, Busca e Logica de Renderizacao.
 
 ---
 
 ## 5. Historico de Atualizacoes (CHANGELOG)
 
-### [30/11/2025] - Fase 3: Performance & SEO
-**Status: EM ANDAMENTO (Funcionalidades Criticas Ativas)**
+### [30/11/2025] - Fase 3: Performance & SEO (Ajustes Taticos)
+**Status: EM ANDAMENTO - VERSAO ESTAVEL RESTAURADA**
 
-**Funcionalidades Entregues e Estaveis (Sucesso):**
-1.  **SEO Avancado (Dados Estruturados):** Injecao de JSON-LD para Rich Snippets.
+**Funcionalidades Entregues (Sucesso):**
+1.  **SEO Avancado:** Injecao de JSON-LD para Rich Snippets.
 2.  **Metadados Dinamicos:** Titulo da aba muda conforme o produto visualizado.
 3.  **Modo Offline (PWA):** Deteccao de queda de internet com feedback visual (Grayscale).
-4.  **Historico "Visto Recentemente":** Rastreamento e filtro automatico dos ultimos produtos acessados.
+4.  **Busca em Tempo Real:** Filtragem instantanea de produtos.
+5.  **Ordenacao Dinamica:** Filtros A-Z, Z-A e Aleatorio.
 
-**Incidentes (CORRIGIDOS/REVERTIDOS):**
-1.  **Focus Trap (Acessibilidade):** A implementacao da "armadilha de foco" gerou conflito com o layout dos modais, impedindo a navegacao correta.
-    * **Acao:** Rollback imediato (Ctrl+Z) para a versao estavel anterior.
-    * **Decisao:** Funcionalidade movida para o final da fila de prioridades para depuracao isolada.
+**Incidentes e Reversoes (ROLLBACK):**
+1.  **Lista de Desejos (Botoes no Card):** A adicao dos botoes de "Coracao" e "Compartilhar" dentro da area do minicard gerou conflito de eventos (Event Bubbling), impedindo que o usuario clicasse na foto para abrir o Zoom.
+    * **Acao:** Funcionalidade revertida temporariamente para garantir que o Zoom (feature principal) funcione perfeitamente.
+    * **Decisao:** Tarefa movida para o final da fila para refatoracao de UI/UX (possivelmente mover o botao para dentro do Modal aberto, em vez da capa).
 
 ---
 
-## 6. PROXIMOS PASSOS (BACKLOG AJUSTADO - FASE 3)
-Objetivo: Concluir as otimizacoes de performance restante antes de revisitar a acessibilidade complexa.
+## 6. PROXIMOS PASSOS (BACKLOG REORGANIZADO)
+Objetivo: Priorizar estabilidade e funcionalidades que nao afetam o layout critico.
 
-1.  **Pre-carregamento Preditivo (Prefetch):** Baixar recursos antes do clique do usuario.
-2.  **Carregamento Adaptativo:** Ajustar qualidade de midia baseada na rede (4G/Wifi).
-3.  **Favicon Dinamico:** Notificacao visual na aba do navegador ao favoritar.
+1.  **Links Compartilhaveis (URL State):** A URL mudar ao filtrar/buscar (sem quebrar a navegacao).
+2.  **Pre-carregamento Preditivo (Prefetch):** Baixar imagens antes do clique.
+3.  **Carregamento Adaptativo:** Ajuste de qualidade para redes lentas.
 4.  **Exit Intent (Marketing):** Modal de recuperacao de saida (Desktop).
-5.  **Blindagem de Links:** Automacao de seguranca para links externos.
-6.  **Focus Trap (Acessibilidade):** *Adiado para revisao tecnica aprofundada.*
+5.  **Blindagem de Links:** Seguranca para links externos.
+6.  **Analytics Caseiro:** Rastreamento de cliques.
+7.  **Focus Trap (Acessibilidade):** *Adiado (Conflito de Layout).*
+8.  **Lista de Desejos (Wishlist):** *Adiado (Conflito de Clique no Card).*
 
 ---
-
-## 7. FUTURO (BACKEND & INFRA)
-*Planejamento de Longo Prazo.*
-
-1.  **Conexao com API Real:** Substituir o banco de dados local por Node.js/Firebase.
-2.  **Painel Administrativo:** Area restrita para cadastro de produtos.
-3.  **Checkout:** Integracao com gateway de pagamento.
-
----
-*Ultima atualizacao: 30/11/2025 - Rollback de Acessibilidade realizado com sucesso. Sistema estavel.*
+*Ultima atualizacao: 30/11/2025 - Rollback estrategico realizado. O zoom dos cards esta funcionando perfeitamente.*
