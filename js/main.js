@@ -1,7 +1,8 @@
 /**
- * DaRafa Acessórios - Main Script (Versão FASE 3 - SEO Edition)
+ * DaRafa Acessórios - Main Script (Versão FASE 3 - Metadados Dinâmicos)
  * * NOVAS OTIMIZAÇÕES (FASE 3):
- * 1. SEO Avançado: Injeção de JSON-LD (Dados Estruturados)
+ * 1. Metadados Dinâmicos (Título da Aba/Descrição mudam ao abrir produto) - NOVO!
+ * 2. SEO Avançado (JSON-LD)
  * * * FUNCIONALIDADES MANTIDAS (FASE 2):
  * Analytics, Toast, Teclado, Infinite Scroll, Ordenação, Swipe, Share, URL, Wishlist, Busca.
  */
@@ -15,6 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const POSTS_LIMIT = 50; 
     const ITEMS_PER_PAGE = 12;
     
+    // Estado Global
     let wishlist = JSON.parse(localStorage.getItem('darafa_wishlist')) || [];
     let analyticsData = JSON.parse(localStorage.getItem('darafa_analytics')) || {
         views: 0, searches: {}, categoryClicks: {}, productClicks: {}, interactions: { wishlist: 0, share: 0 }
@@ -24,6 +26,10 @@ document.addEventListener('DOMContentLoaded', () => {
     let loadedCount = 0; 
     let scrollSentinel;
     let currentViewerIndex = -1;
+
+    // Variáveis para Metadados (SEO Dinâmico)
+    let originalTitle = document.title;
+    let originalDesc = document.querySelector('meta[name="description"]')?.getAttribute('content') || '';
 
     // --- ANALYTICS ---
     function trackEvent(type, label) {
@@ -63,53 +69,52 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     // =========================================================
-    // 1. SEO: DADOS ESTRUTURADOS (JSON-LD) [NOVO!]
+    // 1. SEO & METADADOS (NOVO!)
     // =========================================================
+    
+    // Injeção de JSON-LD
     function initSEO() {
         const baseUrl = window.location.origin + window.location.pathname.replace('index.html', '');
-        
         const schema = {
-            "@context": "https://schema.org",
-            "@graph": [
+            "@context": "https://schema.org", "@graph": [
                 {
-                    "@type": "JewelryStore",
-                    "name": "DaRafa Acessórios",
-                    "url": baseUrl,
-                    "description": "Joias artesanais feitas à mão em Curitiba. Design exclusivo em arame.",
+                    "@type": "JewelryStore", "name": "DaRafa Acessórios", "url": baseUrl,
+                    "description": "Joias artesanais feitas à mão em Curitiba.",
                     "logo": baseUrl + "assets/images/logo.darafa.oficial.logo.png",
                     "sameAs": ["https://www.instagram.com/darafa_cwb/"],
-                    "address": {
-                        "@type": "PostalAddress",
-                        "addressLocality": "Curitiba",
-                        "addressRegion": "PR",
-                        "addressCountry": "BR"
-                    }
+                    "address": { "@type": "PostalAddress", "addressLocality": "Curitiba", "addressRegion": "PR", "addressCountry": "BR" }
                 },
                 {
-                    "@type": "ItemList",
-                    "numberOfItems": productsData.length,
+                    "@type": "ItemList", "numberOfItems": productsData.length,
                     "itemListElement": productsData.map((item, index) => ({
-                        "@type": "ListItem",
-                        "position": index + 1,
+                        "@type": "ListItem", "position": index + 1,
                         "item": {
-                            "@type": "Product",
-                            "name": item.title,
-                            "description": item.description,
-                            "image": baseUrl + item.image,
-                            "sku": `DARAF-${item.id}`,
+                            "@type": "Product", "name": item.title, "description": item.description,
+                            "image": baseUrl + item.image, "sku": `DARAF-${item.id}`,
                             "brand": { "@type": "Brand", "name": "DaRafa" },
-                            "offers": { "@type": "Offer", "availability": "https://schema.org/InStock", "price": "0.00", "priceCurrency": "BRL" } // Preço sob consulta
+                            "offers": { "@type": "Offer", "availability": "https://schema.org/InStock", "price": "0.00", "priceCurrency": "BRL" }
                         }
                     }))
                 }
             ]
         };
-
         const script = document.createElement('script');
         script.type = 'application/ld+json';
         script.text = JSON.stringify(schema);
         document.head.appendChild(script);
-        // console.log("SEO JSON-LD Injetado!");
+    }
+
+    // --- GERENCIADOR DE METADADOS DINÂMICOS (NOVO) ---
+    function setPageMetadata(title, description) {
+        document.title = `${title} | DaRafa`;
+        const metaDesc = document.querySelector('meta[name="description"]');
+        if (metaDesc) metaDesc.setAttribute('content', description);
+    }
+
+    function restorePageMetadata() {
+        document.title = originalTitle;
+        const metaDesc = document.querySelector('meta[name="description"]');
+        if (metaDesc) metaDesc.setAttribute('content', originalDesc);
     }
 
 
@@ -136,7 +141,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Boot
     if (galleryContainer) {
-        initSEO(); // Inicia o SEO
+        initSEO();
         initCatalog();
         initFilters();
         initControls(); 
@@ -440,6 +445,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (viewerImg) {
             viewerImg.style.opacity = 0.5;
             setTimeout(() => { viewerImg.src = nextItem.image; viewerImg.onload = () => viewerImg.style.opacity = 1; }, 200);
+            // ATUALIZA METADADOS AO NAVEGAR NO SLIDESHOW
+            setPageMetadata(nextItem.title, nextItem.description);
         }
     }
 
@@ -600,6 +607,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         const close = () => {
+            restorePageMetadata(); // Restaura título original ao fechar
             overlay.classList.remove('active');
             body.style.overflow = '';
             setTimeout(() => { if(overlay.parentNode) overlay.parentNode.removeChild(overlay); }, 400);
@@ -611,12 +619,17 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function openImageViewer(imageSrc, id) {
+        // Encontra produto para metadados
+        const product = productsData.find(p => p.id == id);
+        if (product) setPageMetadata(product.title, product.description);
+
         const foundIndex = activeData.findIndex(item => item.id == id);
         if (foundIndex !== -1) currentViewerIndex = foundIndex;
         createViewerOverlay(`<img src="${imageSrc}" class="image-viewer-content" style="max-height:90vh; max-width:90%; border:1px solid var(--color-gold-dark); box-shadow: 0 0 30px rgba(0,0,0,0.8);">`);
     }
 
     function openStoryMode(imageSrc, title, description) {
+        setPageMetadata(title, description); // Metadados da história
         createViewerOverlay(`
             <div class="story-viewer-content">
                 <div class="story-image-col"><img src="${imageSrc}" alt="${title}"></div>
@@ -637,6 +650,7 @@ document.addEventListener('DOMContentLoaded', () => {
         viewer.addEventListener('touchend', e => { touchEndY = e.changedTouches[0].screenY; if (touchEndY - touchStartY > 60) closeViewer(); }, {passive: true});
 
         const closeViewer = () => {
+            restorePageMetadata(); // Restaura título original
             viewer.classList.remove('active');
             setTimeout(() => { if(viewer.parentNode) viewer.parentNode.removeChild(viewer); }, 300);
         };
