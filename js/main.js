@@ -1,11 +1,11 @@
 /**
- * DaRafa Acessórios - Main Script (Versão com Infinite Scroll)
+ * DaRafa Acessórios - Main Script (Versão com Navegação por Teclado)
  * * OTIMIZAÇÕES APLICADAS:
- * 1. Infinite Scroll Real (Carregamento progressivo) - NOVO!
- * 2. Ordenação Dinâmica
- * 3. Gestos de Swipe
- * 4. Compartilhamento Nativo & Links
- * 5. Wishlist & Busca
+ * 1. Navegação por Teclado (A11y + Slideshow) - NOVO!
+ * 2. Infinite Scroll Real
+ * 3. Ordenação Dinâmica
+ * 4. Gestos de Swipe
+ * 5. Compartilhamento Nativo & Links
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -15,15 +15,16 @@ document.addEventListener('DOMContentLoaded', () => {
     // =========================================================
     const INSTAGRAM_TOKEN = ''; 
     const POSTS_LIMIT = 50; 
-    const ITEMS_PER_PAGE = 12; // Número de itens por lote
+    const ITEMS_PER_PAGE = 12;
     
     let wishlist = JSON.parse(localStorage.getItem('darafa_wishlist')) || [];
     let currentSort = 'default';
     
-    // Variáveis de Estado do Infinite Scroll
-    let activeData = []; // Dados atualmente filtrados/ordenados
-    let loadedCount = 0; // Quantos já foram mostrados
-    let scrollSentinel;  // O elemento invisível que vigia o fim da página
+    // Estado Global
+    let activeData = []; 
+    let loadedCount = 0; 
+    let scrollSentinel;
+    let currentViewerIndex = -1; // Para o Slideshow
 
     const productsData = [
         { id: 1, category: 'nose-cuff', title: 'Nose Cuff Spirals', description: 'Design espiral em arame dourado, ajuste anatômico sem furos.', image: 'assets/images/darafa-catalogo.jpg' },
@@ -50,10 +51,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     // =========================================================
-    // 1. OBSERVERS (LAZY IMAGE & INFINITE SCROLL)
+    // 1. OBSERVERS
     // =========================================================
-    
-    // Observer para Imagens (Lazy Load)
     const globalImageObserver = new IntersectionObserver((entries, observer) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
@@ -65,11 +64,8 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }, { rootMargin: "200px 0px", threshold: 0.01 });
 
-    // Observer para Infinite Scroll (O Sentinela)
     const infiniteScrollObserver = new IntersectionObserver((entries) => {
-        if (entries[0].isIntersecting) {
-            loadNextBatch();
-        }
+        if (entries[0].isIntersecting) loadNextBatch();
     }, { rootMargin: "200px" });
 
 
@@ -84,6 +80,7 @@ document.addEventListener('DOMContentLoaded', () => {
         initControls(); 
         injectDynamicStyles(); 
         setTimeout(loadStateFromURL, 100);
+        initKeyboardNavigation(); // Inicializa listeners de teclado
     }
 
     window.addEventListener('popstate', loadStateFromURL);
@@ -122,45 +119,32 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function initCatalog() {
         if (INSTAGRAM_TOKEN) {
-            try {
-                await fetchInstagramPosts();
-            } catch (error) { 
-                activeData = [...productsData]; // Inicializa dados ativos
-                resetAndRender();
-            }
+            try { await fetchInstagramPosts(); } 
+            catch (error) { activeData = [...productsData]; resetAndRender(); }
         } else {
             activeData = [...productsData];
             resetAndRender();
         }
     }
 
-    // --- LÓGICA CORE DO INFINITE SCROLL ---
-    
-    // Função chamada quando mudamos filtros, busca ou ordenação (Reseta tudo)
+    // --- INFINITE SCROLL CORE ---
     function resetAndRender(container = galleryContainer) {
         if (!container) return;
-        
-        container.innerHTML = ''; // Limpa a grade
-        loadedCount = 0; // Reseta contador
-        
-        // Remove sentinela antigo se existir
+        container.innerHTML = ''; 
+        loadedCount = 0; 
         if(scrollSentinel) {
             infiniteScrollObserver.unobserve(scrollSentinel);
             scrollSentinel.remove();
             scrollSentinel = null;
         }
-
         if (activeData.length === 0) {
             container.innerHTML = '<p style="color:#241000; text-align:center; width:100%; grid-column: 1/-1; padding: 20px;">Nada encontrado.</p>';
             return;
         }
-
         loadNextBatch(container);
     }
 
-    // Função que carrega o próximo lote (Chunk)
     function loadNextBatch(container = galleryContainer) {
-        // Se já carregou tudo, para.
         if (loadedCount >= activeData.length) return;
 
         const nextBatch = activeData.slice(loadedCount, loadedCount + ITEMS_PER_PAGE);
@@ -168,11 +152,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
         nextBatch.forEach(item => {
             const isFav = wishlist.includes(item.id) ? 'active' : '';
+            // NOVO: tabindex="0" para focar com teclado
             htmlBuffer += `
-                <div class="gold-framebox" data-id="${item.id}" data-category="${item.category}" data-title="${item.title}" data-description="${item.description}">
+                <div class="gold-framebox" tabindex="0" data-id="${item.id}" data-category="${item.category}" data-title="${item.title}" data-description="${item.description}">
                     <div class="card-actions">
-                        <button class="action-btn share-btn" aria-label="Compartilhar" onclick="event.stopPropagation()">➦</button>
-                        <button class="action-btn wishlist-btn ${isFav}" aria-label="Favoritar" onclick="event.stopPropagation()">♥</button>
+                        <button class="action-btn share-btn" aria-label="Compartilhar" tabindex="-1">➦</button>
+                        <button class="action-btn wishlist-btn ${isFav}" aria-label="Favoritar" tabindex="-1">♥</button>
                     </div>
                     <img class="lazy-image" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-src="${item.image}" alt="${item.title}" style="transition: opacity 0.8s ease; opacity: 0;">
                     <div class="card-info-bar">
@@ -183,36 +168,26 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
         });
 
-        // Insere o HTML novo no final do container
         container.insertAdjacentHTML('beforeend', htmlBuffer);
-        
-        // Atualiza contagem
         loadedCount += nextBatch.length;
 
-        // Reativa funcionalidades nos novos itens
         attachCardEvents(container);
         attachObserversAndPreload(container);
-
-        // Gerencia o Sentinela (Cria ou Move para o final)
         manageSentinel(container);
     }
 
     function manageSentinel(container) {
-        // Se ainda tem itens para carregar
         if (loadedCount < activeData.length) {
             if (!scrollSentinel) {
                 scrollSentinel = document.createElement('div');
                 scrollSentinel.id = 'scroll-sentinel';
-                scrollSentinel.style.cssText = "width:100%; height:20px; grid-column: 1/-1;"; // Ocupa toda largura da grid
-                // Insere logo APÓS o container da galeria (para não quebrar o grid layout)
+                scrollSentinel.style.cssText = "width:100%; height:20px; grid-column: 1/-1;"; 
                 container.parentNode.appendChild(scrollSentinel);
                 infiniteScrollObserver.observe(scrollSentinel);
             } else {
-                // Move para o final (se necessário, mas o appendChild já move se já existe no DOM)
                 container.parentNode.appendChild(scrollSentinel); 
             }
         } else {
-            // Se acabou, mata o sentinela
             if(scrollSentinel) {
                 infiniteScrollObserver.unobserve(scrollSentinel);
                 scrollSentinel.remove();
@@ -225,9 +200,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const images = container.querySelectorAll('.lazy-image:not(.observed)');
         images.forEach(img => {
             globalImageObserver.observe(img);
-            img.classList.add('observed'); // Marca para não observar de novo
+            img.classList.add('observed');
         });
-
         const cards = container.querySelectorAll('.gold-framebox');
         cards.forEach(card => {
             card.addEventListener('mouseenter', () => {
@@ -246,7 +220,9 @@ document.addEventListener('DOMContentLoaded', () => {
     function injectDynamicStyles() {
         const style = document.createElement('style');
         style.innerHTML = `
-            .card-actions { position: absolute; top: 10px; right: 10px; z-index: 10; display: flex; gap: 8px; }
+            .card-actions { position: absolute; top: 10px; right: 10px; z-index: 10; display: flex; gap: 8px; opacity: 0; transition: opacity 0.3s ease; }
+            .gold-framebox:hover .card-actions, .gold-framebox:focus-within .card-actions { opacity: 1; }
+            .gold-framebox:focus { outline: 2px solid #D00000; outline-offset: 2px; }
             .action-btn { background: rgba(36, 16, 0, 0.6); border: none; color: #fff; font-size: 1.1rem; width: 35px; height: 35px; border-radius: 50%; cursor: pointer; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: flex; align-items: center; justify-content: center; padding-top: 2px; backdrop-filter: blur(4px); }
             .action-btn:hover { background: #241000; transform: scale(1.1); }
             .wishlist-btn.active { color: #D00000; background: #fff; box-shadow: 0 0 10px rgba(208,0,0,0.5); }
@@ -261,12 +237,51 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function attachCardEvents(container) {
-        // Remove listener antigo (clonagem é um jeito rápido de limpar eventos acumulados)
-        // Mas como estamos usando delegação direta no container principal, apenas garantimos que
-        // não estamos duplicando lógica. Aqui, como os cards são novos (HTML string), não tem duplicação.
-        
-        // A delegação global no 'overlay' ou 'gallery-door' cuida dos cliques.
-        // Essa função fica aqui caso precisemos de eventos específicos por card no futuro.
+        // Eventos de clique já são tratados via delegação global, 
+        // mas precisamos garantir que ações de teclado funcionem.
+    }
+
+    // --- KEYBOARD NAVIGATION (NOVO) ---
+    function initKeyboardNavigation() {
+        document.addEventListener('keydown', (e) => {
+            // Se estiver no Viewer (Zoom)
+            if (document.querySelector('.image-viewer-overlay.active')) {
+                if (e.key === 'ArrowRight') navigateViewer(1);
+                if (e.key === 'ArrowLeft') navigateViewer(-1);
+                return;
+            }
+
+            // Se for Enter num card focado
+            if (e.key === 'Enter' && document.activeElement.classList.contains('gold-framebox')) {
+                const card = document.activeElement;
+                const img = card.querySelector('img');
+                // Abre viewer
+                if (img) openImageViewer(img.dataset.src || img.src, card.dataset.id);
+            }
+        });
+    }
+
+    // Função para navegar no slideshow
+    function navigateViewer(direction) {
+        if (activeData.length === 0 || currentViewerIndex === -1) return;
+
+        let newIndex = currentViewerIndex + direction;
+        // Loop infinito
+        if (newIndex >= activeData.length) newIndex = 0;
+        if (newIndex < 0) newIndex = activeData.length - 1;
+
+        const nextItem = activeData[newIndex];
+        currentViewerIndex = newIndex;
+
+        // Atualiza a imagem do viewer aberto
+        const viewerImg = document.querySelector('.image-viewer-content');
+        if (viewerImg) {
+            viewerImg.style.opacity = 0.5;
+            setTimeout(() => {
+                viewerImg.src = nextItem.image;
+                viewerImg.onload = () => viewerImg.style.opacity = 1;
+            }, 200);
+        }
     }
 
     async function shareProduct(card) {
@@ -290,14 +305,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         localStorage.setItem('darafa_wishlist', JSON.stringify(wishlist));
         
-        // Se estiver no filtro Favoritos, atualiza a lista
         const activeFilter = document.querySelector('.filter-btn.active');
         if (activeFilter && activeFilter.dataset.filter === 'favorites') {
-            // Atualiza activeData para refletir a nova wishlist
             activeData = productsData.filter(item => wishlist.includes(item.id));
             activeData = applySort(activeData);
-            
-            // Re-renderiza o container atual
             const parentContainer = btnElement.closest('.gallery-5-cols');
             if(parentContainer) resetAndRender(parentContainer);
         }
@@ -305,7 +316,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     // =========================================================
-    // 4. CONTROLES UNIFICADOS (COM ATUALIZAÇÃO DE DADOS)
+    // 4. CONTROLES UNIFICADOS
     // =========================================================
     function initControls() {
         const filterContainer = document.querySelector('.catalog-filters');
@@ -329,13 +340,11 @@ document.addEventListener('DOMContentLoaded', () => {
         controlsWrapper.appendChild(sortSelect);
         filterContainer.prepend(controlsWrapper);
 
-        // Lógica de Busca + Ordenação Unificada
         const updateGridData = () => {
             const term = input.value.toLowerCase();
             const activeFilterBtn = document.querySelector('.filter-btn.active');
             const filterValue = activeFilterBtn ? activeFilterBtn.dataset.filter : 'all';
 
-            // 1. Filtra por Categoria
             let filtered = productsData;
             if (filterValue === 'favorites') {
                 filtered = productsData.filter(item => wishlist.includes(item.id));
@@ -343,7 +352,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 filtered = productsData.filter(item => item.category === filterValue);
             }
 
-            // 2. Filtra por Busca
             if (term) {
                 filtered = filtered.filter(item => 
                     item.title.toLowerCase().includes(term) || 
@@ -352,10 +360,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 );
             }
 
-            // 3. Aplica Ordenação
             activeData = applySort(filtered);
-
-            // 4. Renderiza (Reseta Scroll)
+            
             const parentModal = input.closest('.expansion-content');
             const targetGallery = parentModal ? parentModal.querySelector('.gallery-5-cols') : document.querySelector('#gallery-door .gallery-5-cols');
             
@@ -389,7 +395,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     // =========================================================
-    // 5. FILTROS (ATUALIZADOS PARA INFINITE SCROLL)
+    // 5. FILTROS
     // =========================================================
     function initFilters() {
         const filterContainers = document.querySelectorAll('.catalog-filters');
@@ -411,18 +417,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 const filterValue = button.dataset.filter;
                 updateURL('filtro', filterValue);
 
-                // Limpa busca ao trocar filtro
                 const searchInput = document.getElementById('js-search-input');
                 if (searchInput) searchInput.value = '';
 
-                // Atualiza Botões
                 const container = button.closest('.catalog-filters');
                 if(container) {
                     container.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
                     button.classList.add('active');
                 }
 
-                // Prepara Dados
                 if (filterValue === 'favorites') {
                     activeData = productsData.filter(item => wishlist.includes(item.id));
                 } else if (filterValue === 'all') {
@@ -433,7 +436,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 activeData = applySort(activeData);
 
-                // Renderiza
                 const modalContent = button.closest('.expansion-content');
                 const targetGallery = modalContent ? modalContent.querySelector('.gallery-5-cols') : document.querySelector('#gallery-door .gallery-5-cols');
                 
@@ -444,7 +446,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     // =========================================================
-    // 6. UX: MENU, SCROLL & PORTAIS
+    // 6. UX & PORTAIS
     // =========================================================
     function throttle(func, limit) {
         let inThrottle;
@@ -515,20 +517,16 @@ document.addEventListener('DOMContentLoaded', () => {
         overlay.addEventListener('touchstart', e => { touchStartY = e.changedTouches[0].screenY; }, {passive: true});
         overlay.addEventListener('touchend', e => { touchEndY = e.changedTouches[0].screenY; if (touchEndY - touchStartY > 60) close(); }, {passive: true});
 
-        // Limpa controles duplicados
         const oldControls = overlay.querySelector('.controls-wrapper');
         if(oldControls) oldControls.remove();
         
-        // Re-inicializa controles no modal
         const modalFilters = overlay.querySelector('.catalog-filters');
         if(modalFilters) {
              const controlsWrapper = document.createElement('div');
              controlsWrapper.className = 'controls-wrapper';
-             
              const input = document.createElement('input');
              input.placeholder = 'Buscar joia...';
              input.style.cssText = "padding:12px 25px; width:100%; max-width:300px; border-radius:50px; border:2px solid #241000; background:rgba(255,255,255,0.9); color:#241000; font-size:1rem; outline:none;";
-             
              const sortSelect = document.createElement('select');
              sortSelect.innerHTML = `<option value="default">✨ Relevância</option><option value="az">A - Z</option><option value="za">Z - A</option><option value="random">🎲 Aleatório</option>`;
              sortSelect.style.cssText = "padding:12px 20px; border-radius:50px; border:2px solid #241000; background:#241000; color:#FDB90C; font-size:0.9rem; font-weight:600; cursor:pointer;";
@@ -537,17 +535,11 @@ document.addEventListener('DOMContentLoaded', () => {
              controlsWrapper.appendChild(sortSelect);
              modalFilters.prepend(controlsWrapper);
 
-             // Define dados iniciais do modal
-             const targetGallery = overlay.querySelector('.gallery-5-cols');
-             
-             // Função local de update do modal
              const updateModal = () => {
                  const term = input.value.toLowerCase();
-                 // Filtra sempre do productsData original para não perder itens
                  let filtered = productsData.filter(item => item.title.toLowerCase().includes(term) || item.category.includes(term));
-                 
-                 // Aplica ordenação global
                  activeData = applySort(filtered);
+                 const targetGallery = overlay.querySelector('.gallery-5-cols');
                  resetAndRender(targetGallery);
              };
 
@@ -566,18 +558,31 @@ document.addEventListener('DOMContentLoaded', () => {
                 favBtn.style.borderColor = '#D00000';
                 modalFilters.appendChild(favBtn);
              }
-             
-             // Inicializa o modal com os dados atuais
+             const targetGallery = overlay.querySelector('.gallery-5-cols');
              resetAndRender(targetGallery);
         }
 
-        // Delegação de cliques no Modal
+        const modalImages = overlay.querySelectorAll('.lazy-image');
+        if(modalImages.length > 0) {
+            const modalObserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const img = entry.target;
+                        if(img.dataset.src) img.src = img.dataset.src;
+                        img.onload = () => { img.style.opacity = 1; };
+                        observer.unobserve(img);
+                    }
+                });
+            }, { root: overlay, rootMargin: "50px" });
+            modalImages.forEach(img => modalObserver.observe(img));
+        }
+        
+        // Delegação no Modal
         overlay.addEventListener('click', (e) => {
             const btn = e.target;
             if (btn.classList.contains('wishlist-btn')) {
                 e.stopPropagation();
-                const card = btn.closest('.gold-framebox');
-                toggleWishlist(parseInt(card.dataset.id), btn);
+                toggleWishlist(parseInt(btn.closest('.gold-framebox').dataset.id), btn);
                 return;
             }
             if (btn.classList.contains('share-btn')) {
@@ -593,7 +598,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (card.dataset.description && card.classList.contains('story-card')) {
                     openStoryMode(img.dataset.src || img.src, card.dataset.title, card.dataset.description);
                 } else {
-                    if(img) openImageViewer(img.dataset.src || img.src);
+                    if(img) openImageViewer(img.dataset.src || img.src, card.dataset.id);
                 }
             }
         });
@@ -610,7 +615,12 @@ document.addEventListener('DOMContentLoaded', () => {
         document.addEventListener('keydown', closeOnEsc);
     }
 
-    function openImageViewer(imageSrc) {
+    // UPDATED VIEWER TO SUPPORT ID FOR SLIDESHOW
+    function openImageViewer(imageSrc, id) {
+        // Encontra o index deste item no activeData
+        const foundIndex = activeData.findIndex(item => item.id == id);
+        if (foundIndex !== -1) currentViewerIndex = foundIndex;
+
         createViewerOverlay(`<img src="${imageSrc}" class="image-viewer-content" style="max-height:90vh; max-width:90%; border:1px solid var(--color-gold-dark); box-shadow: 0 0 30px rgba(0,0,0,0.8);">`);
     }
 
