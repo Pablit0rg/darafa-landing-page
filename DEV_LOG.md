@@ -1,7 +1,7 @@
 # DaRafa Acessorios - O Dossie Completo do Projeto (MASTER LOG)
 
 **Resumo Executivo:**
-Este documento narra a evolucao completa do desenvolvimento da Landing Page para "DaRafa Acessorios". O projeto encontra-se na Versao 2.2 (Estavel), com o visual "Red Chic" restaurado e funcionalidades de UX aprimoradas.
+Este documento narra a evolucao completa do desenvolvimento da Landing Page para "DaRafa Acessorios". O projeto encontra-se na Versao 4.0 (Estavel), com toda a lógica de JavaScript implementada e funcional, mantendo a integridade do layout "Red Chic".
 
 ---
 
@@ -12,37 +12,47 @@ Este documento narra a evolucao completa do desenvolvimento da Landing Page para
 
 ## 2. Evolucao Visual (Red Chic)
 * **Estilo Atual:** "Red Chic" (Fundo Chocolate, Bordas Vermelhas Finas, Tipografia Editorial).
-* **Status:** Restaurado em 01/12/2025.
+* **Status:** Restaurado e Consolidado.
 
 ---
 
 ## 3. Evolucao Estrutural e Funcionalidade
 * **Core:** Layout Zig-Zag com "Portais" (Cards que expandem para Modais).
 * **Navegacao:** Zoom de produto (Lightbox) e Modo Historia.
-* **Performance:** Infinite Scroll e Lazy Loading ativos.
+* **Performance:** Infinite Scroll, Prefetch Preditivo e Lazy Loading ativos.
 
 ---
 
 ## 4. Mapa Tecnico Atual (Status dos Arquivos)
-* **css/**: Estilizacao completa e modular.
-* **js/main.js**: Motor da aplicacao contendo SEO, Metadados, Modo Offline, Busca e Logica de Renderizacao.
+* **css/**: Estilizacao completa e modular (Estável).
+* **js/main.js**: Versão 4.0 (Analytics, Exit Intent, Prefetch, URL State) - Estável.
 
 ---
 
 ## 5. Historico de Atualizacoes (CHANGELOG)
 
-### [01/12/2025] - Fase 3.3: Tentativa de Layout Clean (ROLLBACK)
-**Status: FALHA / ADIADO**
+### [01/12/2025] - Fase 4.1: Ajuste de Layout (ROLLBACK / FALHA)
+**Status: REVERTIDO**
 
 **Incidente:**
-* A tentativa de reorganizar o cabeçalho do catálogo (movendo a barra de pesquisa para a mesma linha das categorias "inline") gerou **conflito de design**. O layout quebrou em certas resoluções ou sobrepôs elementos.
+* A tentativa de forçar o alinhamento da barra de pesquisa para a extrema direita (inline com as categorias) via JavaScript (`margin-left: auto` + manipulação de DOM) causou quebra de layout em resoluções menores e desalinhamento dos cards.
 
-**Decisão:**
-* Reverter para o layout de bloco (Pesquisa acima, Categorias abaixo) por enquanto.
-* A tarefa de "Refinamento do Cabeçalho do Catálogo" foi movida para o Backlog para ser tratada com mais cuidado no CSS futuramente.
+**Decisão Tática:**
+* **Reverter** para a Versão 4.0 do JavaScript (onde a busca fica centralizada ou acima, mas segura).
+* A tarefa de "Alinhamento Fino do Cabeçalho" foi movida para o **Backlog** para ser tratada exclusivamente via CSS no futuro.
+
+### [01/12/2025] - Fase 4.0: Finalização da Lógica JS (Sucesso Total)
+**Status: CONCLUÍDO (Versão Atual)**
+
+**Funcionalidades Entregues:**
+1.  **Analytics Caseiro (v4.0):** Implementado sistema de rastreamento completo (Cliques, Buscas, Filtros) com funcionalidade de **Scroll Spy** (monitora quais seções foram vistas) e **Relatório de Console** (`relatorio()`).
+2.  **Carregamento Adaptativo (v3.6):** Detecção inteligente de rede (2G/Save-Data) que desativa automaticamente animações pesadas para economizar dados do usuário.
+3.  **Exit Intent (v3.5):** Modal de retenção que convida o usuário para o Instagram ao tentar fechar a página.
+4.  **Prefetch Preditivo (v3.4):** Carregamento antecipado de imagens ao passar o mouse, tornando o zoom instantâneo.
+5.  **URL State & Deep Linking (v3.3):** A URL agora reflete o estado da página (filtros e produto aberto), permitindo compartilhamento direto de links.
 
 ### [01/12/2025] - Fase 3.2: Refinamento Visual & UX (Red Chic Restore)
-**Status: IMPLEMENTADO (Versão Atual Estável)**
+**Status: IMPLEMENTADO**
 
 **Ajustes Visuais (Red Chic):**
 1.  **Bordas Vermelhas:** Restauradas as bordas finas vermelhas (`#D00000`) nos minicards do catálogo e nos modais expandidos (História).
@@ -59,48 +69,12 @@ Este documento narra a evolucao completa do desenvolvimento da Landing Page para
 
 ---
 
-## 6. PROXIMOS PASSOS (BACKLOG REORGANIZADO)
-Objetivo: Polimento final e funcionalidades de marketing.
+## 6. PROXIMOS PASSOS (BACKLOG - VISUAL & POLIMENTO)
+O foco agora sai da programação (JS) e volta para o Design (CSS) em momento oportuno.
 
-1.  **REFINAMENTO UI - Cabeçalho do Catálogo:** Estudar nova forma de alinhar Busca e Filtros sem quebrar o layout (Tarefa adiada da Fase 3.3).
-2.  **REFINAMENTO UI - Botões do Zoom:** Melhorar o design dos botões de ação sobre a imagem ampliada (ajuste fino de tamanho e posição).
-3.  **Links Compartilhaveis (URL State):** A URL mudar ao filtrar/buscar.
-4.  **Pre-carregamento Preditivo (Prefetch):** Baixar imagens antes do clique.
-5.  **Carregamento Adaptativo:** Ajuste de qualidade para redes lentas.
-6.  **Exit Intent (Marketing):** Modal de recuperacao de saida (Desktop).
-7.  **Analytics Caseiro:** Rastreamento de cliques.
+1.  **REFINAMENTO UI - Cabeçalho do Catálogo:** Encontrar solução CSS segura para alinhar Busca à direita sem quebrar o grid.
+2.  **REFINAMENTO UI - Botões do Zoom:** Ajuste fino de posicionamento dos botões flutuantes sobre a imagem.
+3.  **Rodapé:** Revisão de espaçamentos finais.
 
 ---
-*Ultima atualizacao: 01/12/2025 - Conflito de layout registrado. Versão 2.2 mantida.*
-
-# DaRafa Acessorios - O Dossie Completo do Projeto (MASTER LOG)
-
-**Resumo Executivo:**
-Este documento narra a evolucao completa do desenvolvimento da Landing Page para "DaRafa Acessorios". O projeto encontra-se na Versao 4.0 (Final), com a suite completa de funcionalidades JavaScript implementada (Analytics, SEO, Performance e UX).
-
----
-
-## 5. Historico de Atualizacoes (CHANGELOG)
-
-### [01/12/2025] - Fase 4.0: Finalização da Lógica JS (Sucesso Total)
-**Status: CONCLUÍDO**
-
-**Novas Funcionalidades (JavaScript):**
-1.  **Analytics Caseiro (v4.0):** Implementado sistema de rastreamento completo (Cliques, Buscas, Filtros) com funcionalidade de **Scroll Spy** (monitora quais seções foram vistas) e **Relatório de Console** (`relatorio()`).
-2.  **Carregamento Adaptativo (v3.6):** Detecção inteligente de rede (2G/Save-Data) que desativa automaticamente animações pesadas para economizar dados do usuário.
-3.  **Exit Intent (v3.5):** Modal de retenção que convida o usuário para o Instagram ao tentar fechar a página.
-4.  **Prefetch Preditivo (v3.4):** Carregamento antecipado de imagens ao passar o mouse, tornando o zoom instantâneo.
-5.  **URL State & Deep Linking (v3.3):** A URL agora reflete o estado da página (filtros e produto aberto), permitindo compartilhamento direto de links.
-
-**Ajustes Visuais e Correções:**
-* Restaurado o visual "Red Chic" em todos os componentes.
-* Limpada a interface dos minicards (botões removidos).
-* Botões de ação movidos para dentro do Visualizador Ampliado (Zoom).
-
----
-
-## 6. PROXIMOS PASSOS (BACKLOG - APENAS VISUAL)
-O motor do site (JS) está completo. O foco agora é puramente estético.
-
-1.  **REFINAMENTO UI - Cabeçalho do Catálogo:** Estudar nova forma de alinhar Busca e Filtros.
-2.  **REFINAMENTO UI - Botões do Zoom:** Polimento final no design dos botões flutuantes.
+*Ultima atualizacao: 01/12/2025 - Versão 4.0 mantida como a estável.*
