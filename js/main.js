@@ -1,7 +1,6 @@
 /**
- * DaRafa Acessórios - Main Script (Versão FASE 3.1 - Clean Cards)
- * * ATUALIZAÇÃO: Botões de ação (Favoritar/Compartilhar) removidos dos cards.
- * * LÓGICA MANTIDA: Infinite Scroll, SEO, Analytics, PWA.
+ * DaRafa Acessórios - Main Script (Versão FASE 3.2 - Viewer Actions)
+ * * ATUALIZAÇÃO: Botões de ação (Favoritar/Compartilhar) movidos para o VISUALIZADOR AMPLIADO.
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -24,8 +23,9 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentSort = 'default';
     let activeData = []; 
     let loadedCount = 0; 
-    let scrollSentinel; // O elemento invisível que detecta o fim da página
+    let scrollSentinel; 
     let currentViewerIndex = -1;
+    let currentViewerId = null; // Armazena o ID do produto aberto atualmente
 
     // Variáveis para Metadados
     let originalTitle = document.title;
@@ -43,7 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
     window.showAnalytics = () => { console.table(analyticsData.categoryClicks); return analyticsData; };
     trackEvent('view');
 
-    // --- DADOS DOS PRODUTOS (Simulação de 50 itens) ---
+    // --- DADOS DOS PRODUTOS (Simulação) ---
     const productsData = [
         { id: 1, category: 'nose-cuff', title: 'Nose Cuff Spirals', description: 'Design espiral em arame dourado, ajuste anatômico sem furos.', image: 'assets/images/darafa-catalogo.jpg' },
         { id: 2, category: 'brincos', title: 'Brinco Solar', description: 'Peça statement inspirada no sol, leve e marcante.', image: 'assets/images/darafa-catalogo.jpg' },
@@ -67,10 +67,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-
-    // =========================================================
-    // 1. SEO & METADADOS
-    // =========================================================
+    // ... (Funções de SEO, Metadata, Offline Mode mantidas iguais) ...
     function initSEO() {
         const baseUrl = window.location.origin + window.location.pathname.replace('index.html', '');
         const schema = {
@@ -114,10 +111,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (metaDesc) metaDesc.setAttribute('content', originalDesc);
     }
 
-
-    // =========================================================
-    // 2. MODO OFFLINE (PWA)
-    // =========================================================
     function initOfflineMode() {
         const style = document.createElement('style');
         style.innerHTML = `
@@ -125,31 +118,19 @@ document.addEventListener('DOMContentLoaded', () => {
             body.offline-mode .toast-notification { filter: grayscale(0) !important; }
         `;
         document.head.appendChild(style);
-
-        window.addEventListener('offline', () => {
-            document.body.classList.add('offline-mode');
-            showToast('⚠️ Você está offline. Modo leitura ativado.');
-        });
-
+        window.addEventListener('offline', () => { document.body.classList.add('offline-mode'); showToast('⚠️ Você está offline. Modo leitura ativado.'); });
         window.addEventListener('online', () => {
             document.body.classList.remove('offline-mode');
             showToast('🟢 Conexão restaurada! Atualizando...');
-            setTimeout(() => {
-                document.querySelectorAll('img').forEach(img => {
-                    if (!img.complete || img.naturalWidth === 0) { const src = img.src; img.src = ''; img.src = src; }
-                });
-            }, 1000);
+            setTimeout(() => { document.querySelectorAll('img').forEach(img => { if (!img.complete || img.naturalWidth === 0) { const src = img.src; img.src = ''; img.src = src; } }); }, 1000);
         });
     }
 
-
     // =========================================================
-    // 3. INICIALIZAÇÃO GERAL
+    // 3. INICIALIZAÇÃO GERAL & INFINITE SCROLL
     // =========================================================
-    // Container "Escondido" da página principal (Referência Base)
     const galleryContainer = document.querySelector('#gallery-door .gallery-5-cols');
     
-    // Observer para Lazy Load de Imagens
     const globalImageObserver = new IntersectionObserver((entries, observer) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
@@ -161,18 +142,11 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }, { rootMargin: "200px 0px", threshold: 0.01 });
 
-    // --- CORREÇÃO DO INFINITE SCROLL ---
-    // Agora o observer descobre qual container deve carregar
     const infiniteScrollObserver = new IntersectionObserver((entries) => {
         if (entries[0].isIntersecting) {
-            // O target é o Sentinela. O pai do sentinela é onde a galeria está.
             const sentinel = entries[0].target;
-            // Buscamos a galeria vizinha ao sentinela dentro do mesmo pai (seja Modal ou Hidden)
             const targetContainer = sentinel.parentNode ? sentinel.parentNode.querySelector('.gallery-5-cols') : galleryContainer;
-            
-            if (targetContainer) {
-                loadNextBatch(targetContainer);
-            }
+            if (targetContainer) loadNextBatch(targetContainer);
         }
     }, { rootMargin: "200px" });
 
@@ -190,9 +164,8 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('popstate', loadStateFromURL);
 
     // =========================================================
-    // 4. LÓGICA DE CATÁLOGO & HISTÓRICO
+    // 4. LÓGICA DE CATÁLOGO
     // =========================================================
-    
     function addToHistory(id) {
         recentHistory = recentHistory.filter(itemId => itemId !== id);
         recentHistory.unshift(id);
@@ -221,64 +194,30 @@ document.addEventListener('DOMContentLoaded', () => {
         const urlParams = new URLSearchParams(window.location.search);
         const filtro = urlParams.get('filtro');
         const busca = urlParams.get('busca');
-
-        if (filtro) {
-            const btn = document.querySelector(`.filter-btn[data-filter="${filtro}"]`);
-            if (btn) btn.click();
-        } else if (busca) {
-            const input = document.getElementById('js-search-input');
-            if (input) {
-                input.value = busca;
-                input.dispatchEvent(new Event('input'));
-            }
-        } else {
-            const allBtn = document.querySelector('.filter-btn[data-filter="all"]');
-            if(allBtn) allBtn.click();
-        }
+        if (filtro) { const btn = document.querySelector(`.filter-btn[data-filter="${filtro}"]`); if (btn) btn.click(); } 
+        else if (busca) { const input = document.getElementById('js-search-input'); if (input) { input.value = busca; input.dispatchEvent(new Event('input')); } } 
+        else { const allBtn = document.querySelector('.filter-btn[data-filter="all"]'); if(allBtn) allBtn.click(); }
     }
 
     async function initCatalog() {
-        if (INSTAGRAM_TOKEN) {
-            try { await fetchInstagramPosts(); } 
-            catch (error) { activeData = [...productsData]; resetAndRender(); }
-        } else {
-            activeData = [...productsData];
-            resetAndRender();
-        }
+        if (INSTAGRAM_TOKEN) { try { await fetchInstagramPosts(); } catch (error) { activeData = [...productsData]; resetAndRender(); } } 
+        else { activeData = [...productsData]; resetAndRender(); }
     }
 
-    // Reinicia a renderização no container especificado (Modal ou Hidden)
     function resetAndRender(container = galleryContainer) {
         if (!container) return;
-        
         container.innerHTML = ''; 
         loadedCount = 0; 
-        
-        // Remove observador do sentinela antigo, se houver
-        if(scrollSentinel) { 
-            infiniteScrollObserver.unobserve(scrollSentinel); 
-            scrollSentinel.remove(); 
-            scrollSentinel = null; 
-        }
-        
-        if (activeData.length === 0) {
-            container.innerHTML = '<p style="color:#FDB90C; text-align:center; width:100%; grid-column: 1/-1; padding: 20px;">Nada encontrado aqui ainda.</p>';
-            return;
-        }
-        
-        // Carrega o primeiro lote
+        if(scrollSentinel) { infiniteScrollObserver.unobserve(scrollSentinel); scrollSentinel.remove(); scrollSentinel = null; }
+        if (activeData.length === 0) { container.innerHTML = '<p style="color:#FDB90C; text-align:center; width:100%; grid-column: 1/-1; padding: 20px;">Nada encontrado aqui ainda.</p>'; return; }
         loadNextBatch(container);
     }
 
-    // Carrega mais itens no container especificado
     function loadNextBatch(container = galleryContainer) {
         if (loadedCount >= activeData.length) return;
-        
         const nextBatch = activeData.slice(loadedCount, loadedCount + ITEMS_PER_PAGE);
         let htmlBuffer = '';
-
         nextBatch.forEach(item => {
-            // [REMOVIDO] A lógica de favoritos/compartilhar foi removida visualmente
             htmlBuffer += `
                 <div class="gold-framebox" tabindex="0" data-id="${item.id}" data-category="${item.category}" data-title="${item.title}" data-description="${item.description}">
                     <img class="lazy-image" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-src="${item.image}" alt="${item.title}" style="transition: opacity 0.8s ease; opacity: 0;">
@@ -289,76 +228,38 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
             `;
         });
-
         container.insertAdjacentHTML('beforeend', htmlBuffer);
         loadedCount += nextBatch.length;
-        
-        attachCardEvents(container);
+        attachCardEvents(container); // Apenas cliques no card, sem botões
         attachObserversAndPreload(container);
-        manageSentinel(container); // Adiciona o sentinela ao final deste container
+        manageSentinel(container);
     }
 
     function manageSentinel(container) {
-        // Se ainda há itens para carregar
         if (loadedCount < activeData.length) {
-            // Remove sentinela antigo se existir (para movê-lo para o fim)
-            if (scrollSentinel) {
-                infiniteScrollObserver.unobserve(scrollSentinel);
-                scrollSentinel.remove();
-            }
-
-            // Cria novo sentinela
+            if (scrollSentinel) { infiniteScrollObserver.unobserve(scrollSentinel); scrollSentinel.remove(); }
             scrollSentinel = document.createElement('div');
             scrollSentinel.id = 'scroll-sentinel';
             scrollSentinel.style.cssText = "width:100%; height:20px; grid-column: 1/-1; pointer-events: none;"; 
-            
-            // Adiciona AO PAI do container da galeria (para ficar abaixo do grid)
-            // No modal: container.parentNode é .expansion-content
-            if (container.parentNode) {
-                container.parentNode.appendChild(scrollSentinel);
-                infiniteScrollObserver.observe(scrollSentinel);
-            }
-        } else {
-            // Se acabou tudo, limpa
-            if(scrollSentinel) {
-                infiniteScrollObserver.unobserve(scrollSentinel);
-                scrollSentinel.remove();
-                scrollSentinel = null;
-            }
-        }
+            if (container.parentNode) { container.parentNode.appendChild(scrollSentinel); infiniteScrollObserver.observe(scrollSentinel); }
+        } else { if(scrollSentinel) { infiniteScrollObserver.unobserve(scrollSentinel); scrollSentinel.remove(); scrollSentinel = null; } }
     }
 
     function attachObserversAndPreload(container) {
         const images = container.querySelectorAll('.lazy-image:not(.observed)');
         images.forEach(img => { globalImageObserver.observe(img); img.classList.add('observed'); });
-        
-        // Preload no hover
         const cards = container.querySelectorAll('.gold-framebox');
         cards.forEach(card => {
-            card.addEventListener('mouseenter', () => {
-                const img = card.querySelector('img');
-                const src = img.dataset.src || img.src;
-                const preload = new Image();
-                preload.src = src;
-            }, { once: true });
+            card.addEventListener('mouseenter', () => { const img = card.querySelector('img'); const src = img.dataset.src || img.src; const preload = new Image(); preload.src = src; }, { once: true });
         });
     }
 
-
     // =========================================================
-    // 5. ESTILOS & INTERAÇÕES
+    // 5. ESTILOS & TOAST
     // =========================================================
     function injectDynamicStyles() {
         const style = document.createElement('style');
         style.innerHTML = `
-            .card-actions { position: absolute; top: 10px; right: 10px; z-index: 10; display: flex; gap: 8px; opacity: 0; transition: opacity 0.3s ease; }
-            .gold-framebox:hover .card-actions, .gold-framebox:focus-within .card-actions { opacity: 1; }
-            .gold-framebox:focus { outline: 2px solid #D00000; outline-offset: 2px; }
-            .action-btn { background: rgba(36, 16, 0, 0.6); border: none; color: #fff; font-size: 1.1rem; width: 35px; height: 35px; border-radius: 50%; cursor: pointer; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: flex; align-items: center; justify-content: center; padding-top: 2px; backdrop-filter: blur(4px); }
-            .action-btn:hover { background: #D00000; transform: scale(1.1); }
-            .wishlist-btn.active { color: #D00000; background: #fff; box-shadow: 0 0 10px rgba(208,0,0,0.5); }
-            .share-btn { font-size: 1rem; }
-            .share-btn:active { transform: scale(0.9); }
             .controls-wrapper { width: 100%; display: flex; justify-content: center; gap: 15px; margin-bottom: 20px; flex-wrap: wrap; }
             #js-search-input { padding: 12px 25px; width: 100%; max-width: 300px; border-radius: 50px; border: 2px solid #241000; background: rgba(255,255,255,0.9); color: #241000; font-size: 1rem; outline: none; box-shadow: 0 4px 10px rgba(36,16,0,0.1); transition: all 0.3s ease; }
             #js-sort-select { padding: 12px 20px; border-radius: 50px; border: 2px solid #241000; background: #241000; color: #FDB90C; font-size: 0.9rem; font-weight: 600; cursor: pointer; outline: none; appearance: none; -webkit-appearance: none; text-align: center; box-shadow: 0 4px 10px rgba(36,16,0,0.2); }
@@ -372,6 +273,22 @@ document.addEventListener('DOMContentLoaded', () => {
                 display: flex; align-items: center; gap: 8px; border: 1px solid #FDB90C;
             }
             .toast-notification.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+            
+            /* ESTILOS PARA OS BOTÕES NO VIEWER (ZOOM) */
+            .viewer-actions {
+                position: absolute; bottom: 20px; right: 20px;
+                display: flex; gap: 15px; z-index: 3002;
+            }
+            .viewer-btn {
+                background: rgba(36, 16, 0, 0.7); backdrop-filter: blur(5px);
+                border: 1px solid #FDB90C; color: #FDB90C;
+                width: 50px; height: 50px; border-radius: 50%;
+                font-size: 1.5rem; display: flex; align-items: center; justify-content: center;
+                cursor: pointer; transition: all 0.3s ease;
+                box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            }
+            .viewer-btn:hover { background: #FDB90C; color: #241000; transform: scale(1.1); }
+            .viewer-btn.active { background: #D00000; border-color: #D00000; color: #fff; }
         `;
         document.head.appendChild(style);
     }
@@ -388,26 +305,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function attachCardEvents(container) {
-        // Usa delegação de eventos para melhor performance
-        container.addEventListener('click', (e) => {
-            const btn = e.target.closest('.action-btn');
-            if (!btn) return;
-            
-            const card = btn.closest('.gold-framebox');
-            if (!card) return;
-
-            if (btn.classList.contains('wishlist-btn')) { 
-                e.stopPropagation(); 
-                toggleWishlist(parseInt(card.dataset.id), btn); 
-            }
-            else if (btn.classList.contains('share-btn')) { 
-                e.stopPropagation(); 
-                shareProduct(card); 
-            }
-        });
+        // Apenas clique no card para zoom (sem botões aqui)
     }
 
-    // --- FILTROS ---
+    // ... (Funções initFilters e initControls mantidas iguais) ...
     function initFilters() {
         const injectButtons = (container) => {
              if(!container.querySelector('[data-filter="favorites"]')) {
@@ -429,39 +330,23 @@ document.addEventListener('DOMContentLoaded', () => {
                 container.appendChild(histBtn);
             }
         };
-
         const filterContainers = document.querySelectorAll('.catalog-filters');
         filterContainers.forEach(injectButtons);
-
         document.body.addEventListener('click', (e) => {
             if (e.target.classList.contains('filter-btn')) {
                 const button = e.target;
                 const filterValue = button.dataset.filter;
                 updateURL('filtro', filterValue);
                 trackEvent('filter', filterValue);
-
                 const searchInput = document.getElementById('js-search-input');
                 if (searchInput) searchInput.value = '';
-
-                // Atualiza visual dos botões no container atual
                 const container = button.closest('.catalog-filters');
                 if(container) { container.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active')); button.classList.add('active'); }
-
-                // Lógica de Filtragem
-                if (filterValue === 'favorites') {
-                    activeData = productsData.filter(item => wishlist.includes(item.id));
-                } else if (filterValue === 'history') {
-                    activeData = productsData.filter(item => recentHistory.includes(item.id));
-                    activeData.sort((a, b) => recentHistory.indexOf(a.id) - recentHistory.indexOf(b.id));
-                } else if (filterValue === 'all') {
-                    activeData = productsData;
-                } else {
-                    activeData = productsData.filter(item => item.category === filterValue);
-                }
-                
+                if (filterValue === 'favorites') activeData = productsData.filter(item => wishlist.includes(item.id));
+                else if (filterValue === 'history') { activeData = productsData.filter(item => recentHistory.includes(item.id)); activeData.sort((a, b) => recentHistory.indexOf(a.id) - recentHistory.indexOf(b.id)); }
+                else if (filterValue === 'all') activeData = productsData;
+                else activeData = productsData.filter(item => item.category === filterValue);
                 if (filterValue !== 'history') activeData = applySort(activeData);
-
-                // IMPORTANTE: Reseta e renderiza no container correto (Modal ou Hidden)
                 const modalContent = button.closest('.expansion-content');
                 const targetGallery = modalContent ? modalContent.querySelector('.gallery-5-cols') : galleryContainer;
                 resetAndRender(targetGallery);
@@ -472,52 +357,41 @@ document.addEventListener('DOMContentLoaded', () => {
     function initControls() {
         const filterContainer = document.querySelector('.catalog-filters');
         if (!filterContainer) return;
-
         const controlsWrapper = document.createElement('div');
         controlsWrapper.className = 'controls-wrapper';
-
         const input = document.createElement('input');
         input.type = 'text'; input.id = 'js-search-input'; input.placeholder = 'Buscar joia...';
         input.addEventListener('focus', () => input.style.borderColor = '#CD4A00');
         input.addEventListener('blur', () => input.style.borderColor = '#241000');
-
         const sortSelect = document.createElement('select');
         sortSelect.id = 'js-sort-select';
         sortSelect.innerHTML = `<option value="default">✨ Relevância</option><option value="az">A - Z</option><option value="za">Z - A</option><option value="random">🎲 Aleatório</option>`;
-
         controlsWrapper.appendChild(input);
         controlsWrapper.appendChild(sortSelect);
         filterContainer.prepend(controlsWrapper);
-
         const updateGridData = () => {
             const term = input.value.toLowerCase();
             const activeFilterBtn = document.querySelector('.filter-btn.active');
             const filterValue = activeFilterBtn ? activeFilterBtn.dataset.filter : 'all';
-
             let filtered = productsData;
             if (filterValue === 'favorites') filtered = productsData.filter(item => wishlist.includes(item.id));
             else if (filterValue === 'history') filtered = productsData.filter(item => recentHistory.includes(item.id));
             else if (filterValue !== 'all') filtered = productsData.filter(item => item.category === filterValue);
-
             if (term) {
                 if(term.length > 3) trackEvent('search', term);
                 filtered = filtered.filter(item => item.title.toLowerCase().includes(term) || item.description.toLowerCase().includes(term) || item.category.toLowerCase().includes(term));
             }
-
             if (filterValue !== 'history') filtered = applySort(filtered);
             activeData = filtered;
-
             const parentModal = input.closest('.expansion-content');
             const targetGallery = parentModal ? parentModal.querySelector('.gallery-5-cols') : galleryContainer;
             resetAndRender(targetGallery);
         };
-
         input.addEventListener('input', (e) => {
             if(this.searchTimeout) clearTimeout(this.searchTimeout);
             this.searchTimeout = setTimeout(() => { updateURL('busca', e.target.value.length > 0 ? e.target.value : null); }, 500);
             updateGridData();
         });
-
         sortSelect.addEventListener('change', (e) => { currentSort = e.target.value; updateGridData(); });
     }
 
@@ -532,7 +406,6 @@ document.addEventListener('DOMContentLoaded', () => {
         return sortedItems;
     }
 
-    // --- UX: KEYBOARD, SWIPE, MODALS ---
     function initKeyboardNavigation() {
         document.addEventListener('keydown', (e) => {
             if (document.querySelector('.image-viewer-overlay.active')) {
@@ -553,33 +426,42 @@ document.addEventListener('DOMContentLoaded', () => {
         let newIndex = currentViewerIndex + direction;
         if (newIndex >= activeData.length) newIndex = 0;
         if (newIndex < 0) newIndex = activeData.length - 1;
+        
         const nextItem = activeData[newIndex];
         currentViewerIndex = newIndex;
+        currentViewerId = nextItem.id; // Atualiza ID atual
+
         const viewerImg = document.querySelector('.image-viewer-content');
         if (viewerImg) {
             viewerImg.style.opacity = 0.5;
             setTimeout(() => { viewerImg.src = nextItem.image; viewerImg.onload = () => viewerImg.style.opacity = 1; }, 200);
             setPageMetadata(nextItem.title, nextItem.description);
             addToHistory(nextItem.id); 
+            
+            // Atualiza estado do botão de favorito no Viewer
+            const favBtn = document.querySelector('.viewer-btn.fav-btn');
+            if(favBtn) {
+                if(wishlist.includes(nextItem.id)) favBtn.classList.add('active');
+                else favBtn.classList.remove('active');
+            }
         }
     }
 
-    async function shareProduct(card) {
-        const title = card.dataset.title;
-        const category = card.dataset.category;
-        const shareUrl = `${window.location.origin}${window.location.pathname}?filtro=${category}`;
+    // --- FUNÇÕES DE AÇÃO DO VIEWER ---
+    function shareProductById(id) {
+        const product = productsData.find(p => p.id == id);
+        if(!product) return;
+        const shareUrl = `${window.location.origin}${window.location.pathname}?filtro=${product.category}`;
         trackEvent('interaction', 'share');
-        const shareData = { title: `DaRafa: ${title}`, text: `Olha essa joia: ${title}`, url: shareUrl };
-        try { if (navigator.share) await navigator.share(shareData); else { await navigator.clipboard.writeText(shareUrl); showToast('Link copiado! 📋'); } } catch (err) { console.warn('Erro share', err); }
+        const shareData = { title: `DaRafa: ${product.title}`, text: `Olha essa joia: ${product.title}`, url: shareUrl };
+        try { if (navigator.share) navigator.share(shareData); else { navigator.clipboard.writeText(shareUrl); showToast('Link copiado! 📋'); } } catch (err) { console.warn('Erro share', err); }
     }
 
-    function toggleWishlist(id, btnElement) {
+    function toggleWishlistById(id, btnElement) {
         const index = wishlist.indexOf(id);
         if (index === -1) {
             wishlist.push(id);
             btnElement.classList.add('active');
-            btnElement.style.transform = "scale(1.4)";
-            setTimeout(() => btnElement.style.transform = "scale(1)", 200);
             showToast('Adicionado aos Favoritos ❤️');
             trackEvent('interaction', 'wishlist_add');
         } else {
@@ -589,15 +471,6 @@ document.addEventListener('DOMContentLoaded', () => {
             trackEvent('interaction', 'wishlist_remove');
         }
         localStorage.setItem('darafa_wishlist', JSON.stringify(wishlist));
-        
-        const activeFilter = document.querySelector('.filter-btn.active');
-        if (activeFilter && activeFilter.dataset.filter === 'favorites') {
-            activeData = productsData.filter(item => wishlist.includes(item.id));
-            activeData = applySort(activeData);
-            // Atualiza onde foi clicado
-            const parentContainer = btnElement.closest('.gallery-5-cols');
-            if(parentContainer) resetAndRender(parentContainer);
-        }
     }
 
     // --- MODAIS & PORTAIS ---
@@ -672,7 +545,6 @@ document.addEventListener('DOMContentLoaded', () => {
              input.addEventListener('input', updateModal);
              sortSelect.addEventListener('change', (e) => { currentSort = e.target.value; updateModal(); });
 
-             // Re-inject buttons inside modal
              if(!modalFilters.querySelector('[data-filter="favorites"]')) {
                 const favBtn = document.createElement('button');
                 favBtn.className = 'filter-btn';
@@ -711,18 +583,8 @@ document.addEventListener('DOMContentLoaded', () => {
             modalImages.forEach(img => modalObserver.observe(img));
         }
         
-        // Listener de eventos para o Modal (Zoom e Botões)
+        // Listener de eventos para o Modal (Zoom)
         overlay.addEventListener('click', (e) => {
-            const btn = e.target.closest('.action-btn');
-            
-            // Tratamento dos botões (Delegação)
-            if (btn) {
-                const card = btn.closest('.gold-framebox');
-                if (btn.classList.contains('wishlist-btn')) { e.stopPropagation(); toggleWishlist(parseInt(card.dataset.id), btn); return; }
-                if (btn.classList.contains('share-btn')) { e.stopPropagation(); shareProduct(card); return; }
-            }
-
-            // Tratamento do clique no Card (Zoom)
             const card = e.target.closest('.gold-framebox');
             if (card && overlay.contains(card)) {
                 e.stopPropagation();
@@ -755,7 +617,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const foundIndex = activeData.findIndex(item => item.id == id);
         if (foundIndex !== -1) currentViewerIndex = foundIndex;
-        createViewerOverlay(`<img src="${imageSrc}" class="image-viewer-content" style="max-height:90vh; max-width:90%; border:1px solid var(--color-gold-dark); box-shadow: 0 0 30px rgba(0,0,0,0.8);">`);
+        currentViewerId = parseInt(id);
+
+        const isFav = wishlist.includes(currentViewerId) ? 'active' : '';
+
+        // Cria o Overlay com os botões flutuantes
+        createViewerOverlay(`
+            <img src="${imageSrc}" class="image-viewer-content" style="max-height:90vh; max-width:90%; border:1px solid var(--color-gold-dark); box-shadow: 0 0 30px rgba(0,0,0,0.8);">
+            
+            <div class="viewer-actions">
+                <button class="viewer-btn share-btn" aria-label="Compartilhar">➦</button>
+                <button class="viewer-btn fav-btn ${isFav}" aria-label="Favoritar">♥</button>
+            </div>
+        `);
     }
 
     function openStoryMode(imageSrc, title, description) {
@@ -774,6 +648,13 @@ document.addEventListener('DOMContentLoaded', () => {
         viewer.innerHTML = `<button class="close-viewer" style="position:absolute; top:20px; right:30px; color:#fff; font-size:2rem; background:none; border:none; cursor:pointer; z-index:3001;">&times;</button>${innerContent}`;
         body.appendChild(viewer);
         requestAnimationFrame(() => viewer.classList.add('active'));
+
+        // Listeners para os botões internos do Viewer
+        const favBtn = viewer.querySelector('.fav-btn');
+        const shareBtn = viewer.querySelector('.share-btn');
+
+        if(favBtn) favBtn.addEventListener('click', (e) => { e.stopPropagation(); toggleWishlistById(currentViewerId, favBtn); });
+        if(shareBtn) shareBtn.addEventListener('click', (e) => { e.stopPropagation(); shareProductById(currentViewerId); });
 
         let touchStartY = 0; let touchEndY = 0;
         viewer.addEventListener('touchstart', e => { touchStartY = e.changedTouches[0].screenY; }, {passive: true});
