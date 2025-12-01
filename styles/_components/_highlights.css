@@ -380,7 +380,7 @@
     /* Ajuste mobile dos botões do viewer */
     .viewer-actions {
         top: 10px; /* Mantém no topo também no mobile */
-        right: 10px;
+        right: 20px;
         gap: 5px;
     }
     .viewer-btn {
