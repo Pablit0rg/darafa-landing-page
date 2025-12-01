@@ -1,7 +1,7 @@
 /**
- * DaRafa Acessórios - Main Script (Versão FASE 3.3 - URL State & Deep Linking)
- * * NOVIDADE: A URL muda ao abrir produtos (?id=123).
- * * NOVIDADE: Ao acessar um link com ID, o produto abre automaticamente (Deep Linking).
+ * DaRafa Acessórios - Main Script (Versão FASE 3.4 - Prefetch & Performance)
+ * * FEATURE: Pre-carregamento Preditivo (Prefetch) ao passar o mouse.
+ * * CLEANUP: Estilos visuais movidos para o CSS para evitar conflitos.
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -128,10 +128,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // =========================================================
-    // 3. INICIALIZAÇÃO GERAL
+    // 3. INICIALIZAÇÃO GERAL & INFINITE SCROLL
     // =========================================================
     const galleryContainer = document.querySelector('#gallery-door .gallery-5-cols');
     
+    // Observer de Lazy Load
     const globalImageObserver = new IntersectionObserver((entries, observer) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
@@ -143,6 +144,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }, { rootMargin: "200px 0px", threshold: 0.01 });
 
+    // Observer de Scroll Infinito
     const infiniteScrollObserver = new IntersectionObserver((entries) => {
         if (entries[0].isIntersecting) {
             const sentinel = entries[0].target;
@@ -158,29 +160,29 @@ document.addEventListener('DOMContentLoaded', () => {
         initFilters();
         initControls(); 
         injectDynamicStyles(); 
-        setTimeout(loadStateFromURL, 100); // Carrega estado da URL
+        setTimeout(loadStateFromURL, 100); 
         initKeyboardNavigation();
     }
 
     window.addEventListener('popstate', loadStateFromURL);
 
     // =========================================================
-    // 4. LÓGICA DE URL STATE (NOVO)
+    // 4. LÓGICA DE URL STATE & HISTORY
     // =========================================================
+    function addToHistory(id) {
+        recentHistory = recentHistory.filter(itemId => itemId !== id);
+        recentHistory.unshift(id);
+        if (recentHistory.length > 6) recentHistory.pop();
+        localStorage.setItem('darafa_history', JSON.stringify(recentHistory));
+    }
+
     function updateURL(param, value) {
         const url = new URL(window.location);
+        if (value && value !== 'all') url.searchParams.set(param, value);
+        else url.searchParams.delete(param);
         
-        if (value && value !== 'all') {
-            url.searchParams.set(param, value);
-        } else {
-            url.searchParams.delete(param);
-        }
-
-        // Se filtrar, limpa a busca e vice-versa
         if (param === 'filtro') url.searchParams.delete('busca');
         if (param === 'busca') url.searchParams.delete('filtro');
-        
-        // Se abrir produto (id), não precisa limpar o filtro de fundo
         
         window.history.pushState({}, '', url);
     }
@@ -188,7 +190,6 @@ document.addEventListener('DOMContentLoaded', () => {
     function loadStateFromURL() {
         const urlParams = new URLSearchParams(window.location.search);
         
-        // 1. Restaura Filtros/Busca
         const filtro = urlParams.get('filtro');
         const busca = urlParams.get('busca');
         const id = urlParams.get('id');
@@ -204,29 +205,20 @@ document.addEventListener('DOMContentLoaded', () => {
             } 
         } else { 
             const allBtn = document.querySelector('.filter-btn[data-filter="all"]'); 
-            if(allBtn && !id) allBtn.click(); // Só clica em "todos" se não estiver abrindo um ID direto
+            if(allBtn && !id) allBtn.click(); 
         }
 
-        // 2. Restaura Produto (Deep Linking)
         if (id) {
             const product = productsData.find(p => p.id == parseInt(id));
             if (product) {
-                // Pequeno delay para garantir que o DOM esteja pronto
                 setTimeout(() => openImageViewer(product.image, product.id), 200);
             }
         }
     }
 
     // =========================================================
-    // 5. LÓGICA DE CATÁLOGO
+    // 5. RENDERIZAÇÃO DO CATÁLOGO
     // =========================================================
-    function addToHistory(id) {
-        recentHistory = recentHistory.filter(itemId => itemId !== id);
-        recentHistory.unshift(id);
-        if (recentHistory.length > 6) recentHistory.pop();
-        localStorage.setItem('darafa_history', JSON.stringify(recentHistory));
-    }
-
     async function initCatalog() {
         if (INSTAGRAM_TOKEN) { try { await fetchInstagramPosts(); } catch (error) { activeData = [...productsData]; resetAndRender(); } } 
         else { activeData = [...productsData]; resetAndRender(); }
@@ -273,25 +265,45 @@ document.addEventListener('DOMContentLoaded', () => {
         } else { if(scrollSentinel) { infiniteScrollObserver.unobserve(scrollSentinel); scrollSentinel.remove(); scrollSentinel = null; } }
     }
 
+    // --- A MÁGICA DO PREFETCH ESTÁ AQUI ---
     function attachObserversAndPreload(container) {
         const images = container.querySelectorAll('.lazy-image:not(.observed)');
         images.forEach(img => { globalImageObserver.observe(img); img.classList.add('observed'); });
+        
         const cards = container.querySelectorAll('.gold-framebox');
         cards.forEach(card => {
-            card.addEventListener('mouseenter', () => { const img = card.querySelector('img'); const src = img.dataset.src || img.src; const preload = new Image(); preload.src = src; }, { once: true });
+            // Evento MouseEnter: Dispara quando o mouse ENTRA no card
+            card.addEventListener('mouseenter', () => { 
+                const img = card.querySelector('img'); 
+                // Pega o link da imagem grande
+                const src = img.dataset.src || img.src; 
+                // Cria um objeto de imagem invisível para forçar o navegador a baixar
+                const preload = new Image(); 
+                preload.src = src; 
+                // O navegador guarda em cache, e quando clicar, abre instantâneo!
+            }, { once: true }); // Executa apenas uma vez por card para economizar memória
         });
     }
 
     // =========================================================
-    // 6. ESTILOS & CONTROLES
+    // 6. ESTILOS, TOAST & CONTROLES
     // =========================================================
     function injectDynamicStyles() {
         const style = document.createElement('style');
         style.innerHTML = `
-            .controls-wrapper { width: 100%; display: flex; justify-content: center; gap: 15px; margin-bottom: 20px; flex-wrap: wrap; }
+            /* Wrapper Seguro Centralizado (Revertido para evitar quebras) */
+            .controls-wrapper { 
+                width: 100%; 
+                display: flex; 
+                justify-content: center; /* Centralizado = Seguro */
+                gap: 15px; 
+                margin-bottom: 20px; 
+                flex-wrap: wrap; 
+            }
             #js-search-input { padding: 12px 25px; width: 100%; max-width: 300px; border-radius: 50px; border: 2px solid #241000; background: rgba(255,255,255,0.9); color: #241000; font-size: 1rem; outline: none; box-shadow: 0 4px 10px rgba(36,16,0,0.1); transition: all 0.3s ease; }
             #js-sort-select { padding: 12px 20px; border-radius: 50px; border: 2px solid #241000; background: #241000; color: #FDB90C; font-size: 0.9rem; font-weight: 600; cursor: pointer; outline: none; appearance: none; -webkit-appearance: none; text-align: center; box-shadow: 0 4px 10px rgba(36,16,0,0.2); }
             #js-sort-select:hover { background: #3a1a00; }
+            
             .toast-notification {
                 position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px);
                 background-color: #241000; color: #FDB90C; padding: 12px 24px;
@@ -302,12 +314,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             .toast-notification.show { transform: translateX(-50%) translateY(0); opacity: 1; }
             
-            .viewer-actions { position: absolute; bottom: 30px; right: 30px; display: flex; gap: 15px; z-index: 3002; }
-            .viewer-btn { background: rgba(36, 16, 0, 0.85); backdrop-filter: blur(5px); border: 1px solid #FDB90C; color: #FDB90C; width: 60px; height: 60px; border-radius: 50%; font-size: 1.8rem; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(0,0,0,0.6); padding-top: 4px; }
-            .viewer-btn:hover { background: #FDB90C; color: #241000; transform: scale(1.1); box-shadow: 0 0 20px rgba(253, 185, 12, 0.6); }
-            .viewer-btn.active { background: #D00000; border-color: #D00000; color: #fff; animation: heartPulse 0.3s ease-in-out; }
-            @keyframes heartPulse { 0% { transform: scale(1); } 50% { transform: scale(1.3); } 100% { transform: scale(1); } }
-            @media (max-width: 768px) { .viewer-actions { bottom: 20px; right: 50%; transform: translateX(50%); } }
+            /* Removemos os estilos de .viewer-actions daqui pois agora estão no CSS principal */
         `;
         document.head.appendChild(style);
     }
@@ -323,15 +330,12 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 400); }, 3000);
     }
 
-    function attachCardEvents(container) { }
+    function attachCardEvents(container) { } // Sem botões nos minicards
 
     function initFilters() {
-        const injectButtons = (container) => {
-             // Botões "Favoritos" e "Vistos" removidos da barra de filtros conforme solicitado
-        };
+        const injectButtons = (container) => { }; // Sem injeção de botões extras
         const filterContainers = document.querySelectorAll('.catalog-filters');
-        // filterContainers.forEach(injectButtons); // Injeção desativada
-
+        
         document.body.addEventListener('click', (e) => {
             if (e.target.classList.contains('filter-btn')) {
                 const button = e.target;
@@ -368,7 +372,8 @@ document.addEventListener('DOMContentLoaded', () => {
         sortSelect.innerHTML = `<option value="default">✨ Relevância</option><option value="az">A - Z</option><option value="za">Z - A</option><option value="random">🎲 Aleatório</option>`;
         controlsWrapper.appendChild(input);
         controlsWrapper.appendChild(sortSelect);
-        filterContainer.prepend(controlsWrapper);
+        filterContainer.prepend(controlsWrapper); // Volta a ser em cima (Prepend) para segurança
+        
         const updateGridData = () => {
             const term = input.value.toLowerCase();
             const activeFilterBtn = document.querySelector('.filter-btn.active');
@@ -435,7 +440,7 @@ document.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => { viewerImg.src = nextItem.image; viewerImg.onload = () => viewerImg.style.opacity = 1; }, 200);
             setPageMetadata(nextItem.title, nextItem.description);
             addToHistory(nextItem.id); 
-            updateURL('id', nextItem.id); // Atualiza a URL ao navegar
+            updateURL('id', nextItem.id);
             
             const favBtn = document.querySelector('.viewer-btn.fav-btn');
             if(favBtn) {
@@ -445,11 +450,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // --- FUNÇÕES DE AÇÃO DO VIEWER ---
     function shareProductById(id) {
         const product = productsData.find(p => p.id == id);
         if(!product) return;
-        // Gera link direto com o ID para abrir o produto específico
         const shareUrl = `${window.location.origin}${window.location.pathname}?id=${product.id}`;
         trackEvent('interaction', 'share');
         const shareData = { title: `DaRafa: ${product.title}`, text: `Olha essa joia: ${product.title}`, url: shareUrl };
@@ -472,7 +475,7 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem('darafa_wishlist', JSON.stringify(wishlist));
     }
 
-    // --- MODAIS & PORTAIS ---
+    // --- MODALS ---
     function throttle(func, limit) {
         let inThrottle;
         return function() {
@@ -579,6 +582,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const close = () => {
             restorePageMetadata(); 
+            updateURL('id', null);
             overlay.classList.remove('active');
             body.style.overflow = '';
             setTimeout(() => { if(overlay.parentNode) overlay.parentNode.removeChild(overlay); }, 400);
@@ -598,11 +602,10 @@ document.addEventListener('DOMContentLoaded', () => {
         if (foundIndex !== -1) currentViewerIndex = foundIndex;
         currentViewerId = parseInt(id);
 
-        updateURL('id', currentViewerId); // Adiciona ID na URL ao abrir
+        updateURL('id', currentViewerId);
 
         const isFav = wishlist.includes(currentViewerId) ? 'active' : '';
 
-        // ATUALIZAÇÃO: Criamos uma div wrapper (embrulho) para conter a imagem e os botões juntos
         createViewerOverlay(`
             <div class="viewer-image-wrapper" style="position: relative; display: inline-block; max-height:90vh; max-width:90%;">
                 <img src="${imageSrc}" class="image-viewer-content" style="width:100%; height:auto; display:block; border:1px solid var(--color-gold-dark); box-shadow: 0 0 30px rgba(0,0,0,0.8);">
@@ -644,7 +647,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const closeViewer = () => {
             restorePageMetadata(); 
-            updateURL('id', null); // Remove ID da URL ao fechar
+            updateURL('id', null);
             viewer.classList.remove('active');
             setTimeout(() => { if(viewer.parentNode) viewer.parentNode.removeChild(viewer); }, 300);
         };
