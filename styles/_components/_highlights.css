@@ -313,7 +313,7 @@
     position: absolute;
     /* [MODIFICAÇÃO] Botões agora no TOPO direito da imagem */
     top: 15px; 
-    right: 47px;
+    right: 50px;
     display: flex;
     gap: 8px; /* Espaço menor entre eles */
     z-index: 3002;
