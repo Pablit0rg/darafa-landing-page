@@ -335,3 +335,72 @@
     .info-title { font-size: 0.85rem; }
     .info-desc { font-size: 0.65rem; }
 }
+
+/* --- BOTÕES FLUTUANTES DO VISUALIZADOR (ZOOM) --- */
+.viewer-actions {
+    position: absolute; 
+    bottom: 30px; 
+    right: 30px;
+    display: flex; 
+    gap: 15px; 
+    z-index: 3002; /* Fica acima da imagem */
+}
+
+.viewer-btn {
+    background: rgba(36, 16, 0, 0.85); /* Fundo Chocolate Transparente */
+    backdrop-filter: blur(5px);
+    border: 1px solid #FDB90C; 
+    color: #FDB90C;
+    
+    width: 60px; 
+    height: 60px; 
+    border-radius: 50%;
+    
+    font-size: 1.8rem; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center;
+    cursor: pointer; 
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.6);
+    padding-top: 4px; /* Ajuste visual do ícone */
+}
+
+.viewer-btn:hover {
+    background: #FDB90C; 
+    color: #241000; 
+    transform: scale(1.1);
+    box-shadow: 0 0 20px rgba(253, 185, 12, 0.6);
+}
+
+.viewer-btn:active {
+    transform: scale(0.9);
+}
+
+/* Estado Ativo (Favoritado) */
+.viewer-btn.active {
+    background: #D00000; /* Vermelho Red Chic */
+    border-color: #D00000; 
+    color: #fff;
+    animation: heartPulse 0.3s ease-in-out;
+}
+
+@keyframes heartPulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.3); }
+    100% { transform: scale(1); }
+}
+
+/* Mobile: Ajuste de posição */
+@media (max-width: 768px) {
+    .viewer-actions {
+        bottom: 20px;
+        right: 50%;
+        transform: translateX(50%);
+    }
+    
+    .image-viewer-content {
+        /* Garante que a imagem não cubra os botões no mobile */
+        padding-bottom: 0; 
+    }
+}
