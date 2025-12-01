@@ -1,8 +1,8 @@
 /**
- * DaRafa Acessórios - Main Script (Versão FASE 3.5 - Exit Intent)
- * * FEATURE: Exit Intent Modal (Detecta saída e convida para o Instagram).
- * * PERFORMANCE: Prefetch de imagens mantido.
- * * UX: URL State e Deep Linking mantidos.
+ * DaRafa Acessórios - Main Script (Versão FASE 3.6 - Adaptive Loading)
+ * * FEATURE: Detecta conexão lenta (2G/Save-Data) e desativa o Prefetch para economizar dados.
+ * * UX: Feedback visual "Modo Econômico" se necessário.
+ * * MANTIDO: Exit Intent, URL State, Deep Linking, Infinite Scroll.
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -18,6 +18,9 @@ document.addEventListener('DOMContentLoaded', () => {
     let wishlist = JSON.parse(localStorage.getItem('darafa_wishlist')) || [];
     let recentHistory = JSON.parse(localStorage.getItem('darafa_history')) || [];
     
+    // Estado de Conexão (Novo)
+    let isLowEndConnection = false;
+    
     let analyticsData = JSON.parse(localStorage.getItem('darafa_analytics')) || {
         views: 0, searches: {}, categoryClicks: {}, productClicks: {}, interactions: { wishlist: 0, share: 0 }
     };
@@ -29,7 +32,6 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentViewerIndex = -1;
     let currentViewerId = null;
 
-    // Variáveis para Metadados
     let originalTitle = document.title;
     let originalDesc = document.querySelector('meta[name="description"]')?.getAttribute('content') || '';
 
@@ -69,7 +71,21 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // ... (Funções SEO, Metadata, Offline) ...
+    // =========================================================
+    // 1. PERFORMANCE & SEO
+    // =========================================================
+    function checkConnection() {
+        // API Network Information (Suportada no Chrome/Android)
+        if ('connection' in navigator) {
+            const conn = navigator.connection;
+            // Se estiver em modo "Economia de Dados" ou conexão lenta (2g)
+            if (conn.saveData || conn.effectiveType.includes('2g')) {
+                isLowEndConnection = true;
+                console.log('DaRafa: Modo Econômico Ativado 🍃');
+            }
+        }
+    }
+
     function initSEO() {
         const baseUrl = window.location.origin + window.location.pathname.replace('index.html', '');
         const schema = {
@@ -133,7 +149,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // =========================================================
     const galleryContainer = document.querySelector('#gallery-door .gallery-5-cols');
     
-    // Observer de Lazy Load
+    // Observer de Lazy Load (Sempre ativo para imagens visíveis)
     const globalImageObserver = new IntersectionObserver((entries, observer) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
@@ -145,7 +161,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }, { rootMargin: "200px 0px", threshold: 0.01 });
 
-    // Observer de Scroll Infinito
     const infiniteScrollObserver = new IntersectionObserver((entries) => {
         if (entries[0].isIntersecting) {
             const sentinel = entries[0].target;
@@ -155,13 +170,20 @@ document.addEventListener('DOMContentLoaded', () => {
     }, { rootMargin: "200px" });
 
     if (galleryContainer) {
+        checkConnection(); // Verifica a velocidade da internet
         initSEO();
         initOfflineMode();
         initCatalog();
         initFilters();
         initControls(); 
-        initExitIntent(); // Inicia o detector de saída
+        initExitIntent();
         injectDynamicStyles(); 
+        
+        // Se a internet for lenta, avisa o usuário
+        if(isLowEndConnection) {
+            setTimeout(() => showToast('Modo Econômico ativado 🍃'), 2000);
+        }
+
         setTimeout(loadStateFromURL, 100); 
         initKeyboardNavigation();
     }
@@ -169,14 +191,14 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('popstate', loadStateFromURL);
 
     // =========================================================
-    // 4. EXIT INTENT (NOVO)
+    // 4. EXIT INTENT
     // =========================================================
     function initExitIntent() {
-        // Usa SessionStorage para mostrar apenas uma vez por aba/sessão
         if (sessionStorage.getItem('darafa_exit_shown')) return;
+        // Não incomodar usuários com internet lenta com modais pesados de saída
+        if (isLowEndConnection) return; 
 
         document.addEventListener('mouseleave', (e) => {
-            // Se o mouse sair pelo topo (clientY < 10)
             if (e.clientY < 10 && !sessionStorage.getItem('darafa_exit_shown')) {
                 showExitModal();
                 sessionStorage.setItem('darafa_exit_shown', 'true');
@@ -199,11 +221,8 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
         `;
         document.body.appendChild(overlay);
-        
-        // Animação de entrada
         requestAnimationFrame(() => overlay.classList.add('active'));
 
-        // Eventos
         const closeBtn = overlay.querySelector('.close-exit');
         const actionBtn = overlay.querySelector('.exit-btn');
         
@@ -221,7 +240,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // =========================================================
-    // 5. LÓGICA DE URL STATE & HISTORY
+    // 5. LÓGICA DE URL STATE
     // =========================================================
     function addToHistory(id) {
         recentHistory = recentHistory.filter(itemId => itemId !== id);
@@ -319,24 +338,27 @@ document.addEventListener('DOMContentLoaded', () => {
         } else { if(scrollSentinel) { infiniteScrollObserver.unobserve(scrollSentinel); scrollSentinel.remove(); scrollSentinel = null; } }
     }
 
-    // --- PREFETCH (Pre-carregamento) ---
+    // --- PREFETCH ADAPTATIVO ---
     function attachObserversAndPreload(container) {
         const images = container.querySelectorAll('.lazy-image:not(.observed)');
         images.forEach(img => { globalImageObserver.observe(img); img.classList.add('observed'); });
         
-        const cards = container.querySelectorAll('.gold-framebox');
-        cards.forEach(card => {
-            card.addEventListener('mouseenter', () => { 
-                const img = card.querySelector('img'); 
-                const src = img.dataset.src || img.src; 
-                const preload = new Image(); 
-                preload.src = src; 
-            }, { once: true }); 
-        });
+        // Lógica Adaptativa: Só ativa o prefetch se a conexão for BOA
+        if (!isLowEndConnection) {
+            const cards = container.querySelectorAll('.gold-framebox');
+            cards.forEach(card => {
+                card.addEventListener('mouseenter', () => { 
+                    const img = card.querySelector('img'); 
+                    const src = img.dataset.src || img.src; 
+                    const preload = new Image(); 
+                    preload.src = src; 
+                }, { once: true }); 
+            });
+        }
     }
 
     // =========================================================
-    // 7. ESTILOS, TOAST & CONTROLES
+    // 7. ESTILOS & CONTROLES
     // =========================================================
     function injectDynamicStyles() {
         const style = document.createElement('style');
@@ -551,7 +573,7 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem('darafa_wishlist', JSON.stringify(wishlist));
     }
 
-    // --- MODALS (Viewer e Story) ---
+    // --- MODAIS & PORTAIS ---
     function throttle(func, limit) {
         let inThrottle;
         return function() {
