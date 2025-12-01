@@ -31,20 +31,30 @@ Este documento narra a evolucao completa do desenvolvimento da Landing Page para
 
 ## 5. Historico de Atualizacoes (CHANGELOG)
 
+### [01/12/2025] - Fase 3.3: Tentativa de Layout Clean (ROLLBACK)
+**Status: FALHA / ADIADO**
+
+**Incidente:**
+* A tentativa de reorganizar o cabeçalho do catálogo (movendo a barra de pesquisa para a mesma linha das categorias "inline") gerou **conflito de design**. O layout quebrou em certas resoluções ou sobrepôs elementos.
+
+**Decisão:**
+* Reverter para o layout de bloco (Pesquisa acima, Categorias abaixo) por enquanto.
+* A tarefa de "Refinamento do Cabeçalho do Catálogo" foi movida para o Backlog para ser tratada com mais cuidado no CSS futuramente.
+
 ### [01/12/2025] - Fase 3.2: Refinamento Visual & UX (Red Chic Restore)
-**Status: IMPLEMENTADO**
+**Status: IMPLEMENTADO (Versão Atual Estável)**
 
 **Ajustes Visuais (Red Chic):**
 1.  **Bordas Vermelhas:** Restauradas as bordas finas vermelhas (`#D00000`) nos minicards do catálogo e nos modais expandidos (História).
 2.  **Identidade Visual:** Unificação das cores dos cards do "Atelier" com o Catálogo (adicionada a faixa de info marrom).
-3.  **Correção de Cores:** Fundo do Modal Expandido alterado para Chocolate Escuro Sólido (`#241000`) para eliminar transparência indesejada e garantir leitura (títulos em Amarelo Mel).
+3.  **Correção de Cores:** Fundo do Modal Expandido alterado para Chocolate Escuro Sólido (`#241000`) para eliminar transparência indesejada e garantir leitura.
 
 **Correções Funcionais (Bugs):**
-1.  **Infinite Scroll:** Corrigido bug onde o scroll infinito carregava itens no container errado. Agora ele detecta se está dentro de um Modal e carrega os itens lá.
-2.  **Thumbnails Atelier:** Corrigido problema de imagens invisíveis adicionando a classe `lazy-image` e placeholders corretos.
+1.  **Infinite Scroll:** Corrigido bug onde o scroll infinito carregava itens no container errado.
+2.  **Thumbnails Atelier:** Corrigido problema de imagens invisíveis.
 
 **UX (Experiência do Usuário):**
-1.  **Limpeza Visual:** Removidos os botões de ação (Coração/Compartilhar) de cima dos minicards para evitar conflito de clique e poluição visual.
+1.  **Limpeza Visual:** Removidos os botões de ação (Coração/Compartilhar) de cima dos minicards.
 2.  **Ações no Zoom:** Botões de ação movidos para dentro da visualização ampliada (Viewer), posicionados sobre a imagem.
 
 ---
@@ -52,13 +62,13 @@ Este documento narra a evolucao completa do desenvolvimento da Landing Page para
 ## 6. PROXIMOS PASSOS (BACKLOG REORGANIZADO)
 Objetivo: Polimento final e funcionalidades de marketing.
 
-1.  **REFINAMENTO UI (Prioridade):** Melhorar o design e posicionamento dos botões de ação (Favoritar/Compartilhar) que ficam sobre a imagem ampliada. (Visual atual funcional, mas não definitivo).
-2.  **Links Compartilhaveis (URL State):** A URL mudar ao filtrar/buscar (sem quebrar a navegacao).
-3.  **Pre-carregamento Preditivo (Prefetch):** Baixar imagens antes do clique.
-4.  **Carregamento Adaptativo:** Ajuste de qualidade para redes lentas.
-5.  **Exit Intent (Marketing):** Modal de recuperacao de saida (Desktop).
-6.  **Blindagem de Links:** Seguranca para links externos.
+1.  **REFINAMENTO UI - Cabeçalho do Catálogo:** Estudar nova forma de alinhar Busca e Filtros sem quebrar o layout (Tarefa adiada da Fase 3.3).
+2.  **REFINAMENTO UI - Botões do Zoom:** Melhorar o design dos botões de ação sobre a imagem ampliada (ajuste fino de tamanho e posição).
+3.  **Links Compartilhaveis (URL State):** A URL mudar ao filtrar/buscar.
+4.  **Pre-carregamento Preditivo (Prefetch):** Baixar imagens antes do clique.
+5.  **Carregamento Adaptativo:** Ajuste de qualidade para redes lentas.
+6.  **Exit Intent (Marketing):** Modal de recuperacao de saida (Desktop).
 7.  **Analytics Caseiro:** Rastreamento de cliques.
 
 ---
-*Ultima atualizacao: 01/12/2025 - Red Chic is back.*
+*Ultima atualizacao: 01/12/2025 - Conflito de layout registrado. Versão 2.2 mantida.*
