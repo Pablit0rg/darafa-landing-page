@@ -1,7 +1,7 @@
 # DaRafa Acessorios - O Dossie Completo do Projeto (MASTER LOG)
 
 **Resumo Executivo:**
-Este documento narra a evolucao completa do desenvolvimento da Landing Page para "DaRafa Acessorios". O projeto encontra-se na Versao 2.1 (Estavel), operando com funcionalidades de PWA e SEO, mantendo a integridade visual e de navegacao.
+Este documento narra a evolucao completa do desenvolvimento da Landing Page para "DaRafa Acessorios". O projeto encontra-se na Versao 2.2 (Estavel), com o visual "Red Chic" restaurado e funcionalidades de UX aprimoradas.
 
 ---
 
@@ -11,8 +11,8 @@ Este documento narra a evolucao completa do desenvolvimento da Landing Page para
 ---
 
 ## 2. Evolucao Visual (Red Chic)
-* **Estilo Atual:** "Red Chic" (Fundo Chocolate, Bordas Vermelhas, Tipografia Editorial).
-* **Status:** Implementado e consolidado.
+* **Estilo Atual:** "Red Chic" (Fundo Chocolate, Bordas Vermelhas Finas, Tipografia Editorial).
+* **Status:** Restaurado em 01/12/2025.
 
 ---
 
@@ -31,34 +31,34 @@ Este documento narra a evolucao completa do desenvolvimento da Landing Page para
 
 ## 5. Historico de Atualizacoes (CHANGELOG)
 
-### [30/11/2025] - Fase 3: Performance & SEO (Ajustes Taticos)
-**Status: EM ANDAMENTO - VERSAO ESTAVEL RESTAURADA**
+### [01/12/2025] - Fase 3.2: Refinamento Visual & UX (Red Chic Restore)
+**Status: IMPLEMENTADO**
 
-**Funcionalidades Entregues (Sucesso):**
-1.  **SEO Avancado:** Injecao de JSON-LD para Rich Snippets.
-2.  **Metadados Dinamicos:** Titulo da aba muda conforme o produto visualizado.
-3.  **Modo Offline (PWA):** Deteccao de queda de internet com feedback visual (Grayscale).
-4.  **Busca em Tempo Real:** Filtragem instantanea de produtos.
-5.  **Ordenacao Dinamica:** Filtros A-Z, Z-A e Aleatorio.
+**Ajustes Visuais (Red Chic):**
+1.  **Bordas Vermelhas:** Restauradas as bordas finas vermelhas (`#D00000`) nos minicards do catálogo e nos modais expandidos (História).
+2.  **Identidade Visual:** Unificação das cores dos cards do "Atelier" com o Catálogo (adicionada a faixa de info marrom).
+3.  **Correção de Cores:** Fundo do Modal Expandido alterado para Chocolate Escuro Sólido (`#241000`) para eliminar transparência indesejada e garantir leitura (títulos em Amarelo Mel).
 
-**Incidentes e Reversoes (ROLLBACK):**
-1.  **Lista de Desejos (Botoes no Card):** A adicao dos botoes de "Coracao" e "Compartilhar" dentro da area do minicard gerou conflito de eventos (Event Bubbling), impedindo que o usuario clicasse na foto para abrir o Zoom.
-    * **Acao:** Funcionalidade revertida temporariamente para garantir que o Zoom (feature principal) funcione perfeitamente.
-    * **Decisao:** Tarefa movida para o final da fila para refatoracao de UI/UX (possivelmente mover o botao para dentro do Modal aberto, em vez da capa).
+**Correções Funcionais (Bugs):**
+1.  **Infinite Scroll:** Corrigido bug onde o scroll infinito carregava itens no container errado. Agora ele detecta se está dentro de um Modal e carrega os itens lá.
+2.  **Thumbnails Atelier:** Corrigido problema de imagens invisíveis adicionando a classe `lazy-image` e placeholders corretos.
+
+**UX (Experiência do Usuário):**
+1.  **Limpeza Visual:** Removidos os botões de ação (Coração/Compartilhar) de cima dos minicards para evitar conflito de clique e poluição visual.
+2.  **Ações no Zoom:** Botões de ação movidos para dentro da visualização ampliada (Viewer), posicionados sobre a imagem.
 
 ---
 
 ## 6. PROXIMOS PASSOS (BACKLOG REORGANIZADO)
-Objetivo: Priorizar estabilidade e funcionalidades que nao afetam o layout critico.
+Objetivo: Polimento final e funcionalidades de marketing.
 
-1.  **Links Compartilhaveis (URL State):** A URL mudar ao filtrar/buscar (sem quebrar a navegacao).
-2.  **Pre-carregamento Preditivo (Prefetch):** Baixar imagens antes do clique.
-3.  **Carregamento Adaptativo:** Ajuste de qualidade para redes lentas.
-4.  **Exit Intent (Marketing):** Modal de recuperacao de saida (Desktop).
-5.  **Blindagem de Links:** Seguranca para links externos.
-6.  **Analytics Caseiro:** Rastreamento de cliques.
-7.  **Focus Trap (Acessibilidade):** *Adiado (Conflito de Layout).*
-8.  **Lista de Desejos (Wishlist):** *Adiado (Conflito de Clique no Card).*
+1.  **REFINAMENTO UI (Prioridade):** Melhorar o design e posicionamento dos botões de ação (Favoritar/Compartilhar) que ficam sobre a imagem ampliada. (Visual atual funcional, mas não definitivo).
+2.  **Links Compartilhaveis (URL State):** A URL mudar ao filtrar/buscar (sem quebrar a navegacao).
+3.  **Pre-carregamento Preditivo (Prefetch):** Baixar imagens antes do clique.
+4.  **Carregamento Adaptativo:** Ajuste de qualidade para redes lentas.
+5.  **Exit Intent (Marketing):** Modal de recuperacao de saida (Desktop).
+6.  **Blindagem de Links:** Seguranca para links externos.
+7.  **Analytics Caseiro:** Rastreamento de cliques.
 
 ---
-*Ultima atualizacao: 30/11/2025 - Rollback estrategico realizado. O zoom dos cards esta funcionando perfeitamente.*
+*Ultima atualizacao: 01/12/2025 - Red Chic is back.*
