@@ -81,57 +81,49 @@
     }
 }
 
-/* --- FILTROS DO CATÁLOGO (LAYOUT ATUALIZADO) --- */
+/* --- FILTROS DO CATÁLOGO (NOVO) --- */
 .catalog-filters {
     display: flex;
-    /* Alinha texto à esquerda e pesquisa à direita */
-    justify-content: space-between; 
-    align-items: center;
+    justify-content: center;
     flex-wrap: wrap;
-    gap: 15px;
+    gap: 12px;
     margin-bottom: 30px;
     padding-bottom: 20px;
-    border-bottom: 1px solid rgba(36, 16, 0, 0.1);
+    border-bottom: 1px solid rgba(36, 16, 0, 0.1); /* Linha sutil */
 }
 
 .filter-btn {
-    padding: 8px 16px; /* Botões um pouco menores e elegantes */
+    padding: 8px 24px;
     border-radius: 50px;
-    border: none; /* Remove a borda para parecerem links de texto */
+    border: 1px solid var(--color-gold-medium); /* Borda Chocolate */
     background-color: transparent;
     color: var(--color-text-main);
     font-family: var(--font-sans);
-    font-size: 0.9rem;
-    font-weight: 500;
+    font-size: 0.85rem;
+    font-weight: 600;
     cursor: pointer;
     transition: all 0.3s ease;
-    text-transform: capitalize; /* Texto normal, não uppercase */
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
 .filter-btn:hover {
-    color: var(--color-gold-dark);
-    transform: translateY(-1px);
+    background-color: rgba(36, 16, 0, 0.05);
+    transform: translateY(-2px);
 }
 
 /* Estado Ativo (Botão Selecionado) */
 .filter-btn.active {
-    color: #D00000; /* Vermelho Red Chic */
-    font-weight: 700;
-    background-color: transparent;
-    box-shadow: none;
-    text-decoration: underline;
+    background-color: var(--color-gold-medium); /* Fundo Chocolate */
+    color: #FDB90C; /* Texto Amarelo */
+    box-shadow: 0 4px 15px rgba(36, 16, 0, 0.2);
+    transform: scale(1.05);
 }
 
 /* Mobile: Ajuste para não quebrar em telas pequenas */
-@media (max-width: 600px) {
-    .catalog-filters {
-        flex-direction: column;
-        align-items: flex-start;
-    }
+@media (max-width: 480px) {
     .filter-btn {
-        padding: 5px 10px;
-        font-size: 0.8rem;
+        padding: 6px 16px;
+        font-size: 0.75rem;
     }
-}
-
 }
