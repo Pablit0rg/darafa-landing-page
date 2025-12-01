@@ -143,15 +143,18 @@
     display: flex;
     width: 90%;
     max-width: 900px;
-    background-color: #FDB90C; 
     
-    /* [RED CHIC] Borda Vermelha Fina Restaurada no Modal */
+    /* [CORREÇÃO] Fundo Chocolate Escuro Sólido (Era Amarelo #FDB90C) */
+    background-color: #241000; 
+    
+    /* [RED CHIC] Borda Vermelha Fina */
     border: 1px solid #D00000;
     
-    box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.9); /* Sombra mais forte */
     overflow: hidden;
     border-radius: 8px;
     position: relative;
+    z-index: 2005; /* Garante que fique acima de tudo */
 }
 
 .story-image-col {
@@ -179,12 +182,17 @@
 .story-title {
     font-family: var(--font-serif);
     font-size: 2rem;
-    color: var(--color-gold-medium);
+    
+    /* [CORREÇÃO] Texto Amarelo para contrastar com fundo Chocolate */
+    color: #FDB90C;
+    
     margin-bottom: 25px;
     padding-bottom: 15px;
     position: relative;
-    /* [RED CHIC] Sublinhado vermelho no título interno */
+    
+    /* [RED CHIC] Sublinhado vermelho */
     border-bottom: 2px solid #D00000;
+    
     display: inline-block;
     text-transform: uppercase;
 }
@@ -192,7 +200,10 @@
 .story-desc {
     font-family: var(--font-sans);
     font-size: 1rem;
-    color: var(--color-text-main);
+    
+    /* [CORREÇÃO] Texto Creme para leitura no fundo escuro */
+    color: #e0d0a0;
+    
     line-height: 1.8;
     font-weight: 500;
     text-align: justify;
