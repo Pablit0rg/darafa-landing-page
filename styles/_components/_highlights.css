@@ -1,6 +1,6 @@
 /*
  * COMPONENTE: Highlights (Cards Internos)
- * Atualizado: Design "Red Chic" Completo + Viewer Actions (Botões na Imagem)
+ * Atualizado: Design "Red Chic" Completo + Viewer Actions (Botões no TOPO da Imagem)
  */
 
 /* --- Grids --- */
@@ -310,8 +310,8 @@
 
 .viewer-actions {
     position: absolute;
-    /* Posiciona no canto inferior direito, DENTRO da imagem */
-    bottom: 15px; 
+    /* [MODIFICAÇÃO] Botões agora no TOPO direito da imagem */
+    top: 15px; 
     right: 15px;
     display: flex;
     gap: 8px; /* Espaço menor entre eles */
@@ -378,7 +378,7 @@
     
     /* Ajuste mobile dos botões do viewer */
     .viewer-actions {
-        bottom: 10px;
+        top: 10px; /* Mantém no topo também no mobile */
         right: 10px;
         gap: 5px;
     }
