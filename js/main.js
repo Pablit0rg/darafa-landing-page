@@ -266,12 +266,12 @@ document.addEventListener('DOMContentLoaded', () => {
         let htmlBuffer = '';
 
         nextBatch.forEach(item => {
-            // MUDANÇA AQUI: Removi o cálculo de isFav e o bloco .card-actions (Coração) da capa.
+            const isFav = wishlist.includes(item.id) ? 'active' : '';
             htmlBuffer += `
                 <div class="gold-framebox" tabindex="0" data-id="${item.id}" data-category="${item.category}" data-title="${item.title}" data-description="${item.description}">
                     <div class="card-actions">
                         <button class="action-btn share-btn" aria-label="Compartilhar" tabindex="-1">➦</button>
-                        <!-- O botão de Favoritar (Coração) foi removido daqui conforme solicitado -->
+                        <button class="action-btn wishlist-btn ${isFav}" aria-label="Favoritar" tabindex="-1">♥</button>
                     </div>
                     <img class="lazy-image" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-src="${item.image}" alt="${item.title}" style="transition: opacity 0.8s ease; opacity: 0;">
                     <div class="card-info-bar">
@@ -365,7 +365,6 @@ document.addEventListener('DOMContentLoaded', () => {
     function attachCardEvents(container) {
         container.addEventListener('click', (e) => {
             const btn = e.target;
-            // Mantemos o listener caso o botão exista em algum contexto, mas ele não será gerado na grade.
             if (btn.classList.contains('wishlist-btn')) { e.stopPropagation(); toggleWishlist(parseInt(btn.closest('.gold-framebox').dataset.id), btn); return; }
             if (btn.classList.contains('share-btn')) { e.stopPropagation(); shareProduct(btn.closest('.gold-framebox')); return; }
         });
@@ -518,13 +517,13 @@ document.addEventListener('DOMContentLoaded', () => {
         if (newIndex < 0) newIndex = activeData.length - 1;
         const nextItem = activeData[newIndex];
         currentViewerIndex = newIndex;
-        
-        // Simplesmente fecha e reabre para atualizar o botão de favoritos corretamente com o novo ID
-        const viewer = document.querySelector('.image-viewer-overlay');
-        if (viewer) {
-             viewer.classList.remove('active');
-             setTimeout(() => { if(viewer.parentNode) viewer.parentNode.removeChild(viewer); }, 300);
-             setTimeout(() => openImageViewer(nextItem.image, nextItem.id), 300);
+        const viewerImg = document.querySelector('.image-viewer-content');
+        if (viewerImg) {
+            viewerImg.style.opacity = 0.5;
+            setTimeout(() => { viewerImg.src = nextItem.image; viewerImg.onload = () => viewerImg.style.opacity = 1; }, 200);
+            setPageMetadata(nextItem.title, nextItem.description);
+            // Ao navegar, também adiciona ao histórico
+            addToHistory(nextItem.id); 
         }
     }
 
@@ -543,7 +542,7 @@ document.addEventListener('DOMContentLoaded', () => {
             wishlist.push(id);
             btnElement.classList.add('active');
             btnElement.style.transform = "scale(1.4)";
-            setTimeout(() => btnElement.style.transform = "scale(1)", 200); // Se houver scale no inline style, isso pode sobrescrever, mas ok.
+            setTimeout(() => btnElement.style.transform = "scale(1)", 200);
             showToast('Adicionado aos Favoritos ❤️');
             trackEvent('interaction', 'wishlist_add');
         } else {
@@ -558,7 +557,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (activeFilter && activeFilter.dataset.filter === 'favorites') {
             activeData = productsData.filter(item => wishlist.includes(item.id));
             activeData = applySort(activeData);
-            const parentContainer = document.querySelector('.gallery-5-cols');
+            const parentContainer = btnElement.closest('.gallery-5-cols');
             if(parentContainer) resetAndRender(parentContainer);
         }
     }
@@ -716,23 +715,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const foundIndex = activeData.findIndex(item => item.id == id);
         if (foundIndex !== -1) currentViewerIndex = foundIndex;
-
-        // MUDANÇA AQUI: Criamos o botão de favorito especificamente para o Viewer
-        const isFav = wishlist.includes(parseInt(id)) ? 'active' : '';
-        const favButtonHTML = `
-            <button class="action-btn wishlist-btn viewer-wishlist-btn ${isFav}" data-id="${id}" aria-label="Favoritar"
-                style="position: absolute; bottom: 20px; right: 20px; z-index: 100; transform: scale(1.3); box-shadow: 0 4px 15px rgba(0,0,0,0.6);">
-                ♥
-            </button>
-        `;
-
-        // Envolvemos a imagem num wrapper relativo para o botão ficar em cima dela
-        createViewerOverlay(`
-            <div style="position: relative; display: inline-block;">
-                <img src="${imageSrc}" class="image-viewer-content" style="max-height:90vh; max-width:90%; border:1px solid var(--color-gold-dark); box-shadow: 0 0 30px rgba(0,0,0,0.8);">
-                ${favButtonHTML}
-            </div>
-        `);
+        createViewerOverlay(`<img src="${imageSrc}" class="image-viewer-content" style="max-height:90vh; max-width:90%; border:1px solid var(--color-gold-dark); box-shadow: 0 0 30px rgba(0,0,0,0.8);">`);
     }
 
     function openStoryMode(imageSrc, title, description) {
@@ -751,16 +734,6 @@ document.addEventListener('DOMContentLoaded', () => {
         viewer.innerHTML = `<button class="close-viewer" style="position:absolute; top:20px; right:30px; color:#fff; font-size:2rem; background:none; border:none; cursor:pointer; z-index:3001;">&times;</button>${innerContent}`;
         body.appendChild(viewer);
         requestAnimationFrame(() => viewer.classList.add('active'));
-
-        // MUDANÇA AQUI: Adicionamos o listener para o botão de favorito do Viewer
-        const viewerFavBtn = viewer.querySelector('.viewer-wishlist-btn');
-        if (viewerFavBtn) {
-            viewerFavBtn.addEventListener('click', (e) => {
-                e.stopPropagation(); // Impede que o modal feche ao clicar no coração
-                const id = parseInt(viewerFavBtn.dataset.id);
-                toggleWishlist(id, viewerFavBtn);
-            });
-        }
 
         let touchStartY = 0; let touchEndY = 0;
         viewer.addEventListener('touchstart', e => { touchStartY = e.changedTouches[0].screenY; }, {passive: true});
