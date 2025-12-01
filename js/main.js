@@ -1,8 +1,7 @@
 /**
- * DaRafa Acessórios - Main Script (Versão FASE 3 - Fix Infinite Scroll)
- * * CORREÇÃO: Scroll Infinito agora funciona corretamente dentro do Modal.
- * * * FUNCIONALIDADES:
- * Analytics, Toast, Teclado, Infinite Scroll, Ordenação, Swipe, Share, URL, Wishlist, Busca.
+ * DaRafa Acessórios - Main Script (Versão FASE 3.1 - Clean Cards)
+ * * ATUALIZAÇÃO: Botões de ação (Favoritar/Compartilhar) removidos dos cards.
+ * * LÓGICA MANTIDA: Infinite Scroll, SEO, Analytics, PWA.
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -279,13 +278,9 @@ document.addEventListener('DOMContentLoaded', () => {
         let htmlBuffer = '';
 
         nextBatch.forEach(item => {
-            const isFav = wishlist.includes(item.id) ? 'active' : '';
+            // [REMOVIDO] A lógica de favoritos/compartilhar foi removida visualmente
             htmlBuffer += `
                 <div class="gold-framebox" tabindex="0" data-id="${item.id}" data-category="${item.category}" data-title="${item.title}" data-description="${item.description}">
-                    <div class="card-actions">
-                        <button class="action-btn share-btn" aria-label="Compartilhar" tabindex="-1">➦</button>
-                        <button class="action-btn wishlist-btn ${isFav}" aria-label="Favoritar" tabindex="-1">♥</button>
-                    </div>
                     <img class="lazy-image" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-src="${item.image}" alt="${item.title}" style="transition: opacity 0.8s ease; opacity: 0;">
                     <div class="card-info-bar">
                         <h3 class="info-title">${item.title}</h3>
@@ -394,7 +389,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function attachCardEvents(container) {
         // Usa delegação de eventos para melhor performance
-        // (Nota: O clique no card para abrir o zoom é tratado no listener do Modal Overlay)
         container.addEventListener('click', (e) => {
             const btn = e.target.closest('.action-btn');
             if (!btn) return;
@@ -415,7 +409,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- FILTROS ---
     function initFilters() {
-        // Função auxiliar para injetar botões se não existirem
         const injectButtons = (container) => {
              if(!container.querySelector('[data-filter="favorites"]')) {
                 const favBtn = document.createElement('button');
