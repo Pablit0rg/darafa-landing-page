@@ -1,8 +1,7 @@
 /**
- * DaRafa Acessórios - Main Script (Versão FASE 4.2 - Scroll Reveal)
- * * FEATURE: Efeito visual "Reveal" (surgimento suave) ao rolar a página.
- * * BASE: Versão 4.0 Estável (Layout Seguro Centralizado).
- * * MANTIDO: Analytics, Exit Intent, Prefetch, URL State, PWA.
+ * DaRafa Acessórios - Main Script (Versão FINAL 4.0 - Master)
+ * * FEATURE: Analytics Caseiro Completo (Scroll Spy + Relatório de Console).
+ * * INCLUSO: Todas as features anteriores (Adaptive, Exit Intent, URL State, Prefetch).
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -21,7 +20,10 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Analytics Profundo
     let analyticsData = JSON.parse(localStorage.getItem('darafa_analytics')) || {
-        views: 0, searches: {}, categoryClicks: {}, productClicks: {}, 
+        views: 0, 
+        searches: {}, 
+        categoryClicks: {}, 
+        productClicks: {}, 
         interactions: { wishlist: 0, share: 0, exit_shown: 0, exit_clicked: 0 },
         sectionsViewed: { hero: 0, catalogo: 0, atelier: 0, artista: 0 }
     };
@@ -52,21 +54,36 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         if (type === 'section') analyticsData.sectionsViewed[label] = (analyticsData.sectionsViewed[label] || 0) + 1;
         
+        saveAnalytics();
+    }
+
+    function saveAnalytics() {
         localStorage.setItem('darafa_analytics', JSON.stringify(analyticsData));
     }
-    trackEvent('view');
 
-    // Relatório no Console
+    // Comando Secreto Global para o Console
     window.relatorio = () => {
         console.group('%c📊 RELATÓRIO DARAFA', 'color: #FDB90C; font-size: 20px; background: #241000; padding: 10px; border-radius: 5px;');
         console.log(`👁️ Visitas Totais: ${analyticsData.views}`);
-        console.table(analyticsData.interactions);
-        console.group('🏆 Top Produtos');
-        console.table(analyticsData.productClicks);
+        console.log('🔥 Interações:', analyticsData.interactions);
+        
+        console.group('🏆 Top 5 Produtos');
+        const sortedProducts = Object.entries(analyticsData.productClicks).sort((a,b) => b[1] - a[1]).slice(0,5);
+        console.table(sortedProducts);
         console.groupEnd();
+
+        console.group('📂 Categorias Mais Buscadas');
+        console.table(analyticsData.categoryClicks);
         console.groupEnd();
-        return "Relatório gerado.";
+
+        console.group('📍 Mapa de Calor (Seções)');
+        console.table(analyticsData.sectionsViewed);
+        console.groupEnd();
+        
+        console.groupEnd();
+        return "Dados carregados com sucesso!";
     };
+    trackEvent('view');
 
     // --- DADOS DOS PRODUTOS ---
     const productsData = [
@@ -93,7 +110,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // =========================================================
-    // 1. PERFORMANCE & SEO (CÓDIGO COMPLETO)
+    // 1. PERFORMANCE & SEO
     // =========================================================
     function checkConnection() {
         if ('connection' in navigator) {
@@ -189,11 +206,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }, { rootMargin: "200px" });
 
-    // Scroll Spy Observer (Analytics)
+    // Observer de Seções (Analytics Scroll Spy)
     const sectionObserver = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting && entry.intersectionRatio > 0.5) {
                 const sectionId = entry.target.id;
+                // Mapeia IDs para nomes amigáveis
                 const sectionName = sectionId === 'gallery-section' ? 'catalogo' : 
                                     sectionId === 'about-section' ? 'atelier' : 
                                     sectionId === 'artist-section' ? 'artista' : 'hero';
@@ -203,7 +221,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }, { threshold: 0.5 });
 
     if (galleryContainer) {
-        checkConnection();
+        checkConnection(); 
         initSEO();
         initOfflineMode();
         initCatalog();
@@ -211,8 +229,8 @@ document.addEventListener('DOMContentLoaded', () => {
         initControls(); 
         initExitIntent();
         injectDynamicStyles(); 
-        initScrollReveal(); // [NOVO] Inicia a animação de rolagem
         
+        // Ativa o Scroll Spy nas seções principais
         document.querySelectorAll('section, header').forEach(sec => sectionObserver.observe(sec));
 
         if(isLowEndConnection) {
@@ -226,32 +244,7 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('popstate', loadStateFromURL);
 
     // =========================================================
-    // 4. SCROLL REVEAL (NOVO)
-    // =========================================================
-    function initScrollReveal() {
-        // Se for conexão lenta, não anima para economizar processamento
-        if (isLowEndConnection) return;
-
-        const revealObserver = new IntersectionObserver((entries, observer) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
-                    observer.unobserve(entry.target); // Anima só uma vez
-                }
-            });
-        }, { threshold: 0.15 }); // 15% visível para disparar
-
-        // Seleciona elementos para animar
-        const elementsToReveal = document.querySelectorAll('.section-title, .section-description, .gold-framebox, .hero-main-logo, .hero-subtitle, .artist-bio-text');
-        
-        elementsToReveal.forEach(el => {
-            el.classList.add('reveal-on-scroll'); // Adiciona classe base via JS (sem mexer no HTML)
-            revealObserver.observe(el);
-        });
-    }
-
-    // =========================================================
-    // 5. EXIT INTENT
+    // 4. EXIT INTENT
     // =========================================================
     function initExitIntent() {
         if (sessionStorage.getItem('darafa_exit_shown')) return;
@@ -299,7 +292,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // =========================================================
-    // 6. URL STATE & HISTORY
+    // 5. LÓGICA DE URL STATE & HISTORY
     // =========================================================
     function addToHistory(id) {
         recentHistory = recentHistory.filter(itemId => itemId !== id);
@@ -349,7 +342,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // =========================================================
-    // 7. RENDERIZAÇÃO DO CATÁLOGO
+    // 6. RENDERIZAÇÃO DO CATÁLOGO
     // =========================================================
     async function initCatalog() {
         if (INSTAGRAM_TOKEN) { try { await fetchInstagramPosts(); } catch (error) { activeData = [...productsData]; resetAndRender(); } } 
@@ -397,6 +390,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } else { if(scrollSentinel) { infiniteScrollObserver.unobserve(scrollSentinel); scrollSentinel.remove(); scrollSentinel = null; } }
     }
 
+    // --- PREFETCH ADAPTATIVO ---
     function attachObserversAndPreload(container) {
         const images = container.querySelectorAll('.lazy-image:not(.observed)');
         images.forEach(img => { globalImageObserver.observe(img); img.classList.add('observed'); });
@@ -415,23 +409,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // =========================================================
-    // 8. ESTILOS & CONTROLES
+    // 7. ESTILOS & CONTROLES
     // =========================================================
     function injectDynamicStyles() {
         const style = document.createElement('style');
         style.innerHTML = `
-            /* ESTILO BASE DO SCROLL REVEAL [NOVO] */
-            .reveal-on-scroll {
-                opacity: 0;
-                transform: translateY(30px);
-                transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-                will-change: transform, opacity;
-            }
-            .reveal-on-scroll.visible {
-                opacity: 1;
-                transform: translateY(0);
-            }
-
             .controls-wrapper { width: 100%; display: flex; justify-content: center; gap: 15px; margin-bottom: 20px; flex-wrap: wrap; }
             #js-search-input { padding: 12px 25px; width: 100%; max-width: 300px; border-radius: 50px; border: 2px solid #241000; background: rgba(255,255,255,0.9); color: #241000; font-size: 1rem; outline: none; box-shadow: 0 4px 10px rgba(36,16,0,0.1); transition: all 0.3s ease; }
             #js-sort-select { padding: 12px 20px; border-radius: 50px; border: 2px solid #241000; background: #241000; color: #FDB90C; font-size: 0.9rem; font-weight: 600; cursor: pointer; outline: none; appearance: none; -webkit-appearance: none; text-align: center; box-shadow: 0 4px 10px rgba(36,16,0,0.2); }
@@ -497,16 +479,7 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 400); }, 3000);
     }
 
-    function attachCardEvents(container) {
-        container.addEventListener('click', (e) => {
-            const card = e.target.closest('.gold-framebox');
-            if (card) {
-                trackEvent('product_click', card.dataset.title);
-                const img = card.querySelector('img');
-                openImageViewer(img.dataset.src || img.src, card.dataset.id);
-            }
-        });
-    }
+    function attachCardEvents(container) { } 
 
     function initFilters() {
         const injectButtons = (container) => { }; 
@@ -651,7 +624,7 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem('darafa_wishlist', JSON.stringify(wishlist));
     }
 
-    // --- MODAIS & PORTAIS ---
+    // --- MODALS (Viewer e Story) ---
     function throttle(func, limit) {
         let inThrottle;
         return function() {
