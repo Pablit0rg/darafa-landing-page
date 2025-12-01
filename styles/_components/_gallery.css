@@ -81,49 +81,57 @@
     }
 }
 
-/* --- FILTROS DO CATÁLOGO (NOVO) --- */
+/* --- FILTROS DO CATÁLOGO (LAYOUT ATUALIZADO) --- */
 .catalog-filters {
     display: flex;
-    justify-content: center;
+    /* Alinha texto à esquerda e pesquisa à direita */
+    justify-content: space-between; 
+    align-items: center;
     flex-wrap: wrap;
-    gap: 12px;
+    gap: 15px;
     margin-bottom: 30px;
     padding-bottom: 20px;
-    border-bottom: 1px solid rgba(36, 16, 0, 0.1); /* Linha sutil */
+    border-bottom: 1px solid rgba(36, 16, 0, 0.1);
 }
 
 .filter-btn {
-    padding: 8px 24px;
+    padding: 8px 16px; /* Botões um pouco menores e elegantes */
     border-radius: 50px;
-    border: 1px solid var(--color-gold-medium); /* Borda Chocolate */
+    border: none; /* Remove a borda para parecerem links de texto */
     background-color: transparent;
     color: var(--color-text-main);
     font-family: var(--font-sans);
-    font-size: 0.85rem;
-    font-weight: 600;
+    font-size: 0.9rem;
+    font-weight: 500;
     cursor: pointer;
     transition: all 0.3s ease;
-    text-transform: uppercase;
-    letter-spacing: 1px;
+    text-transform: capitalize; /* Texto normal, não uppercase */
 }
 
 .filter-btn:hover {
-    background-color: rgba(36, 16, 0, 0.05);
-    transform: translateY(-2px);
+    color: var(--color-gold-dark);
+    transform: translateY(-1px);
 }
 
 /* Estado Ativo (Botão Selecionado) */
 .filter-btn.active {
-    background-color: var(--color-gold-medium); /* Fundo Chocolate */
-    color: #FDB90C; /* Texto Amarelo */
-    box-shadow: 0 4px 15px rgba(36, 16, 0, 0.2);
-    transform: scale(1.05);
+    color: #D00000; /* Vermelho Red Chic */
+    font-weight: 700;
+    background-color: transparent;
+    box-shadow: none;
+    text-decoration: underline;
 }
 
 /* Mobile: Ajuste para não quebrar em telas pequenas */
-@media (max-width: 480px) {
-    .filter-btn {
-        padding: 6px 16px;
-        font-size: 0.75rem;
+@media (max-width: 600px) {
+    .catalog-filters {
+        flex-direction: column;
+        align-items: flex-start;
     }
+    .filter-btn {
+        padding: 5px 10px;
+        font-size: 0.8rem;
+    }
+}
+
 }
