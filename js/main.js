@@ -1,12 +1,12 @@
 /**
- * DaRafa Acessórios - Main Script (Versão FASE 3.1 - Ajuste UI Viewer)
+ * DaRafa Acessórios - Main Script (Versão FASE 3 - Histórico Recente)
  * * NOVAS OTIMIZAÇÕES (FASE 3):
- * 1. Histórico "Visto Recentemente" (Widget + Filtro)
+ * 1. Histórico "Visto Recentemente" (Widget + Filtro) - NOVO!
  * 2. Modo Offline (PWA)
  * 3. Metadados Dinâmicos
  * 4. SEO Avançado (JSON-LD)
- * * * AJUSTE SOLICITADO (01/12/2025):
- * - Botões de ação (Favorito/Share) movidos do card pequeno para o Viewer (Zoom).
+ * * * FUNCIONALIDADES MANTIDAS (FASE 2):
+ * Analytics, Toast, Teclado, Infinite Scroll, Ordenação, Swipe, Share, URL, Wishlist, Busca.
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Estados Persistentes
     let wishlist = JSON.parse(localStorage.getItem('darafa_wishlist')) || [];
-    let recentHistory = JSON.parse(localStorage.getItem('darafa_history')) || [];
+    let recentHistory = JSON.parse(localStorage.getItem('darafa_history')) || []; // NOVO
     
     let analyticsData = JSON.parse(localStorage.getItem('darafa_analytics')) || {
         views: 0, searches: {}, categoryClicks: {}, productClicks: {}, interactions: { wishlist: 0, share: 0 }
@@ -182,20 +182,27 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('popstate', loadStateFromURL);
 
     // =========================================================
-    // 4. LÓGICA DE CATÁLOGO & HISTÓRICO
+    // 4. LÓGICA DE CATÁLOGO & HISTÓRICO (NOVO!)
     // =========================================================
     
+    // --- FUNÇÃO PARA ADICIONAR AO HISTÓRICO ---
     function addToHistory(id) {
+        // Remove se já existe para colocar no topo
         recentHistory = recentHistory.filter(itemId => itemId !== id);
-        recentHistory.unshift(id); 
+        recentHistory.unshift(id); // Adiciona no início
+        
+        // Limita a 6 itens
         if (recentHistory.length > 6) recentHistory.pop();
+        
         localStorage.setItem('darafa_history', JSON.stringify(recentHistory));
         
+        // Se o usuário estiver no filtro "Vistos", atualiza a tela
         const activeFilter = document.querySelector('.filter-btn.active');
         if (activeFilter && activeFilter.dataset.filter === 'history') {
             activeData = productsData.filter(item => recentHistory.includes(item.id));
+            // Ordena pela ordem do histórico (mais recente primeiro)
             activeData.sort((a, b) => recentHistory.indexOf(a.id) - recentHistory.indexOf(b.id));
-            const container = document.querySelector('.gallery-5-cols'); 
+            const container = document.querySelector('.gallery-5-cols'); // Ou modal
             if(container) resetAndRender(container);
         }
     }
@@ -259,9 +266,13 @@ document.addEventListener('DOMContentLoaded', () => {
         let htmlBuffer = '';
 
         nextBatch.forEach(item => {
-            // NOTA: Os botões de ação foram removidos daqui para limpar o card
+            const isFav = wishlist.includes(item.id) ? 'active' : '';
             htmlBuffer += `
                 <div class="gold-framebox" tabindex="0" data-id="${item.id}" data-category="${item.category}" data-title="${item.title}" data-description="${item.description}">
+                    <div class="card-actions">
+                        <button class="action-btn share-btn" aria-label="Compartilhar" tabindex="-1">➦</button>
+                        <button class="action-btn wishlist-btn ${isFav}" aria-label="Favoritar" tabindex="-1">♥</button>
+                    </div>
                     <img class="lazy-image" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-src="${item.image}" alt="${item.title}" style="transition: opacity 0.8s ease; opacity: 0;">
                     <div class="card-info-bar">
                         <h3 class="info-title">${item.title}</h3>
@@ -315,46 +326,14 @@ document.addEventListener('DOMContentLoaded', () => {
     function injectDynamicStyles() {
         const style = document.createElement('style');
         style.innerHTML = `
-            /* Estilos antigos removidos (card-actions) */
+            .card-actions { position: absolute; top: 10px; right: 10px; z-index: 10; display: flex; gap: 8px; opacity: 0; transition: opacity 0.3s ease; }
+            .gold-framebox:hover .card-actions, .gold-framebox:focus-within .card-actions { opacity: 1; }
             .gold-framebox:focus { outline: 2px solid #D00000; outline-offset: 2px; }
-            
-            /* --- NOVOS ESTILOS PARA O VIEWER (ZOOM) --- */
-            .viewer-actions {
-                position: absolute;
-                bottom: 20px;
-                right: 20px;
-                display: flex;
-                gap: 15px;
-                z-index: 3002;
-            }
-            .viewer-btn {
-                width: 50px;
-                height: 50px;
-                border-radius: 50%;
-                border: 2px solid #FDB90C;
-                background: rgba(36, 16, 0, 0.7); /* Chocolate Transparente */
-                color: #FDB90C;
-                font-size: 1.5rem;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                cursor: pointer;
-                transition: all 0.3s ease;
-                backdrop-filter: blur(5px);
-                padding-top: 3px; /* Ajuste visual do ícone */
-            }
-            .viewer-btn:hover {
-                background: #FDB90C;
-                color: #241000;
-                transform: scale(1.1);
-            }
-            .viewer-btn.active {
-                background: #D00000; /* Vermelho Paixão */
-                color: #fff;
-                border-color: #D00000;
-                box-shadow: 0 0 15px rgba(208, 0, 0, 0.6);
-            }
-
+            .action-btn { background: rgba(36, 16, 0, 0.6); border: none; color: #fff; font-size: 1.1rem; width: 35px; height: 35px; border-radius: 50%; cursor: pointer; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: flex; align-items: center; justify-content: center; padding-top: 2px; backdrop-filter: blur(4px); }
+            .action-btn:hover { background: #241000; transform: scale(1.1); }
+            .wishlist-btn.active { color: #D00000; background: #fff; box-shadow: 0 0 10px rgba(208,0,0,0.5); }
+            .share-btn { font-size: 1rem; }
+            .share-btn:active { transform: scale(0.9); }
             .controls-wrapper { width: 100%; display: flex; justify-content: center; gap: 15px; margin-bottom: 20px; flex-wrap: wrap; }
             #js-search-input { padding: 12px 25px; width: 100%; max-width: 300px; border-radius: 50px; border: 2px solid #241000; background: rgba(255,255,255,0.9); color: #241000; font-size: 1rem; outline: none; box-shadow: 0 4px 10px rgba(36,16,0,0.1); transition: all 0.3s ease; }
             #js-sort-select { padding: 12px 20px; border-radius: 50px; border: 2px solid #241000; background: #241000; color: #FDB90C; font-size: 0.9rem; font-weight: 600; cursor: pointer; outline: none; appearance: none; -webkit-appearance: none; text-align: center; box-shadow: 0 4px 10px rgba(36,16,0,0.2); }
@@ -384,13 +363,18 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function attachCardEvents(container) {
-        // Eventos movidos para o Viewer, mas mantemos se precisar de algo no futuro
+        container.addEventListener('click', (e) => {
+            const btn = e.target;
+            if (btn.classList.contains('wishlist-btn')) { e.stopPropagation(); toggleWishlist(parseInt(btn.closest('.gold-framebox').dataset.id), btn); return; }
+            if (btn.classList.contains('share-btn')) { e.stopPropagation(); shareProduct(btn.closest('.gold-framebox')); return; }
+        });
     }
 
-    // --- FILTROS & HISTÓRICO ---
+    // --- FILTROS (ATUALIZADO COM HISTÓRICO) ---
     function initFilters() {
         const filterContainers = document.querySelectorAll('.catalog-filters');
         filterContainers.forEach(container => {
+            // Botão Favoritos
             if(!container.querySelector('[data-filter="favorites"]')) {
                 const favBtn = document.createElement('button');
                 favBtn.className = 'filter-btn';
@@ -400,6 +384,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 favBtn.style.borderColor = '#D00000';
                 container.appendChild(favBtn);
             }
+            // Botão Histórico (NOVO!)
             if(!container.querySelector('[data-filter="history"]')) {
                 const histBtn = document.createElement('button');
                 histBtn.className = 'filter-btn';
@@ -427,7 +412,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (filterValue === 'favorites') {
                     activeData = productsData.filter(item => wishlist.includes(item.id));
                 } else if (filterValue === 'history') {
+                    // Lógica do Histórico
                     activeData = productsData.filter(item => recentHistory.includes(item.id));
+                    // Ordena para mostrar o último visto primeiro
                     activeData.sort((a, b) => recentHistory.indexOf(a.id) - recentHistory.indexOf(b.id));
                 } else if (filterValue === 'all') {
                     activeData = productsData;
@@ -435,7 +422,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     activeData = productsData.filter(item => item.category === filterValue);
                 }
                 
-                if (filterValue !== 'history') activeData = applySort(activeData); 
+                if (filterValue !== 'history') activeData = applySort(activeData); // Não reordena histórico para manter cronologia
 
                 const modalContent = button.closest('.expansion-content');
                 const targetGallery = modalContent ? modalContent.querySelector('.gallery-5-cols') : document.querySelector('#gallery-door .gallery-5-cols');
@@ -530,20 +517,22 @@ document.addEventListener('DOMContentLoaded', () => {
         if (newIndex < 0) newIndex = activeData.length - 1;
         const nextItem = activeData[newIndex];
         currentViewerIndex = newIndex;
-        // Fecha o atual e abre o próximo para re-renderizar os botões corretamente
-        const oldViewer = document.querySelector('.image-viewer-overlay');
-        if(oldViewer) oldViewer.remove();
-        openImageViewer(nextItem.image, nextItem.id);
+        const viewerImg = document.querySelector('.image-viewer-content');
+        if (viewerImg) {
+            viewerImg.style.opacity = 0.5;
+            setTimeout(() => { viewerImg.src = nextItem.image; viewerImg.onload = () => viewerImg.style.opacity = 1; }, 200);
+            setPageMetadata(nextItem.title, nextItem.description);
+            // Ao navegar, também adiciona ao histórico
+            addToHistory(nextItem.id); 
+        }
     }
 
-    // Função auxiliar para compartilhar pelo ID (usada dentro do Viewer)
-    async function shareProductById(id) {
-        const item = productsData.find(p => p.id == id);
-        if(!item) return;
-        
-        const shareUrl = `${window.location.origin}${window.location.pathname}?filtro=${item.category}`;
+    async function shareProduct(card) {
+        const title = card.dataset.title;
+        const category = card.dataset.category;
+        const shareUrl = `${window.location.origin}${window.location.pathname}?filtro=${category}`;
         trackEvent('interaction', 'share');
-        const shareData = { title: `DaRafa: ${item.title}`, text: `Olha essa joia: ${item.title}`, url: shareUrl };
+        const shareData = { title: `DaRafa: ${title}`, text: `Olha essa joia: ${title}`, url: shareUrl };
         try { if (navigator.share) await navigator.share(shareData); else { await navigator.clipboard.writeText(shareUrl); showToast('Link copiado! 📋'); } } catch (err) { console.warn('Erro share', err); }
     }
 
@@ -551,26 +540,25 @@ document.addEventListener('DOMContentLoaded', () => {
         const index = wishlist.indexOf(id);
         if (index === -1) {
             wishlist.push(id);
-            if(btnElement) btnElement.classList.add('active');
-            if(btnElement) { btnElement.style.transform = "scale(1.4)"; setTimeout(() => btnElement.style.transform = "scale(1)", 200); }
+            btnElement.classList.add('active');
+            btnElement.style.transform = "scale(1.4)";
+            setTimeout(() => btnElement.style.transform = "scale(1)", 200);
             showToast('Adicionado aos Favoritos ❤️');
             trackEvent('interaction', 'wishlist_add');
         } else {
             wishlist.splice(index, 1);
-            if(btnElement) btnElement.classList.remove('active');
+            btnElement.classList.remove('active');
             showToast('Removido dos Favoritos 💔');
             trackEvent('interaction', 'wishlist_remove');
         }
         localStorage.setItem('darafa_wishlist', JSON.stringify(wishlist));
         
-        // Atualiza a grid se estiver no filtro de favoritos
         const activeFilter = document.querySelector('.filter-btn.active');
         if (activeFilter && activeFilter.dataset.filter === 'favorites') {
             activeData = productsData.filter(item => wishlist.includes(item.id));
             activeData = applySort(activeData);
-            // Re-renderiza a galeria visível
-            const visibleGallery = document.querySelector('.expansion-overlay.active .gallery-5-cols') || document.querySelector('#gallery-door .gallery-5-cols');
-            if(visibleGallery) resetAndRender(visibleGallery);
+            const parentContainer = btnElement.closest('.gallery-5-cols');
+            if(parentContainer) resetAndRender(parentContainer);
         }
     }
 
@@ -599,7 +587,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const body = document.body;
     doors.forEach(door => {
         door.addEventListener('click', function(e) {
-            if(e.target.classList.contains('filter-btn') || e.target.id === 'js-search-input' || e.target.id === 'js-sort-select') return;
+            if(e.target.classList.contains('filter-btn') || e.target.id === 'js-search-input' || e.target.id === 'js-sort-select' || e.target.classList.contains('action-btn')) return;
             e.preventDefault();
             const hiddenContentDiv = this.querySelector('.hidden-content');
             if (hiddenContentDiv) openExpansionModal(hiddenContentDiv.innerHTML);
@@ -655,6 +643,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 favBtn.style.borderColor = '#D00000';
                 modalFilters.appendChild(favBtn);
              }
+             // INJETAR O BOTÃO DE HISTÓRICO TAMBÉM NO MODAL
              if(!modalFilters.querySelector('[data-filter="history"]')) {
                 const histBtn = document.createElement('button');
                 histBtn.className = 'filter-btn';
@@ -688,6 +677,10 @@ document.addEventListener('DOMContentLoaded', () => {
         if(modalGallery) attachCardEvents(modalGallery);
 
         overlay.addEventListener('click', (e) => {
+            const btn = e.target;
+            if (btn.classList.contains('wishlist-btn')) { e.stopPropagation(); toggleWishlist(parseInt(btn.closest('.gold-framebox').dataset.id), btn); return; }
+            if (btn.classList.contains('share-btn')) { e.stopPropagation(); shareProduct(btn.closest('.gold-framebox')); return; }
+
             const card = e.target.closest('.gold-framebox');
             if (card && overlay.contains(card)) {
                 e.stopPropagation();
@@ -714,6 +707,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function openImageViewer(imageSrc, id) {
+        // Salva no histórico ao abrir
         addToHistory(id);
 
         const product = productsData.find(p => p.id == id);
@@ -721,31 +715,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const foundIndex = activeData.findIndex(item => item.id == id);
         if (foundIndex !== -1) currentViewerIndex = foundIndex;
-
-        // Verifica estado do favorito
-        const isFav = wishlist.includes(parseInt(id)) ? 'active' : '';
-
-        // Cria o HTML com o container e os botões sobre a imagem
-        const viewerContent = `
-            <div style="position: relative; display: inline-block;">
-                <img src="${imageSrc}" class="image-viewer-content" style="max-height:90vh; max-width:90%; border:1px solid var(--color-gold-dark); box-shadow: 0 0 30px rgba(0,0,0,0.8);">
-                <div class="viewer-actions">
-                    <button class="viewer-btn share-btn-viewer" aria-label="Compartilhar">➦</button>
-                    <button class="viewer-btn wishlist-btn-viewer ${isFav}" aria-label="Favoritar">♥</button>
-                </div>
-            </div>
-        `;
-
-        createViewerOverlay(viewerContent);
-
-        // Adiciona os eventos aos botões recém-criados
-        setTimeout(() => {
-            const shareBtn = document.querySelector('.share-btn-viewer');
-            const wishBtn = document.querySelector('.wishlist-btn-viewer');
-            
-            if(shareBtn) shareBtn.onclick = (e) => { e.stopPropagation(); shareProductById(id); };
-            if(wishBtn) wishBtn.onclick = (e) => { e.stopPropagation(); toggleWishlist(parseInt(id), wishBtn); };
-        }, 50);
+        createViewerOverlay(`<img src="${imageSrc}" class="image-viewer-content" style="max-height:90vh; max-width:90%; border:1px solid var(--color-gold-dark); box-shadow: 0 0 30px rgba(0,0,0,0.8);">`);
     }
 
     function openStoryMode(imageSrc, title, description) {
@@ -775,10 +745,7 @@ document.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => { if(viewer.parentNode) viewer.parentNode.removeChild(viewer); }, 300);
         };
         viewer.querySelector('.close-viewer').addEventListener('click', closeViewer);
-        viewer.addEventListener('click', (e) => { 
-            // Fecha se clicar fora da imagem E fora dos botões
-            if(e.target === viewer) closeViewer(); 
-        });
+        viewer.addEventListener('click', (e) => { if(e.target === viewer) closeViewer(); });
         const closeViewerOnEsc = (e) => { if (e.key === 'Escape') { closeViewer(); document.removeEventListener('keydown', closeViewerOnEsc); } };
         document.addEventListener('keydown', closeViewerOnEsc);
     }
