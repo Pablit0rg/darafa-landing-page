@@ -72,3 +72,35 @@ Objetivo: Polimento final e funcionalidades de marketing.
 
 ---
 *Ultima atualizacao: 01/12/2025 - Conflito de layout registrado. Versão 2.2 mantida.*
+
+# DaRafa Acessorios - O Dossie Completo do Projeto (MASTER LOG)
+
+**Resumo Executivo:**
+Este documento narra a evolucao completa do desenvolvimento da Landing Page para "DaRafa Acessorios". O projeto encontra-se na Versao 4.0 (Final), com a suite completa de funcionalidades JavaScript implementada (Analytics, SEO, Performance e UX).
+
+---
+
+## 5. Historico de Atualizacoes (CHANGELOG)
+
+### [01/12/2025] - Fase 4.0: Finalização da Lógica JS (Sucesso Total)
+**Status: CONCLUÍDO**
+
+**Novas Funcionalidades (JavaScript):**
+1.  **Analytics Caseiro (v4.0):** Implementado sistema de rastreamento completo (Cliques, Buscas, Filtros) com funcionalidade de **Scroll Spy** (monitora quais seções foram vistas) e **Relatório de Console** (`relatorio()`).
+2.  **Carregamento Adaptativo (v3.6):** Detecção inteligente de rede (2G/Save-Data) que desativa automaticamente animações pesadas para economizar dados do usuário.
+3.  **Exit Intent (v3.5):** Modal de retenção que convida o usuário para o Instagram ao tentar fechar a página.
+4.  **Prefetch Preditivo (v3.4):** Carregamento antecipado de imagens ao passar o mouse, tornando o zoom instantâneo.
+5.  **URL State & Deep Linking (v3.3):** A URL agora reflete o estado da página (filtros e produto aberto), permitindo compartilhamento direto de links.
+
+**Ajustes Visuais e Correções:**
+* Restaurado o visual "Red Chic" em todos os componentes.
+* Limpada a interface dos minicards (botões removidos).
+* Botões de ação movidos para dentro do Visualizador Ampliado (Zoom).
+
+---
+
+## 6. PROXIMOS PASSOS (BACKLOG - APENAS VISUAL)
+O motor do site (JS) está completo. O foco agora é puramente estético.
+
+1.  **REFINAMENTO UI - Cabeçalho do Catálogo:** Estudar nova forma de alinhar Busca e Filtros.
+2.  **REFINAMENTO UI - Botões do Zoom:** Polimento final no design dos botões flutuantes.
