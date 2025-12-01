@@ -610,7 +610,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.addEventListener('keydown', closeOnEsc);
     }
 
-    function openImageViewer(imageSrc, id) {
+function openImageViewer(imageSrc, id) {
         addToHistory(id);
         const product = productsData.find(p => p.id == id);
         if (product) setPageMetadata(product.title, product.description);
@@ -621,13 +621,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const isFav = wishlist.includes(currentViewerId) ? 'active' : '';
 
-        // Cria o Overlay com os botões flutuantes
+        // ATUALIZAÇÃO: Criamos uma div wrapper (embrulho) para conter a imagem e os botões juntos
         createViewerOverlay(`
-            <img src="${imageSrc}" class="image-viewer-content" style="max-height:90vh; max-width:90%; border:1px solid var(--color-gold-dark); box-shadow: 0 0 30px rgba(0,0,0,0.8);">
-            
-            <div class="viewer-actions">
-                <button class="viewer-btn share-btn" aria-label="Compartilhar">➦</button>
-                <button class="viewer-btn fav-btn ${isFav}" aria-label="Favoritar">♥</button>
+            <div class="viewer-image-wrapper" style="position: relative; display: inline-block; max-height:90vh; max-width:90%;">
+                <img src="${imageSrc}" class="image-viewer-content" style="width:100%; height:auto; display:block; border:1px solid var(--color-gold-dark); box-shadow: 0 0 30px rgba(0,0,0,0.8);">
+                
+                <div class="viewer-actions">
+                    <button class="viewer-btn share-btn" aria-label="Compartilhar">➦</button>
+                    <button class="viewer-btn fav-btn ${isFav}" aria-label="Favoritar">♥</button>
+                </div>
             </div>
         `);
     }
