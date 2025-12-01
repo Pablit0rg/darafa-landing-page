@@ -1,7 +1,8 @@
 /**
- * DaRafa Acessórios - Main Script (Versão FASE 3.4 - Prefetch & Performance)
- * * FEATURE: Pre-carregamento Preditivo (Prefetch) ao passar o mouse.
- * * CLEANUP: Estilos visuais movidos para o CSS para evitar conflitos.
+ * DaRafa Acessórios - Main Script (Versão FASE 3.5 - Exit Intent)
+ * * FEATURE: Exit Intent Modal (Detecta saída e convida para o Instagram).
+ * * PERFORMANCE: Prefetch de imagens mantido.
+ * * UX: URL State e Deep Linking mantidos.
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -128,7 +129,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // =========================================================
-    // 3. INICIALIZAÇÃO GERAL & INFINITE SCROLL
+    // 3. INICIALIZAÇÃO GERAL
     // =========================================================
     const galleryContainer = document.querySelector('#gallery-door .gallery-5-cols');
     
@@ -159,6 +160,7 @@ document.addEventListener('DOMContentLoaded', () => {
         initCatalog();
         initFilters();
         initControls(); 
+        initExitIntent(); // Inicia o detector de saída
         injectDynamicStyles(); 
         setTimeout(loadStateFromURL, 100); 
         initKeyboardNavigation();
@@ -167,7 +169,59 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('popstate', loadStateFromURL);
 
     // =========================================================
-    // 4. LÓGICA DE URL STATE & HISTORY
+    // 4. EXIT INTENT (NOVO)
+    // =========================================================
+    function initExitIntent() {
+        // Usa SessionStorage para mostrar apenas uma vez por aba/sessão
+        if (sessionStorage.getItem('darafa_exit_shown')) return;
+
+        document.addEventListener('mouseleave', (e) => {
+            // Se o mouse sair pelo topo (clientY < 10)
+            if (e.clientY < 10 && !sessionStorage.getItem('darafa_exit_shown')) {
+                showExitModal();
+                sessionStorage.setItem('darafa_exit_shown', 'true');
+                trackEvent('interaction', 'exit_intent_shown');
+            }
+        });
+    }
+
+    function showExitModal() {
+        const overlay = document.createElement('div');
+        overlay.className = 'exit-overlay';
+        overlay.innerHTML = `
+            <div class="exit-modal">
+                <button class="close-exit">&times;</button>
+                <div class="exit-content">
+                    <h3>Espere! ✨</h3>
+                    <p>Não vá embora sem conferir nossos lançamentos exclusivos no Instagram.</p>
+                    <a href="https://www.instagram.com/darafa_cwb/" target="_blank" class="exit-btn">Seguir @darafa_cwb</a>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(overlay);
+        
+        // Animação de entrada
+        requestAnimationFrame(() => overlay.classList.add('active'));
+
+        // Eventos
+        const closeBtn = overlay.querySelector('.close-exit');
+        const actionBtn = overlay.querySelector('.exit-btn');
+        
+        const close = () => {
+            overlay.classList.remove('active');
+            setTimeout(() => overlay.remove(), 400);
+        };
+
+        closeBtn.addEventListener('click', close);
+        overlay.addEventListener('click', (e) => { if(e.target === overlay) close(); });
+        actionBtn.addEventListener('click', () => {
+            trackEvent('interaction', 'exit_intent_clicked');
+            close();
+        });
+    }
+
+    // =========================================================
+    // 5. LÓGICA DE URL STATE & HISTORY
     // =========================================================
     function addToHistory(id) {
         recentHistory = recentHistory.filter(itemId => itemId !== id);
@@ -217,7 +271,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // =========================================================
-    // 5. RENDERIZAÇÃO DO CATÁLOGO
+    // 6. RENDERIZAÇÃO DO CATÁLOGO
     // =========================================================
     async function initCatalog() {
         if (INSTAGRAM_TOKEN) { try { await fetchInstagramPosts(); } catch (error) { activeData = [...productsData]; resetAndRender(); } } 
@@ -265,41 +319,29 @@ document.addEventListener('DOMContentLoaded', () => {
         } else { if(scrollSentinel) { infiniteScrollObserver.unobserve(scrollSentinel); scrollSentinel.remove(); scrollSentinel = null; } }
     }
 
-    // --- A MÁGICA DO PREFETCH ESTÁ AQUI ---
+    // --- PREFETCH (Pre-carregamento) ---
     function attachObserversAndPreload(container) {
         const images = container.querySelectorAll('.lazy-image:not(.observed)');
         images.forEach(img => { globalImageObserver.observe(img); img.classList.add('observed'); });
         
         const cards = container.querySelectorAll('.gold-framebox');
         cards.forEach(card => {
-            // Evento MouseEnter: Dispara quando o mouse ENTRA no card
             card.addEventListener('mouseenter', () => { 
                 const img = card.querySelector('img'); 
-                // Pega o link da imagem grande
                 const src = img.dataset.src || img.src; 
-                // Cria um objeto de imagem invisível para forçar o navegador a baixar
                 const preload = new Image(); 
                 preload.src = src; 
-                // O navegador guarda em cache, e quando clicar, abre instantâneo!
-            }, { once: true }); // Executa apenas uma vez por card para economizar memória
+            }, { once: true }); 
         });
     }
 
     // =========================================================
-    // 6. ESTILOS, TOAST & CONTROLES
+    // 7. ESTILOS, TOAST & CONTROLES
     // =========================================================
     function injectDynamicStyles() {
         const style = document.createElement('style');
         style.innerHTML = `
-            /* Wrapper Seguro Centralizado (Revertido para evitar quebras) */
-            .controls-wrapper { 
-                width: 100%; 
-                display: flex; 
-                justify-content: center; /* Centralizado = Seguro */
-                gap: 15px; 
-                margin-bottom: 20px; 
-                flex-wrap: wrap; 
-            }
+            .controls-wrapper { width: 100%; display: flex; justify-content: center; gap: 15px; margin-bottom: 20px; flex-wrap: wrap; }
             #js-search-input { padding: 12px 25px; width: 100%; max-width: 300px; border-radius: 50px; border: 2px solid #241000; background: rgba(255,255,255,0.9); color: #241000; font-size: 1rem; outline: none; box-shadow: 0 4px 10px rgba(36,16,0,0.1); transition: all 0.3s ease; }
             #js-sort-select { padding: 12px 20px; border-radius: 50px; border: 2px solid #241000; background: #241000; color: #FDB90C; font-size: 0.9rem; font-weight: 600; cursor: pointer; outline: none; appearance: none; -webkit-appearance: none; text-align: center; box-shadow: 0 4px 10px rgba(36,16,0,0.2); }
             #js-sort-select:hover { background: #3a1a00; }
@@ -314,7 +356,41 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             .toast-notification.show { transform: translateX(-50%) translateY(0); opacity: 1; }
             
-            /* Removemos os estilos de .viewer-actions daqui pois agora estão no CSS principal */
+            /* EXIT INTENT MODAL */
+            .exit-overlay {
+                position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+                background: rgba(36, 16, 0, 0.9); z-index: 6000;
+                display: flex; justify-content: center; align-items: center;
+                opacity: 0; visibility: hidden; transition: all 0.4s ease;
+                backdrop-filter: blur(5px);
+            }
+            .exit-overlay.active { opacity: 1; visibility: visible; }
+            
+            .exit-modal {
+                background: #241000; border: 1px solid #D00000;
+                padding: 40px; border-radius: 10px; text-align: center;
+                position: relative; max-width: 400px; width: 90%;
+                box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+                transform: translateY(20px); transition: transform 0.4s ease;
+            }
+            .exit-overlay.active .exit-modal { transform: translateY(0); }
+            
+            .exit-modal h3 { color: #FDB90C; font-family: 'Playfair Display', serif; font-size: 2rem; margin-bottom: 10px; }
+            .exit-modal p { color: #e0d0a0; font-family: 'Poppins', sans-serif; margin-bottom: 25px; line-height: 1.6; }
+            
+            .exit-btn {
+                background: #D00000; color: #fff; text-decoration: none;
+                padding: 12px 30px; border-radius: 50px; font-weight: 600;
+                display: inline-block; transition: transform 0.2s;
+                text-transform: uppercase; font-size: 0.9rem; letter-spacing: 1px;
+            }
+            .exit-btn:hover { transform: scale(1.05); background: #ff2a00; }
+            
+            .close-exit {
+                position: absolute; top: 10px; right: 15px;
+                background: none; border: none; color: #FDB90C;
+                font-size: 1.5rem; cursor: pointer;
+            }
         `;
         document.head.appendChild(style);
     }
@@ -330,10 +406,10 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 400); }, 3000);
     }
 
-    function attachCardEvents(container) { } // Sem botões nos minicards
+    function attachCardEvents(container) { } 
 
     function initFilters() {
-        const injectButtons = (container) => { }; // Sem injeção de botões extras
+        const injectButtons = (container) => { }; 
         const filterContainers = document.querySelectorAll('.catalog-filters');
         
         document.body.addEventListener('click', (e) => {
@@ -372,7 +448,7 @@ document.addEventListener('DOMContentLoaded', () => {
         sortSelect.innerHTML = `<option value="default">✨ Relevância</option><option value="az">A - Z</option><option value="za">Z - A</option><option value="random">🎲 Aleatório</option>`;
         controlsWrapper.appendChild(input);
         controlsWrapper.appendChild(sortSelect);
-        filterContainer.prepend(controlsWrapper); // Volta a ser em cima (Prepend) para segurança
+        filterContainer.prepend(controlsWrapper); 
         
         const updateGridData = () => {
             const term = input.value.toLowerCase();
@@ -475,7 +551,7 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem('darafa_wishlist', JSON.stringify(wishlist));
     }
 
-    // --- MODALS ---
+    // --- MODALS (Viewer e Story) ---
     function throttle(func, limit) {
         let inThrottle;
         return function() {
