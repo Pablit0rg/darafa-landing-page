@@ -414,7 +414,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function injectDynamicStyles() {
         const style = document.createElement('style');
         style.innerHTML = `
-            .controls-wrapper { width: 100%; display: flex; justify-content: center; gap: 15px; margin-bottom: 20px; flex-wrap: wrap; }
+            .controls-wrapper { width: 100%; display: flex; justify-content: center; gap: 15px; margin-bottom: 5px; flex-wrap: wrap; }
             #js-search-input { padding: 12px 25px; width: 100%; max-width: 300px; border-radius: 50px; border: 2px solid #241000; background: rgba(255,255,255,0.9); color: #241000; font-size: 1rem; outline: none; box-shadow: 0 4px 10px rgba(36,16,0,0.1); transition: all 0.3s ease; }
             #js-sort-select { padding: 12px 20px; border-radius: 50px; border: 2px solid #241000; background: #241000; color: #FDB90C; font-size: 0.9rem; font-weight: 600; cursor: pointer; outline: none; appearance: none; -webkit-appearance: none; text-align: center; box-shadow: 0 4px 10px rgba(36,16,0,0.2); }
             #js-sort-select:hover { background: #3a1a00; }
