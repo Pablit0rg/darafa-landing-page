@@ -1,8 +1,7 @@
 /**
- * DaRafa Acessórios - Main Script (Versão FASE 3.6 - Adaptive Loading)
- * * FEATURE: Detecta conexão lenta (2G/Save-Data) e desativa o Prefetch para economizar dados.
- * * UX: Feedback visual "Modo Econômico" se necessário.
- * * MANTIDO: Exit Intent, URL State, Deep Linking, Infinite Scroll.
+ * DaRafa Acessórios - Main Script (Versão FINAL 4.0 - Master)
+ * * FEATURE: Analytics Caseiro Completo (Scroll Spy + Relatório de Console).
+ * * INCLUSO: Todas as features anteriores (Adaptive, Exit Intent, URL State, Prefetch).
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -17,12 +16,16 @@ document.addEventListener('DOMContentLoaded', () => {
     // Estados Persistentes
     let wishlist = JSON.parse(localStorage.getItem('darafa_wishlist')) || [];
     let recentHistory = JSON.parse(localStorage.getItem('darafa_history')) || [];
-    
-    // Estado de Conexão (Novo)
     let isLowEndConnection = false;
     
+    // Analytics Profundo
     let analyticsData = JSON.parse(localStorage.getItem('darafa_analytics')) || {
-        views: 0, searches: {}, categoryClicks: {}, productClicks: {}, interactions: { wishlist: 0, share: 0 }
+        views: 0, 
+        searches: {}, 
+        categoryClicks: {}, 
+        productClicks: {}, 
+        interactions: { wishlist: 0, share: 0, exit_shown: 0, exit_clicked: 0 },
+        sectionsViewed: { hero: 0, catalogo: 0, atelier: 0, artista: 0 }
     };
     
     let currentSort = 'default';
@@ -35,16 +38,51 @@ document.addEventListener('DOMContentLoaded', () => {
     let originalTitle = document.title;
     let originalDesc = document.querySelector('meta[name="description"]')?.getAttribute('content') || '';
 
-    // --- ANALYTICS ---
+    // --- FUNÇÕES DE ANALYTICS ---
     function trackEvent(type, label) {
         if (type === 'view') analyticsData.views++;
         if (type === 'search' && label) analyticsData.searches[label] = (analyticsData.searches[label] || 0) + 1;
         if (type === 'filter') analyticsData.categoryClicks[label] = (analyticsData.categoryClicks[label] || 0) + 1;
         if (type === 'product_click') analyticsData.productClicks[label] = (analyticsData.productClicks[label] || 0) + 1;
-        if (type === 'interaction') analyticsData.interactions[label]++;
+        if (type === 'interaction') {
+            if (label.includes('exit')) {
+                if(label === 'exit_intent_shown') analyticsData.interactions.exit_shown++;
+                if(label === 'exit_intent_clicked') analyticsData.interactions.exit_clicked++;
+            } else {
+                analyticsData.interactions[label] = (analyticsData.interactions[label] || 0) + 1;
+            }
+        }
+        if (type === 'section') analyticsData.sectionsViewed[label] = (analyticsData.sectionsViewed[label] || 0) + 1;
+        
+        saveAnalytics();
+    }
+
+    function saveAnalytics() {
         localStorage.setItem('darafa_analytics', JSON.stringify(analyticsData));
     }
-    window.showAnalytics = () => { console.table(analyticsData.categoryClicks); return analyticsData; };
+
+    // Comando Secreto Global para o Console
+    window.relatorio = () => {
+        console.group('%c📊 RELATÓRIO DARAFA', 'color: #FDB90C; font-size: 20px; background: #241000; padding: 10px; border-radius: 5px;');
+        console.log(`👁️ Visitas Totais: ${analyticsData.views}`);
+        console.log('🔥 Interações:', analyticsData.interactions);
+        
+        console.group('🏆 Top 5 Produtos');
+        const sortedProducts = Object.entries(analyticsData.productClicks).sort((a,b) => b[1] - a[1]).slice(0,5);
+        console.table(sortedProducts);
+        console.groupEnd();
+
+        console.group('📂 Categorias Mais Buscadas');
+        console.table(analyticsData.categoryClicks);
+        console.groupEnd();
+
+        console.group('📍 Mapa de Calor (Seções)');
+        console.table(analyticsData.sectionsViewed);
+        console.groupEnd();
+        
+        console.groupEnd();
+        return "Dados carregados com sucesso!";
+    };
     trackEvent('view');
 
     // --- DADOS DOS PRODUTOS ---
@@ -75,10 +113,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // 1. PERFORMANCE & SEO
     // =========================================================
     function checkConnection() {
-        // API Network Information (Suportada no Chrome/Android)
         if ('connection' in navigator) {
             const conn = navigator.connection;
-            // Se estiver em modo "Economia de Dados" ou conexão lenta (2g)
             if (conn.saveData || conn.effectiveType.includes('2g')) {
                 isLowEndConnection = true;
                 console.log('DaRafa: Modo Econômico Ativado 🍃');
@@ -149,7 +185,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // =========================================================
     const galleryContainer = document.querySelector('#gallery-door .gallery-5-cols');
     
-    // Observer de Lazy Load (Sempre ativo para imagens visíveis)
+    // Observer de Lazy Load
     const globalImageObserver = new IntersectionObserver((entries, observer) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
@@ -161,6 +197,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }, { rootMargin: "200px 0px", threshold: 0.01 });
 
+    // Observer de Scroll Infinito
     const infiniteScrollObserver = new IntersectionObserver((entries) => {
         if (entries[0].isIntersecting) {
             const sentinel = entries[0].target;
@@ -169,8 +206,22 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }, { rootMargin: "200px" });
 
+    // Observer de Seções (Analytics Scroll Spy)
+    const sectionObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting && entry.intersectionRatio > 0.5) {
+                const sectionId = entry.target.id;
+                // Mapeia IDs para nomes amigáveis
+                const sectionName = sectionId === 'gallery-section' ? 'catalogo' : 
+                                    sectionId === 'about-section' ? 'atelier' : 
+                                    sectionId === 'artist-section' ? 'artista' : 'hero';
+                trackEvent('section', sectionName);
+            }
+        });
+    }, { threshold: 0.5 });
+
     if (galleryContainer) {
-        checkConnection(); // Verifica a velocidade da internet
+        checkConnection(); 
         initSEO();
         initOfflineMode();
         initCatalog();
@@ -179,7 +230,9 @@ document.addEventListener('DOMContentLoaded', () => {
         initExitIntent();
         injectDynamicStyles(); 
         
-        // Se a internet for lenta, avisa o usuário
+        // Ativa o Scroll Spy nas seções principais
+        document.querySelectorAll('section, header').forEach(sec => sectionObserver.observe(sec));
+
         if(isLowEndConnection) {
             setTimeout(() => showToast('Modo Econômico ativado 🍃'), 2000);
         }
@@ -195,7 +248,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // =========================================================
     function initExitIntent() {
         if (sessionStorage.getItem('darafa_exit_shown')) return;
-        // Não incomodar usuários com internet lenta com modais pesados de saída
         if (isLowEndConnection) return; 
 
         document.addEventListener('mouseleave', (e) => {
@@ -240,7 +292,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // =========================================================
-    // 5. LÓGICA DE URL STATE
+    // 5. LÓGICA DE URL STATE & HISTORY
     // =========================================================
     function addToHistory(id) {
         recentHistory = recentHistory.filter(itemId => itemId !== id);
@@ -343,7 +395,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const images = container.querySelectorAll('.lazy-image:not(.observed)');
         images.forEach(img => { globalImageObserver.observe(img); img.classList.add('observed'); });
         
-        // Lógica Adaptativa: Só ativa o prefetch se a conexão for BOA
         if (!isLowEndConnection) {
             const cards = container.querySelectorAll('.gold-framebox');
             cards.forEach(card => {
@@ -573,7 +624,7 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem('darafa_wishlist', JSON.stringify(wishlist));
     }
 
-    // --- MODAIS & PORTAIS ---
+    // --- MODALS (Viewer e Story) ---
     function throttle(func, limit) {
         let inThrottle;
         return function() {
