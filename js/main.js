@@ -1,14 +1,13 @@
 /**
- * DaRafa Acessórios - Main Script (Versão FASE 4.1 - COMPLETO)
- * * SEM ABREVIAÇÕES: Todo o código funcional está aqui.
- * * LAYOUT: Busca alinhada à direita (space-between).
- * * FEATURES: Analytics, Exit Intent, Prefetch, URL State, PWA.
+ * DaRafa Acessórios - Main Script (Versão FINAL 4.0 - Master)
+ * * FEATURE: Analytics Caseiro Completo (Scroll Spy + Relatório de Console).
+ * * INCLUSO: Todas as features anteriores (Adaptive, Exit Intent, URL State, Prefetch).
  */
 
 document.addEventListener('DOMContentLoaded', () => {
 
     // =========================================================
-    // 0. DADOS & VARIÁVEIS DE ESTADO
+    // 0. DADOS, CONFIGURAÇÕES & ANALYTICS
     // =========================================================
     const INSTAGRAM_TOKEN = ''; 
     const POSTS_LIMIT = 50; 
@@ -21,7 +20,10 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Analytics Profundo
     let analyticsData = JSON.parse(localStorage.getItem('darafa_analytics')) || {
-        views: 0, searches: {}, categoryClicks: {}, productClicks: {}, 
+        views: 0, 
+        searches: {}, 
+        categoryClicks: {}, 
+        productClicks: {}, 
         interactions: { wishlist: 0, share: 0, exit_shown: 0, exit_clicked: 0 },
         sectionsViewed: { hero: 0, catalogo: 0, atelier: 0, artista: 0 }
     };
@@ -52,21 +54,36 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         if (type === 'section') analyticsData.sectionsViewed[label] = (analyticsData.sectionsViewed[label] || 0) + 1;
         
+        saveAnalytics();
+    }
+
+    function saveAnalytics() {
         localStorage.setItem('darafa_analytics', JSON.stringify(analyticsData));
     }
-    trackEvent('view');
 
-    // Relatório no Console
+    // Comando Secreto Global para o Console
     window.relatorio = () => {
         console.group('%c📊 RELATÓRIO DARAFA', 'color: #FDB90C; font-size: 20px; background: #241000; padding: 10px; border-radius: 5px;');
         console.log(`👁️ Visitas Totais: ${analyticsData.views}`);
-        console.table(analyticsData.interactions);
-        console.group('🏆 Top Produtos');
-        console.table(analyticsData.productClicks);
+        console.log('🔥 Interações:', analyticsData.interactions);
+        
+        console.group('🏆 Top 5 Produtos');
+        const sortedProducts = Object.entries(analyticsData.productClicks).sort((a,b) => b[1] - a[1]).slice(0,5);
+        console.table(sortedProducts);
         console.groupEnd();
+
+        console.group('📂 Categorias Mais Buscadas');
+        console.table(analyticsData.categoryClicks);
         console.groupEnd();
-        return "Relatório gerado.";
+
+        console.group('📍 Mapa de Calor (Seções)');
+        console.table(analyticsData.sectionsViewed);
+        console.groupEnd();
+        
+        console.groupEnd();
+        return "Dados carregados com sucesso!";
     };
+    trackEvent('view');
 
     // --- DADOS DOS PRODUTOS ---
     const productsData = [
@@ -93,7 +110,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // =========================================================
-    // 1. PERFORMANCE & SEO (CÓDIGO COMPLETO)
+    // 1. PERFORMANCE & SEO
     // =========================================================
     function checkConnection() {
         if ('connection' in navigator) {
@@ -168,6 +185,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // =========================================================
     const galleryContainer = document.querySelector('#gallery-door .gallery-5-cols');
     
+    // Observer de Lazy Load
     const globalImageObserver = new IntersectionObserver((entries, observer) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
@@ -179,6 +197,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }, { rootMargin: "200px 0px", threshold: 0.01 });
 
+    // Observer de Scroll Infinito
     const infiniteScrollObserver = new IntersectionObserver((entries) => {
         if (entries[0].isIntersecting) {
             const sentinel = entries[0].target;
@@ -187,11 +206,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }, { rootMargin: "200px" });
 
-    // Scroll Spy Observer
+    // Observer de Seções (Analytics Scroll Spy)
     const sectionObserver = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting && entry.intersectionRatio > 0.5) {
                 const sectionId = entry.target.id;
+                // Mapeia IDs para nomes amigáveis
                 const sectionName = sectionId === 'gallery-section' ? 'catalogo' : 
                                     sectionId === 'about-section' ? 'atelier' : 
                                     sectionId === 'artist-section' ? 'artista' : 'hero';
@@ -201,7 +221,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }, { threshold: 0.5 });
 
     if (galleryContainer) {
-        checkConnection();
+        checkConnection(); 
         initSEO();
         initOfflineMode();
         initCatalog();
@@ -210,6 +230,7 @@ document.addEventListener('DOMContentLoaded', () => {
         initExitIntent();
         injectDynamicStyles(); 
         
+        // Ativa o Scroll Spy nas seções principais
         document.querySelectorAll('section, header').forEach(sec => sectionObserver.observe(sec));
 
         if(isLowEndConnection) {
@@ -223,7 +244,7 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('popstate', loadStateFromURL);
 
     // =========================================================
-    // 4. EXIT INTENT (MODAL DE SAÍDA)
+    // 4. EXIT INTENT
     // =========================================================
     function initExitIntent() {
         if (sessionStorage.getItem('darafa_exit_shown')) return;
@@ -271,7 +292,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // =========================================================
-    // 5. URL STATE & HISTORY
+    // 5. LÓGICA DE URL STATE & HISTORY
     // =========================================================
     function addToHistory(id) {
         recentHistory = recentHistory.filter(itemId => itemId !== id);
@@ -321,7 +342,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // =========================================================
-    // 6. RENDERIZAÇÃO
+    // 6. RENDERIZAÇÃO DO CATÁLOGO
     // =========================================================
     async function initCatalog() {
         if (INSTAGRAM_TOKEN) { try { await fetchInstagramPosts(); } catch (error) { activeData = [...productsData]; resetAndRender(); } } 
@@ -369,11 +390,11 @@ document.addEventListener('DOMContentLoaded', () => {
         } else { if(scrollSentinel) { infiniteScrollObserver.unobserve(scrollSentinel); scrollSentinel.remove(); scrollSentinel = null; } }
     }
 
+    // --- PREFETCH ADAPTATIVO ---
     function attachObserversAndPreload(container) {
         const images = container.querySelectorAll('.lazy-image:not(.observed)');
         images.forEach(img => { globalImageObserver.observe(img); img.classList.add('observed'); });
         
-        // Prefetch apenas se a conexão for boa
         if (!isLowEndConnection) {
             const cards = container.querySelectorAll('.gold-framebox');
             cards.forEach(card => {
@@ -388,26 +409,16 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // =========================================================
-    // 7. CONTROLES & LAYOUT (AJUSTE FINAL)
+    // 7. ESTILOS & CONTROLES
     // =========================================================
     function injectDynamicStyles() {
         const style = document.createElement('style');
         style.innerHTML = `
-            /* LAYOUT: Categorias Esq / Busca Dir */
-            .catalog-filters {
-                display: flex !important;
-                justify-content: space-between !important;
-                align-items: center !important;
-                flex-wrap: wrap !important;
-            }
-            .controls-wrapper { 
-                display: flex; 
-                gap: 10px; 
-            }
-            #js-search-input { padding: 8px 20px; width: 220px; border-radius: 50px; border: 2px solid #241000; background: rgba(255,255,255,0.9); outline: none; }
-            #js-sort-select { padding: 8px 15px; border-radius: 50px; border: 2px solid #241000; background: #241000; color: #FDB90C; font-weight: 600; cursor: pointer; }
+            .controls-wrapper { width: 100%; display: flex; justify-content: center; gap: 15px; margin-bottom: 20px; flex-wrap: wrap; }
+            #js-search-input { padding: 12px 25px; width: 100%; max-width: 300px; border-radius: 50px; border: 2px solid #241000; background: rgba(255,255,255,0.9); color: #241000; font-size: 1rem; outline: none; box-shadow: 0 4px 10px rgba(36,16,0,0.1); transition: all 0.3s ease; }
+            #js-sort-select { padding: 12px 20px; border-radius: 50px; border: 2px solid #241000; background: #241000; color: #FDB90C; font-size: 0.9rem; font-weight: 600; cursor: pointer; outline: none; appearance: none; -webkit-appearance: none; text-align: center; box-shadow: 0 4px 10px rgba(36,16,0,0.2); }
+            #js-sort-select:hover { background: #3a1a00; }
             
-            /* TOAST */
             .toast-notification {
                 position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px);
                 background-color: #241000; color: #FDB90C; padding: 12px 24px;
@@ -418,7 +429,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             .toast-notification.show { transform: translateX(-50%) translateY(0); opacity: 1; }
             
-            /* EXIT MODAL */
+            /* EXIT INTENT MODAL */
             .exit-overlay {
                 position: fixed; top: 0; left: 0; width: 100%; height: 100%;
                 background: rgba(36, 16, 0, 0.9); z-index: 6000;
@@ -427,6 +438,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 backdrop-filter: blur(5px);
             }
             .exit-overlay.active { opacity: 1; visibility: visible; }
+            
             .exit-modal {
                 background: #241000; border: 1px solid #D00000;
                 padding: 40px; border-radius: 10px; text-align: center;
@@ -435,24 +447,22 @@ document.addEventListener('DOMContentLoaded', () => {
                 transform: translateY(20px); transition: transform 0.4s ease;
             }
             .exit-overlay.active .exit-modal { transform: translateY(0); }
+            
             .exit-modal h3 { color: #FDB90C; font-family: 'Playfair Display', serif; font-size: 2rem; margin-bottom: 10px; }
             .exit-modal p { color: #e0d0a0; font-family: 'Poppins', sans-serif; margin-bottom: 25px; line-height: 1.6; }
+            
             .exit-btn {
                 background: #D00000; color: #fff; text-decoration: none;
                 padding: 12px 30px; border-radius: 50px; font-weight: 600;
                 display: inline-block; transition: transform 0.2s;
                 text-transform: uppercase; font-size: 0.9rem; letter-spacing: 1px;
             }
+            .exit-btn:hover { transform: scale(1.05); background: #ff2a00; }
+            
             .close-exit {
                 position: absolute; top: 10px; right: 15px;
                 background: none; border: none; color: #FDB90C;
                 font-size: 1.5rem; cursor: pointer;
-            }
-
-            @media (max-width: 768px) {
-                .catalog-filters { flex-direction: column; align-items: stretch !important; }
-                .controls-wrapper { justify-content: space-between; }
-                #js-search-input { width: 100%; }
             }
         `;
         document.head.appendChild(style);
@@ -469,30 +479,20 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 400); }, 3000);
     }
 
-    function attachCardEvents(container) {
-        container.addEventListener('click', (e) => {
-            // Apenas clique no card para abrir o Viewer (botões removidos)
-            const card = e.target.closest('.gold-framebox');
-            if (card) {
-                trackEvent('product_click', card.dataset.title);
-                const img = card.querySelector('img');
-                openImageViewer(img.dataset.src || img.src, card.dataset.id);
-            }
-        });
-    }
+    function attachCardEvents(container) { } 
 
     function initFilters() {
-        // [MODIFICADO] Botões de Favoritos e Vistos removidos da injeção
+        const injectButtons = (container) => { }; 
+        const filterContainers = document.querySelectorAll('.catalog-filters');
+        
         document.body.addEventListener('click', (e) => {
             if (e.target.classList.contains('filter-btn')) {
                 const button = e.target;
                 const filterValue = button.dataset.filter;
                 updateURL('filtro', filterValue);
                 trackEvent('filter', filterValue);
-                
                 const searchInput = document.getElementById('js-search-input');
                 if (searchInput) searchInput.value = '';
-                
                 const container = button.closest('.catalog-filters');
                 if(container) { container.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active')); button.classList.add('active'); }
                 
@@ -510,34 +510,27 @@ document.addEventListener('DOMContentLoaded', () => {
     function initControls() {
         const filterContainer = document.querySelector('.catalog-filters');
         if (!filterContainer) return;
-        
         const controlsWrapper = document.createElement('div');
         controlsWrapper.className = 'controls-wrapper';
-        
         const input = document.createElement('input');
         input.type = 'text'; input.id = 'js-search-input'; input.placeholder = 'Buscar joia...';
         input.addEventListener('focus', () => input.style.borderColor = '#CD4A00');
         input.addEventListener('blur', () => input.style.borderColor = '#241000');
-        
         const sortSelect = document.createElement('select');
         sortSelect.id = 'js-sort-select';
         sortSelect.innerHTML = `<option value="default">✨ Relevância</option><option value="az">A - Z</option><option value="za">Z - A</option><option value="random">🎲 Aleatório</option>`;
-        
         controlsWrapper.appendChild(input);
         controlsWrapper.appendChild(sortSelect);
-        
-        // [LAYOUT FIX] appendChild coloca no final (Direita)
-        filterContainer.appendChild(controlsWrapper);
+        filterContainer.prepend(controlsWrapper); 
         
         const updateGridData = () => {
             const term = input.value.toLowerCase();
             const activeFilterBtn = document.querySelector('.filter-btn.active');
             const filterValue = activeFilterBtn ? activeFilterBtn.dataset.filter : 'all';
             let filtered = productsData;
-            
             if (filterValue !== 'all') filtered = productsData.filter(item => item.category === filterValue);
             if (term) {
-                trackEvent('search', term);
+                if(term.length > 3) trackEvent('search', term);
                 filtered = filtered.filter(item => item.title.toLowerCase().includes(term) || item.description.toLowerCase().includes(term) || item.category.toLowerCase().includes(term));
             }
             filtered = applySort(filtered);
@@ -546,7 +539,11 @@ document.addEventListener('DOMContentLoaded', () => {
             const targetGallery = parentModal ? parentModal.querySelector('.gallery-5-cols') : galleryContainer;
             resetAndRender(targetGallery);
         };
-        input.addEventListener('input', updateGridData);
+        input.addEventListener('input', (e) => {
+            if(this.searchTimeout) clearTimeout(this.searchTimeout);
+            this.searchTimeout = setTimeout(() => { updateURL('busca', e.target.value.length > 0 ? e.target.value : null); }, 500);
+            updateGridData();
+        });
         sortSelect.addEventListener('change', (e) => { currentSort = e.target.value; updateGridData(); });
     }
 
@@ -567,6 +564,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (e.key === 'ArrowRight') navigateViewer(1);
                 if (e.key === 'ArrowLeft') navigateViewer(-1);
                 return;
+            }
+            if (e.key === 'Enter' && document.activeElement.classList.contains('gold-framebox')) {
+                const card = document.activeElement;
+                const img = card.querySelector('img');
+                if (img) { trackEvent('product_click', card.dataset.title); openImageViewer(img.dataset.src || img.src, card.dataset.id); }
             }
         });
     }
@@ -597,7 +599,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // --- AÇÕES DO VIEWER ---
     function shareProductById(id) {
         const product = productsData.find(p => p.id == id);
         if(!product) return;
@@ -623,7 +624,124 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem('darafa_wishlist', JSON.stringify(wishlist));
     }
 
-    // --- MODAIS ---
+    // --- MODALS (Viewer e Story) ---
+    function throttle(func, limit) {
+        let inThrottle;
+        return function() {
+            const args = arguments;
+            const context = this;
+            if (!inThrottle) { func.apply(context, args); inThrottle = true; setTimeout(() => inThrottle = false, limit); }
+        }
+    }
+
+    const backToTopBtn = document.getElementById('backToTop');
+    if(backToTopBtn) window.addEventListener('scroll', throttle(() => { if (window.scrollY > 300) backToTopBtn.classList.add('visible'); else backToTopBtn.classList.remove('visible'); }, 100), { passive: true });
+
+    const navbarToggler = document.getElementById('navbar-toggler');
+    const navbarMenu = document.getElementById('navbar-menu');
+    const navLinks = document.querySelectorAll('.navbar-link');
+    function toggleMenu() { if(navbarMenu && navbarToggler) { navbarMenu.classList.toggle('active'); navbarToggler.classList.toggle('is-active'); } }
+    if(navbarToggler) navbarToggler.addEventListener('click', (e) => { e.stopPropagation(); toggleMenu(); });
+    navLinks.forEach(link => link.addEventListener('click', () => { if (navbarMenu.classList.contains('active')) toggleMenu(); }));
+    document.addEventListener('click', (e) => { if (navbarMenu && navbarMenu.classList.contains('active') && !navbarMenu.contains(e.target) && !navbarToggler.contains(e.target)) toggleMenu(); });
+
+    const doors = document.querySelectorAll('.big-card-wrapper:not(.no-expand)');
+    const body = document.body;
+    doors.forEach(door => {
+        door.addEventListener('click', function(e) {
+            if(e.target.classList.contains('filter-btn') || e.target.id === 'js-search-input' || e.target.id === 'js-sort-select' || e.target.classList.contains('action-btn')) return;
+            e.preventDefault();
+            const hiddenContentDiv = this.querySelector('.hidden-content');
+            if (hiddenContentDiv) openExpansionModal(hiddenContentDiv.innerHTML);
+        });
+    });
+
+    function openExpansionModal(contentHTML) {
+        const overlay = document.createElement('div');
+        overlay.className = 'expansion-overlay';
+        overlay.innerHTML = `<button class="close-expansion">&times;</button><div class="expansion-content">${contentHTML}</div>`;
+        body.appendChild(overlay);
+        body.style.overflow = 'hidden'; 
+        requestAnimationFrame(() => { overlay.classList.add('active'); });
+
+        let touchStartY = 0; let touchEndY = 0;
+        overlay.addEventListener('touchstart', e => { touchStartY = e.changedTouches[0].screenY; }, {passive: true});
+        overlay.addEventListener('touchend', e => { touchEndY = e.changedTouches[0].screenY; if (touchEndY - touchStartY > 60) close(); }, {passive: true});
+
+        const oldControls = overlay.querySelector('.controls-wrapper');
+        if(oldControls) oldControls.remove();
+        
+        const modalFilters = overlay.querySelector('.catalog-filters');
+        if(modalFilters) {
+             const controlsWrapper = document.createElement('div');
+             controlsWrapper.className = 'controls-wrapper';
+             const input = document.createElement('input');
+             input.placeholder = 'Buscar joia...';
+             input.style.cssText = "padding:12px 25px; width:100%; max-width:300px; border-radius:50px; border:2px solid #241000; background:rgba(255,255,255,0.9); color:#241000; font-size:1rem; outline:none;";
+             const sortSelect = document.createElement('select');
+             sortSelect.innerHTML = `<option value="default">✨ Relevância</option><option value="az">A - Z</option><option value="za">Z - A</option><option value="random">🎲 Aleatório</option>`;
+             sortSelect.style.cssText = "padding:12px 20px; border-radius:50px; border:2px solid #241000; background:#241000; color:#FDB90C; font-size:0.9rem; font-weight:600; cursor:pointer;";
+             
+             controlsWrapper.appendChild(input);
+             controlsWrapper.appendChild(sortSelect);
+             modalFilters.prepend(controlsWrapper);
+
+             const updateModal = () => {
+                 const term = input.value.toLowerCase();
+                 let filtered = productsData.filter(item => item.title.toLowerCase().includes(term) || item.category.includes(term));
+                 activeData = applySort(filtered);
+                 const targetGallery = overlay.querySelector('.gallery-5-cols');
+                 resetAndRender(targetGallery);
+             };
+             input.addEventListener('input', updateModal);
+             sortSelect.addEventListener('change', (e) => { currentSort = e.target.value; updateModal(); });
+
+             const targetGallery = overlay.querySelector('.gallery-5-cols');
+             resetAndRender(targetGallery);
+        }
+
+        const modalImages = overlay.querySelectorAll('.lazy-image');
+        if(modalImages.length > 0) {
+            const modalObserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const img = entry.target;
+                        if(img.dataset.src) img.src = img.dataset.src;
+                        img.onload = () => { img.style.opacity = 1; };
+                        observer.unobserve(img);
+                    }
+                });
+            }, { root: overlay, rootMargin: "50px" });
+            modalImages.forEach(img => modalObserver.observe(img));
+        }
+        
+        overlay.addEventListener('click', (e) => {
+            const card = e.target.closest('.gold-framebox');
+            if (card && overlay.contains(card)) {
+                e.stopPropagation();
+                const img = card.querySelector('img');
+                if (card.dataset.description && card.classList.contains('story-card')) {
+                    openStoryMode(img.dataset.src || img.src, card.dataset.title, card.dataset.description);
+                } else {
+                    trackEvent('product_click', card.dataset.title);
+                    if(img) openImageViewer(img.dataset.src || img.src, card.dataset.id);
+                }
+            }
+        });
+
+        const close = () => {
+            restorePageMetadata(); 
+            updateURL('id', null);
+            overlay.classList.remove('active');
+            body.style.overflow = '';
+            setTimeout(() => { if(overlay.parentNode) overlay.parentNode.removeChild(overlay); }, 400);
+        };
+        overlay.querySelector('.close-expansion').addEventListener('click', close);
+        overlay.addEventListener('click', (e) => { if (e.target === overlay || e.target.classList.contains('expansion-content')) close(); });
+        const closeOnEsc = (e) => { if (e.key === 'Escape') { close(); document.removeEventListener('keydown', closeOnEsc); } };
+        document.addEventListener('keydown', closeOnEsc);
+    }
+
     function openImageViewer(imageSrc, id) {
         addToHistory(id);
         const product = productsData.find(p => p.id == id);
@@ -634,11 +752,13 @@ document.addEventListener('DOMContentLoaded', () => {
         currentViewerId = parseInt(id);
 
         updateURL('id', currentViewerId);
+
         const isFav = wishlist.includes(currentViewerId) ? 'active' : '';
 
         createViewerOverlay(`
             <div class="viewer-image-wrapper" style="position: relative; display: inline-block; max-height:90vh; max-width:90%;">
                 <img src="${imageSrc}" class="image-viewer-content" style="width:100%; height:auto; display:block; border:1px solid var(--color-gold-dark); box-shadow: 0 0 30px rgba(0,0,0,0.8);">
+                
                 <div class="viewer-actions">
                     <button class="viewer-btn share-btn" aria-label="Compartilhar">➦</button>
                     <button class="viewer-btn fav-btn ${isFav}" aria-label="Favoritar">♥</button>
@@ -661,7 +781,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const viewer = document.createElement('div');
         viewer.className = 'image-viewer-overlay';
         viewer.innerHTML = `<button class="close-viewer" style="position:absolute; top:20px; right:30px; color:#fff; font-size:2rem; background:none; border:none; cursor:pointer; z-index:3001;">&times;</button>${innerContent}`;
-        document.body.appendChild(viewer);
+        body.appendChild(viewer);
         requestAnimationFrame(() => viewer.classList.add('active'));
 
         const favBtn = viewer.querySelector('.fav-btn');
@@ -670,14 +790,19 @@ document.addEventListener('DOMContentLoaded', () => {
         if(favBtn) favBtn.addEventListener('click', (e) => { e.stopPropagation(); toggleWishlistById(currentViewerId, favBtn); });
         if(shareBtn) shareBtn.addEventListener('click', (e) => { e.stopPropagation(); shareProductById(currentViewerId); });
 
-        const close = () => {
+        let touchStartY = 0; let touchEndY = 0;
+        viewer.addEventListener('touchstart', e => { touchStartY = e.changedTouches[0].screenY; }, {passive: true});
+        viewer.addEventListener('touchend', e => { touchEndY = e.changedTouches[0].screenY; if (touchEndY - touchStartY > 60) closeViewer(); }, {passive: true});
+
+        const closeViewer = () => {
             restorePageMetadata(); 
             updateURL('id', null);
             viewer.classList.remove('active');
-            setTimeout(() => viewer.remove(), 300);
+            setTimeout(() => { if(viewer.parentNode) viewer.parentNode.removeChild(viewer); }, 300);
         };
-        viewer.querySelector('.close-viewer').addEventListener('click', close);
-        viewer.addEventListener('click', (e) => { if(e.target === viewer) close(); });
-        document.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
+        viewer.querySelector('.close-viewer').addEventListener('click', closeViewer);
+        viewer.addEventListener('click', (e) => { if(e.target === viewer) closeViewer(); });
+        const closeViewerOnEsc = (e) => { if (e.key === 'Escape') { closeViewer(); document.removeEventListener('keydown', closeViewerOnEsc); } };
+        document.addEventListener('keydown', closeViewerOnEsc);
     }
 });
