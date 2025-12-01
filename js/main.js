@@ -1,8 +1,6 @@
 /**
- * DaRafa Acessórios - Main Script (Versão FASE 3.3 - Layout Clean)
- * * ATUALIZAÇÃO:
- * 1. Botões "Favoritos/Vistos" removidos da barra de filtros.
- * 2. Barra de pesquisa movida para a direita (inline com as categorias).
+ * DaRafa Acessórios - Main Script (Versão FASE 3.2 - Viewer Actions)
+ * * ATUALIZAÇÃO: Botões de ação (Favoritar/Compartilhar) movidos para o VISUALIZADOR AMPLIADO.
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -27,7 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let loadedCount = 0; 
     let scrollSentinel; 
     let currentViewerIndex = -1;
-    let currentViewerId = null;
+    let currentViewerId = null; // Armazena o ID do produto aberto atualmente
 
     // Variáveis para Metadados
     let originalTitle = document.title;
@@ -45,7 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
     window.showAnalytics = () => { console.table(analyticsData.categoryClicks); return analyticsData; };
     trackEvent('view');
 
-    // --- DADOS DOS PRODUTOS ---
+    // --- DADOS DOS PRODUTOS (Simulação) ---
     const productsData = [
         { id: 1, category: 'nose-cuff', title: 'Nose Cuff Spirals', description: 'Design espiral em arame dourado, ajuste anatômico sem furos.', image: 'assets/images/darafa-catalogo.jpg' },
         { id: 2, category: 'brincos', title: 'Brinco Solar', description: 'Peça statement inspirada no sol, leve e marcante.', image: 'assets/images/darafa-catalogo.jpg' },
@@ -69,7 +67,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // ... (Funções SEO, Metadata, Offline iguais) ...
+    // ... (Funções de SEO, Metadata, Offline Mode mantidas iguais) ...
     function initSEO() {
         const baseUrl = window.location.origin + window.location.pathname.replace('index.html', '');
         const schema = {
@@ -129,7 +127,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // =========================================================
-    // 3. INICIALIZAÇÃO
+    // 3. INICIALIZAÇÃO GERAL & INFINITE SCROLL
     // =========================================================
     const galleryContainer = document.querySelector('#gallery-door .gallery-5-cols');
     
@@ -166,14 +164,21 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('popstate', loadStateFromURL);
 
     // =========================================================
-    // 4. LÓGICA DE CATÁLOGO & FILTROS
+    // 4. LÓGICA DE CATÁLOGO
     // =========================================================
     function addToHistory(id) {
         recentHistory = recentHistory.filter(itemId => itemId !== id);
         recentHistory.unshift(id);
         if (recentHistory.length > 6) recentHistory.pop();
         localStorage.setItem('darafa_history', JSON.stringify(recentHistory));
-        // Lógica de filtro "history" removida da barra, mas mantida internamente se necessário
+        
+        const activeFilter = document.querySelector('.filter-btn.active');
+        if (activeFilter && activeFilter.dataset.filter === 'history') {
+            activeData = productsData.filter(item => recentHistory.includes(item.id));
+            activeData.sort((a, b) => recentHistory.indexOf(a.id) - recentHistory.indexOf(b.id));
+            const container = document.querySelector('.expansion-overlay.active .gallery-5-cols') || galleryContainer;
+            resetAndRender(container);
+        }
     }
 
     function updateURL(param, value) {
@@ -225,7 +230,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         container.insertAdjacentHTML('beforeend', htmlBuffer);
         loadedCount += nextBatch.length;
-        attachCardEvents(container);
+        attachCardEvents(container); // Apenas cliques no card, sem botões
         attachObserversAndPreload(container);
         manageSentinel(container);
     }
@@ -250,44 +255,15 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // =========================================================
-    // 5. ESTILOS & CONTROLES
+    // 5. ESTILOS & TOAST
     // =========================================================
     function injectDynamicStyles() {
         const style = document.createElement('style');
         style.innerHTML = `
-            /* [ATUALIZAÇÃO] Controls Wrapper agora é flexível e não ocupa 100% */
-            .controls-wrapper { 
-                display: flex; 
-                align-items: center; 
-                gap: 10px; 
-                flex-grow: 1; /* Ocupa o espaço restante */
-                justify-content: flex-end; /* Alinha à direita */
-            }
-            
-            #js-search-input { 
-                padding: 10px 20px; 
-                width: 100%; 
-                max-width: 250px; 
-                border-radius: 50px; 
-                border: 2px solid #241000; 
-                background: rgba(255,255,255,0.9); 
-                color: #241000; 
-                font-size: 0.9rem; 
-                outline: none; 
-                transition: all 0.3s ease; 
-            }
-            #js-sort-select { 
-                padding: 10px 15px; 
-                border-radius: 50px; 
-                border: 2px solid #241000; 
-                background: #241000; 
-                color: #FDB90C; 
-                font-size: 0.85rem; 
-                font-weight: 600; 
-                cursor: pointer; 
-                outline: none; 
-            }
-            
+            .controls-wrapper { width: 100%; display: flex; justify-content: center; gap: 15px; margin-bottom: 20px; flex-wrap: wrap; }
+            #js-search-input { padding: 12px 25px; width: 100%; max-width: 300px; border-radius: 50px; border: 2px solid #241000; background: rgba(255,255,255,0.9); color: #241000; font-size: 1rem; outline: none; box-shadow: 0 4px 10px rgba(36,16,0,0.1); transition: all 0.3s ease; }
+            #js-sort-select { padding: 12px 20px; border-radius: 50px; border: 2px solid #241000; background: #241000; color: #FDB90C; font-size: 0.9rem; font-weight: 600; cursor: pointer; outline: none; appearance: none; -webkit-appearance: none; text-align: center; box-shadow: 0 4px 10px rgba(36,16,0,0.2); }
+            #js-sort-select:hover { background: #3a1a00; }
             .toast-notification {
                 position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px);
                 background-color: #241000; color: #FDB90C; padding: 12px 24px;
@@ -298,15 +274,21 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             .toast-notification.show { transform: translateX(-50%) translateY(0); opacity: 1; }
             
-            .viewer-actions { position: absolute; bottom: 30px; right: 30px; display: flex; gap: 15px; z-index: 3002; }
-            .viewer-btn { background: rgba(36, 16, 0, 0.85); backdrop-filter: blur(5px); border: 1px solid #FDB90C; color: #FDB90C; width: 60px; height: 60px; border-radius: 50%; font-size: 1.8rem; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(0,0,0,0.6); padding-top: 4px; }
-            .viewer-btn:hover { background: #FDB90C; color: #241000; transform: scale(1.1); box-shadow: 0 0 20px rgba(253, 185, 12, 0.6); }
-            .viewer-btn.active { background: #D00000; border-color: #D00000; color: #fff; animation: heartPulse 0.3s ease-in-out; }
-            @keyframes heartPulse { 0% { transform: scale(1); } 50% { transform: scale(1.3); } 100% { transform: scale(1); } }
-            @media (max-width: 768px) { 
-                .viewer-actions { bottom: 20px; right: 50%; transform: translateX(50%); } 
-                .controls-wrapper { width: 100%; justify-content: space-between; margin-top: 15px; }
+            /* ESTILOS PARA OS BOTÕES NO VIEWER (ZOOM) */
+            .viewer-actions {
+                position: absolute; bottom: 20px; right: 20px;
+                display: flex; gap: 15px; z-index: 3002;
             }
+            .viewer-btn {
+                background: rgba(36, 16, 0, 0.7); backdrop-filter: blur(5px);
+                border: 1px solid #FDB90C; color: #FDB90C;
+                width: 50px; height: 50px; border-radius: 50%;
+                font-size: 1.5rem; display: flex; align-items: center; justify-content: center;
+                cursor: pointer; transition: all 0.3s ease;
+                box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            }
+            .viewer-btn:hover { background: #FDB90C; color: #241000; transform: scale(1.1); }
+            .viewer-btn.active { background: #D00000; border-color: #D00000; color: #fff; }
         `;
         document.head.appendChild(style);
     }
@@ -322,11 +304,34 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 400); }, 3000);
     }
 
-    function attachCardEvents(container) { }
+    function attachCardEvents(container) {
+        // Apenas clique no card para zoom (sem botões aqui)
+    }
 
+    // ... (Funções initFilters e initControls mantidas iguais) ...
     function initFilters() {
-        // [REMOVIDO] A injeção dos botões de Favoritos/Histórico foi retirada.
-        
+        const injectButtons = (container) => {
+             if(!container.querySelector('[data-filter="favorites"]')) {
+                const favBtn = document.createElement('button');
+                favBtn.className = 'filter-btn';
+                favBtn.dataset.filter = 'favorites';
+                favBtn.innerText = '♥ Favoritos';
+                favBtn.style.color = '#D00000';
+                favBtn.style.borderColor = '#D00000';
+                container.appendChild(favBtn);
+            }
+            if(!container.querySelector('[data-filter="history"]')) {
+                const histBtn = document.createElement('button');
+                histBtn.className = 'filter-btn';
+                histBtn.dataset.filter = 'history';
+                histBtn.innerText = '🕒 Vistos';
+                histBtn.style.color = '#241000';
+                histBtn.style.borderColor = '#241000';
+                container.appendChild(histBtn);
+            }
+        };
+        const filterContainers = document.querySelectorAll('.catalog-filters');
+        filterContainers.forEach(injectButtons);
         document.body.addEventListener('click', (e) => {
             if (e.target.classList.contains('filter-btn')) {
                 const button = e.target;
@@ -337,12 +342,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (searchInput) searchInput.value = '';
                 const container = button.closest('.catalog-filters');
                 if(container) { container.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active')); button.classList.add('active'); }
-                
-                // Lógica simples: apenas categorias ou "all"
-                if (filterValue === 'all') activeData = productsData;
+                if (filterValue === 'favorites') activeData = productsData.filter(item => wishlist.includes(item.id));
+                else if (filterValue === 'history') { activeData = productsData.filter(item => recentHistory.includes(item.id)); activeData.sort((a, b) => recentHistory.indexOf(a.id) - recentHistory.indexOf(b.id)); }
+                else if (filterValue === 'all') activeData = productsData;
                 else activeData = productsData.filter(item => item.category === filterValue);
-                
-                activeData = applySort(activeData);
+                if (filterValue !== 'history') activeData = applySort(activeData);
                 const modalContent = button.closest('.expansion-content');
                 const targetGallery = modalContent ? modalContent.querySelector('.gallery-5-cols') : galleryContainer;
                 resetAndRender(targetGallery);
@@ -353,37 +357,31 @@ document.addEventListener('DOMContentLoaded', () => {
     function initControls() {
         const filterContainer = document.querySelector('.catalog-filters');
         if (!filterContainer) return;
-        
         const controlsWrapper = document.createElement('div');
         controlsWrapper.className = 'controls-wrapper';
-        
         const input = document.createElement('input');
         input.type = 'text'; input.id = 'js-search-input'; input.placeholder = 'Buscar joia...';
         input.addEventListener('focus', () => input.style.borderColor = '#CD4A00');
         input.addEventListener('blur', () => input.style.borderColor = '#241000');
-        
         const sortSelect = document.createElement('select');
         sortSelect.id = 'js-sort-select';
         sortSelect.innerHTML = `<option value="default">✨ Relevância</option><option value="az">A - Z</option><option value="za">Z - A</option><option value="random">🎲 Aleatório</option>`;
-        
         controlsWrapper.appendChild(input);
         controlsWrapper.appendChild(sortSelect);
-        
-        // [ATUALIZAÇÃO] appendChild coloca a busca DEPOIS das categorias (ao lado)
-        filterContainer.appendChild(controlsWrapper);
-        
+        filterContainer.prepend(controlsWrapper);
         const updateGridData = () => {
             const term = input.value.toLowerCase();
             const activeFilterBtn = document.querySelector('.filter-btn.active');
             const filterValue = activeFilterBtn ? activeFilterBtn.dataset.filter : 'all';
             let filtered = productsData;
-            
-            if (filterValue !== 'all') filtered = productsData.filter(item => item.category === filterValue);
+            if (filterValue === 'favorites') filtered = productsData.filter(item => wishlist.includes(item.id));
+            else if (filterValue === 'history') filtered = productsData.filter(item => recentHistory.includes(item.id));
+            else if (filterValue !== 'all') filtered = productsData.filter(item => item.category === filterValue);
             if (term) {
                 if(term.length > 3) trackEvent('search', term);
                 filtered = filtered.filter(item => item.title.toLowerCase().includes(term) || item.description.toLowerCase().includes(term) || item.category.toLowerCase().includes(term));
             }
-            filtered = applySort(filtered);
+            if (filterValue !== 'history') filtered = applySort(filtered);
             activeData = filtered;
             const parentModal = input.closest('.expansion-content');
             const targetGallery = parentModal ? parentModal.querySelector('.gallery-5-cols') : galleryContainer;
@@ -431,7 +429,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         const nextItem = activeData[newIndex];
         currentViewerIndex = newIndex;
-        currentViewerId = nextItem.id;
+        currentViewerId = nextItem.id; // Atualiza ID atual
 
         const viewerImg = document.querySelector('.image-viewer-content');
         if (viewerImg) {
@@ -439,6 +437,8 @@ document.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => { viewerImg.src = nextItem.image; viewerImg.onload = () => viewerImg.style.opacity = 1; }, 200);
             setPageMetadata(nextItem.title, nextItem.description);
             addToHistory(nextItem.id); 
+            
+            // Atualiza estado do botão de favorito no Viewer
             const favBtn = document.querySelector('.viewer-btn.fav-btn');
             if(favBtn) {
                 if(wishlist.includes(nextItem.id)) favBtn.classList.add('active');
@@ -447,6 +447,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // --- FUNÇÕES DE AÇÃO DO VIEWER ---
     function shareProductById(id) {
         const product = productsData.find(p => p.id == id);
         if(!product) return;
@@ -472,7 +473,7 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem('darafa_wishlist', JSON.stringify(wishlist));
     }
 
-    // --- MODALS (Viewer e Story) ---
+    // --- MODAIS & PORTAIS ---
     function throttle(func, limit) {
         let inThrottle;
         return function() {
@@ -525,14 +526,14 @@ document.addEventListener('DOMContentLoaded', () => {
              controlsWrapper.className = 'controls-wrapper';
              const input = document.createElement('input');
              input.placeholder = 'Buscar joia...';
-             input.style.cssText = "padding:10px 20px; width:100%; max-width:250px; border-radius:50px; border:2px solid #241000; background:rgba(255,255,255,0.9); color:#241000; font-size:0.9rem; outline:none;";
+             input.style.cssText = "padding:12px 25px; width:100%; max-width:300px; border-radius:50px; border:2px solid #241000; background:rgba(255,255,255,0.9); color:#241000; font-size:1rem; outline:none;";
              const sortSelect = document.createElement('select');
              sortSelect.innerHTML = `<option value="default">✨ Relevância</option><option value="az">A - Z</option><option value="za">Z - A</option><option value="random">🎲 Aleatório</option>`;
-             sortSelect.style.cssText = "padding:10px 15px; border-radius:50px; border:2px solid #241000; background:#241000; color:#FDB90C; font-size:0.85rem; font-weight:600; cursor:pointer;";
+             sortSelect.style.cssText = "padding:12px 20px; border-radius:50px; border:2px solid #241000; background:#241000; color:#FDB90C; font-size:0.9rem; font-weight:600; cursor:pointer;";
              
              controlsWrapper.appendChild(input);
              controlsWrapper.appendChild(sortSelect);
-             modalFilters.appendChild(controlsWrapper);
+             modalFilters.prepend(controlsWrapper);
 
              const updateModal = () => {
                  const term = input.value.toLowerCase();
@@ -543,6 +544,25 @@ document.addEventListener('DOMContentLoaded', () => {
              };
              input.addEventListener('input', updateModal);
              sortSelect.addEventListener('change', (e) => { currentSort = e.target.value; updateModal(); });
+
+             if(!modalFilters.querySelector('[data-filter="favorites"]')) {
+                const favBtn = document.createElement('button');
+                favBtn.className = 'filter-btn';
+                favBtn.dataset.filter = 'favorites';
+                favBtn.innerText = '♥ Favoritos';
+                favBtn.style.color = '#D00000';
+                favBtn.style.borderColor = '#D00000';
+                modalFilters.appendChild(favBtn);
+             }
+             if(!modalFilters.querySelector('[data-filter="history"]')) {
+                const histBtn = document.createElement('button');
+                histBtn.className = 'filter-btn';
+                histBtn.dataset.filter = 'history';
+                histBtn.innerText = '🕒 Vistos';
+                histBtn.style.color = '#241000';
+                histBtn.style.borderColor = '#241000';
+                modalFilters.appendChild(histBtn);
+             }
 
              const targetGallery = overlay.querySelector('.gallery-5-cols');
              resetAndRender(targetGallery);
@@ -563,6 +583,7 @@ document.addEventListener('DOMContentLoaded', () => {
             modalImages.forEach(img => modalObserver.observe(img));
         }
         
+        // Listener de eventos para o Modal (Zoom)
         overlay.addEventListener('click', (e) => {
             const card = e.target.closest('.gold-framebox');
             if (card && overlay.contains(card)) {
@@ -589,7 +610,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.addEventListener('keydown', closeOnEsc);
     }
 
-    function openImageViewer(imageSrc, id) {
+function openImageViewer(imageSrc, id) {
         addToHistory(id);
         const product = productsData.find(p => p.id == id);
         if (product) setPageMetadata(product.title, product.description);
@@ -600,6 +621,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const isFav = wishlist.includes(currentViewerId) ? 'active' : '';
 
+        // ATUALIZAÇÃO: Criamos uma div wrapper (embrulho) para conter a imagem e os botões juntos
         createViewerOverlay(`
             <div class="viewer-image-wrapper" style="position: relative; display: inline-block; max-height:90vh; max-width:90%;">
                 <img src="${imageSrc}" class="image-viewer-content" style="width:100%; height:auto; display:block; border:1px solid var(--color-gold-dark); box-shadow: 0 0 30px rgba(0,0,0,0.8);">
@@ -629,6 +651,7 @@ document.addEventListener('DOMContentLoaded', () => {
         body.appendChild(viewer);
         requestAnimationFrame(() => viewer.classList.add('active'));
 
+        // Listeners para os botões internos do Viewer
         const favBtn = viewer.querySelector('.fav-btn');
         const shareBtn = viewer.querySelector('.share-btn');
 
