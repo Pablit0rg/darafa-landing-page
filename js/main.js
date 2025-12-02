@@ -180,7 +180,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // [NOVO] Banner de Consentimento LGPD (Ética)
+// [NOVO] Banner de Consentimento LGPD (Ética)
     function initCookieConsent() {
         // Se já aceitou, não faz nada
         if (localStorage.getItem('darafa_lgpd_consent')) return;
@@ -189,12 +189,12 @@ document.addEventListener('DOMContentLoaded', () => {
         banner.className = 'cookie-banner';
         banner.innerHTML = `
             <div class="cookie-content">
-                <p>Utilizamos cookies para aprimorar sua experiência de navegação e analisar o tráfego do site. Ao continuar, você concorda com nossa política de privacidade.</p>
+                <p>🍪 Utilizamos cookies para aprimorar sua experiência de navegação e analisar o tráfego do site. Ao continuar, você concorda com nossa política de privacidade.</p>
                 <button id="accept-cookies">Aceitar e Fechar</button>
             </div>
         `;
         
-        // Estilos exclusivos do Banner (Injetados dinamicamente)
+        // Estilos exclusivos do Banner (Atualizado: Texto Justificado)
         const style = document.createElement('style');
         style.innerHTML = `
             .cookie-banner {
@@ -207,7 +207,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 backdrop-filter: blur(8px);
             }
             .cookie-content { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; justify-content: center; }
-            .cookie-content p { color: #e0d0a0; font-family: 'Poppins', sans-serif; font-size: 0.85rem; margin: 0; text-align: left; flex: 1; }
+            
+            /* MUDANÇA AQUI: text-align: justify */
+            .cookie-content p { 
+                color: #e0d0a0; font-family: 'Poppins', sans-serif; 
+                font-size: 0.85rem; margin: 0; 
+                text-align: justify; /* Texto alinhado e justificado */
+                flex: 1; 
+            }
+            
             #accept-cookies {
                 background: linear-gradient(to right, #FDB90C, #FFD700); 
                 color: #241000; border: none; padding: 10px 24px;
@@ -229,7 +237,6 @@ document.addEventListener('DOMContentLoaded', () => {
             banner.style.transform = 'translate(-50%, 50%)';
             setTimeout(() => banner.remove(), 500);
             
-            // Registra no nosso Analytics caseiro
             trackEvent('interaction', 'lgpd_accept');
             showToast('Preferências salvas! ✨');
         });
