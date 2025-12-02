@@ -180,6 +180,61 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // [NOVO] Banner de Consentimento LGPD (Ética)
+    function initCookieConsent() {
+        // Se já aceitou, não faz nada
+        if (localStorage.getItem('darafa_lgpd_consent')) return;
+
+        const banner = document.createElement('div');
+        banner.className = 'cookie-banner';
+        banner.innerHTML = `
+            <div class="cookie-content">
+                <p>🍪 Meu senhor(a), usamos cookies para melhorar sua experiência no atelier. Ao continuar, você concorda com nossa política.</p>
+                <button id="accept-cookies">Aceitar e Fechar</button>
+            </div>
+        `;
+        
+        // Estilos exclusivos do Banner (Injetados dinamicamente)
+        const style = document.createElement('style');
+        style.innerHTML = `
+            .cookie-banner {
+                position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+                width: 90%; max-width: 500px; background: rgba(36, 16, 0, 0.95);
+                border: 1px solid #FDB90C; border-radius: 15px; padding: 15px 25px;
+                z-index: 9999; box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+                display: flex; align-items: center; justify-content: center;
+                animation: slideUp 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+                backdrop-filter: blur(8px);
+            }
+            .cookie-content { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; justify-content: center; }
+            .cookie-content p { color: #e0d0a0; font-family: 'Poppins', sans-serif; font-size: 0.85rem; margin: 0; text-align: left; flex: 1; }
+            #accept-cookies {
+                background: linear-gradient(to right, #FDB90C, #FFD700); 
+                color: #241000; border: none; padding: 10px 24px;
+                border-radius: 50px; font-weight: 700; cursor: pointer; white-space: nowrap;
+                font-family: 'Poppins', sans-serif; transition: all 0.2s; box-shadow: 0 4px 10px rgba(253, 185, 12, 0.3);
+            }
+            #accept-cookies:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(253, 185, 12, 0.5); background: #fff; }
+            @media(max-width: 600px) { .cookie-content { text-align: center; } .cookie-content p { text-align: center; } }
+            @keyframes slideUp { from { transform: translate(-50%, 150%); opacity: 0; } to { transform: translate(-50%, 0); opacity: 1; } }
+        `;
+        document.head.appendChild(style);
+        document.body.appendChild(banner);
+
+        // Lógica de Aceite
+        document.getElementById('accept-cookies').addEventListener('click', () => {
+            localStorage.setItem('darafa_lgpd_consent', 'true');
+            banner.style.transition = 'all 0.5s ease';
+            banner.style.opacity = '0';
+            banner.style.transform = 'translate(-50%, 50%)';
+            setTimeout(() => banner.remove(), 500);
+            
+            // Registra no nosso Analytics caseiro
+            trackEvent('interaction', 'lgpd_accept');
+            showToast('Preferências salvas! ✨');
+        });
+    }
+
     // =========================================================
     // 3. INICIALIZAÇÃO GERAL
     // =========================================================
