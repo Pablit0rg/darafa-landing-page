@@ -189,7 +189,7 @@ document.addEventListener('DOMContentLoaded', () => {
         banner.className = 'cookie-banner';
         banner.innerHTML = `
             <div class="cookie-content">
-                <p>🍪 Utilizamos cookies para aprimorar sua experiência de navegação e analisar o tráfego do site. Ao continuar, você concorda com nossa política de privacidade.</p>
+                <p>Utilizamos cookies para aprimorar sua experiência de navegação e analisar o tráfego do site. Ao continuar, você concorda com nossa política de privacidade.</p>
                 <button id="accept-cookies">Aceitar e Fechar</button>
             </div>
         `;
@@ -238,7 +238,7 @@ document.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => banner.remove(), 500);
             
             trackEvent('interaction', 'lgpd_accept');
-            showToast('Preferências salvas! ✨');
+            showToast('Preferências salvas!');
         });
     }
 
