@@ -82,9 +82,9 @@
 }
 
 .navbar-link:hover {
-    /* Hover: Fica mais claro ou branco para contraste */
-    color: #fff; 
-    text-shadow: 0 0 5px rgba(36, 16, 0, 0.2);
+    
+    color: #D00000; /* Vermelho Chic */
+text-shadow: none; /* Removemos a sombra para ficar nítido e moderno */
 }
 
 .navbar-link::after {
