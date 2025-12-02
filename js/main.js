@@ -676,11 +676,13 @@ document.addEventListener('DOMContentLoaded', () => {
         try { if (navigator.share) navigator.share(shareData); else { navigator.clipboard.writeText(shareUrl); showToast('Link copiado! 📋'); } } catch (err) { console.warn('Erro share', err); }
     }
 
-    // [ATUALIZAÇÃO] Lógica de Sincronia Real-Time (Modal -> Mini-Card)
+// [ATUALIZAÇÃO] Lógica de Sincronia Real-Time (Modal -> Mini-Card)
     function toggleWishlistById(id, btnElement) {
         const index = wishlist.indexOf(id);
-        // Procura o card correspondente na galeria (fundo)
-        const galleryCard = document.querySelector(`.gold-framebox[data-id="${id}"]`);
+        
+        // CORREÇÃO: Usamos querySelectorAll para pegar TODAS as cópias do card
+        // (tanto o original oculto quanto o visível no modal)
+        const galleryCards = document.querySelectorAll(`.gold-framebox[data-id="${id}"]`);
 
         if (index === -1) {
             // Adicionar
@@ -689,10 +691,12 @@ document.addEventListener('DOMContentLoaded', () => {
             showToast('Adicionado aos Favoritos ❤️');
             trackEvent('interaction', 'wishlist_add');
             
-            // Atualiza o mini-card visualmente se ele existir na tela
-            if (galleryCard && !galleryCard.querySelector('.fav-marker')) {
-                galleryCard.insertAdjacentHTML('afterbegin', '<span class="fav-marker" style="position:absolute; top:8px; right:8px; color:#D00000; font-size:1.2rem; z-index:10; text-shadow:0 2px 5px rgba(0,0,0,0.5);">♥</span>');
-            }
+            // Atualiza VISUALMENTE todos os cards encontrados (Ocultos e Visíveis)
+            galleryCards.forEach(card => {
+                if (!card.querySelector('.fav-marker')) {
+                    card.insertAdjacentHTML('afterbegin', '<span class="fav-marker" style="position:absolute; top:8px; right:8px; color:#D00000; font-size:1.2rem; z-index:10; text-shadow:0 2px 5px rgba(0,0,0,0.5);">♥</span>');
+                }
+            });
         } else {
             // Remover
             wishlist.splice(index, 1);
@@ -700,11 +704,11 @@ document.addEventListener('DOMContentLoaded', () => {
             showToast('Removido dos Favoritos 💔');
             trackEvent('interaction', 'wishlist_remove');
 
-            // Remove o marcador do mini-card
-            if (galleryCard) {
-                const marker = galleryCard.querySelector('.fav-marker');
+            // Remove o marcador de todos os cards encontrados
+            galleryCards.forEach(card => {
+                const marker = card.querySelector('.fav-marker');
                 if (marker) marker.remove();
-            }
+            });
         }
         localStorage.setItem('darafa_wishlist', JSON.stringify(wishlist));
     }
