@@ -405,3 +405,9 @@
     .info-title { font-size: 0.85rem; }
     .info-desc { font-size: 0.65rem; }
 }
+
+/* --- COR ESPECÍFICA PARA OS CARDS DO ATELIER (STUDIO, MÃOS...) --- */
+.story-card {
+    /* Substitua o código abaixo pelo marrom claro que o senhor quer */
+    background-color: ##241000 !important; 
+}
