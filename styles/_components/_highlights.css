@@ -405,22 +405,3 @@
     .info-title { font-size: 0.85rem; }
     .info-desc { font-size: 0.65rem; }
 }
-
-/*
- * [CORREÇÃO BUG VISUAL] Cards de História (Atelier)
- * Aumentamos a especificidade (.about-grid + classe) para garantir
- * que este fundo vença a regra padrão.
- */
-.about-grid .gold-framebox.story-card {
-    /* Um tom Café/Café mais profundo para diferenciar dos produtos */
-    background-color: #1a0900; 
-    
-    /* Opcional: Uma borda levemente diferente para marcar que é 'leitura' */
-    border-color: var(--color-gold-medium);
-}
-
-.about-grid .gold-framebox.story-card:hover {
-    /* No hover, clareia levemente para o Chocolate padrão */
-    background-color: #241000;
-    border-color: #FDB90C;
-}
