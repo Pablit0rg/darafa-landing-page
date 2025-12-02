@@ -1,53 +1,49 @@
 # DaRafa Acessorios - O Dossie Completo do Projeto (MASTER LOG)
 
 **Resumo Executivo:**
-Este documento narra a evolucao completa do desenvolvimento da Landing Page para "DaRafa Acessorios". O projeto encontra-se na Versao 4.4 (Polida), com conformidade legal (LGPD) implementada e refinamentos visuais concluídos. O site está visualmente estável e pronto para receber integrações de backend futuras.
+Este documento narra a evolucao completa do desenvolvimento da Landing Page para "DaRafa Acessorios". O projeto encontra-se na Versao 4.5 (Estável), com todas as funcionalidades de UX (incluindo sincronia complexa) e conformidade legal (LGPD) operando perfeitamente. O site está pronto para o lançamento oficial.
 
 ---
 
 ## 1. Mapa Tecnico (Status)
 * **Frontend (Ativo):**
-    * **css/**: Estilizacao modular "Red Chic" (Finalizada com correções de especificidade).
-    * **js/main.js**: Versão 4.4 (Banner LGPD Justificado + Funcionalidades Core).
-    * **assets/**: Otimização de imagens de capa (WebP).
-* **Backend (Planejamento):**
-    * **Stack:** Node.js + Supabase + Render (Ambiente Configurado).
+    * **css/**: Estilizacao modular "Red Chic" (Polida).
+    * **js/main.js**: Versão 4.5 (Sync Multi-Instância + Banner LGPD).
+    * **assets/**: Imagens otimizadas e ajustadas.
+* **Infraestrutura:**
+    * **Domínio Oficial:** `darafa.com` (Atualmente exibindo página "Em Breve" com Hamster Loader).
+    * **Staging:** Site principal aguardando virada de chave na Vercel.
 
 ---
 
 ## 5. Historico de Atualizacoes (CHANGELOG)
 
-### [02/12/2025] - Fase 4.4: Polimento Visual & Compliance (LGPD) - CONCLUÍDO
-**Status: FUNCIONAL / PRONTO**
+### [02/12/2025] - Fase 4.5: O Fim dos Bugs (Sync Perfeito) - CONCLUÍDO
+**Status: ESTÁVEL**
 
-**1. Ética e Transparência (LGPD):**
-* **Banner de Cookies:** Implementado via JS puro (`initCookieConsent`).
-* **Design:** Visual flutuante "Glassmorphism" com cores da marca (#FDB90C/#241000).
-* **Texto:** Redação profissional justificada para maior seriedade.
-* **Persistência:** Uso de `localStorage` para não incomodar o usuário que já aceitou.
+**Correções Críticas:**
+* **Sync Real-Time (Fix Definitivo):** Corrigido o bug onde alguns minicards não atualizavam o ícone de coração.
+    * *Causa:* O código selecionava apenas a primeira instância do card (muitas vezes oculta).
+    * *Solução:* Implementação de `querySelectorAll` para atualizar visualmente **todas** as cópias do card (Galeria + Modal) simultaneamente.
 
-**2. Polimento Visual (CSS & HTML):**
-* **Fix Atelier Cards:** Resolvido conflito de especificidade CSS. Agora os cards de história ("O Studio", "Feito à Mão") possuem fundo Café Escuro diferenciado, melhorando a hierarquia visual.
-* **Capa do Catálogo:** Substituição da imagem principal por `darafa-acessorio1.webp`.
-* **Ajuste Fino de Imagem:** Aplicação de `object-fit` e `object-position: center center` na thumbnail do catálogo para garantir enquadramento perfeito da joia sem cortes indesejados.
-
-### [02/12/2025] - Fase 4.3: Refinamento de UX & Sincronia (Sucesso)
-**Status: FUNCIONAL**
-* **Sync Real-Time:** Sincronia visual de "favoritos" entre o Modal de Zoom e a Galeria.
-* **Ergonomia:** Botões de ação movidos para o topo no visualizador de imagens.
+### [02/12/2025] - Fase 4.4: Polimento Visual & Compliance (LGPD)
+**Status: CONCLUÍDO**
+* **LGPD:** Banner de Cookies justificado e elegante implementado.
+* **UI:** Ajuste fino de imagens (Capas e Thumbnails) e correção de especificidade CSS nos cards do Atelier.
 
 ---
 
-## 6. PROXIMOS PASSOS (FASE 5 - PREPARAÇÃO PARA O MUNDO REAL)
-O frontend está maduro. O foco agora muda para infraestrutura e expansão.
+## 6. PROXIMOS PASSOS (FASE 5 - O LANÇAMENTO)
+O código está pronto. O foco agora é estratégia de deploy.
 
-1.  **SETUP DE SERVIDOR (Prioridade Alta):**
-    * Configurar repositório final no GitHub.
-    * Conectar ao Vercel ou Render para hospedagem oficial.
-2.  **MÉTRICAS (Deferido):**
-    * Configurar Google Analytics 4 (GA4) quando houver ID de medição.
-3.  **BACKEND & PEDIDOS (Longo Prazo):**
-    * Criar API para receber pedidos via WhatsApp/E-mail de forma automatizada.
+1.  **INFRAESTRUTURA FINAL:**
+    * Garantir que este código final (v4.5) esteja no GitHub.
+    * Preparar o projeto `darafa-production` na Vercel.
+2.  **A VIRADA DE CHAVE:**
+    * Remover domínio `darafa.com` do projeto "Em Breve".
+    * Adicionar domínio `darafa.com` no projeto "Principal".
+3.  **FUTURO (Pós-Lançamento):**
+    * Integração com Backend/Supabase para gestão de pedidos real.
 
 ---
-*Ultima atualizacao: 02/12/2025 - Site em conformidade e visualmente polido.*
+*Ultima atualizacao: 02/12/2025 - Bug de sincronia exterminado. Frontend finalizado.*
