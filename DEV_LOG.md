@@ -1,31 +1,32 @@
 # DaRafa Acessorios - O Dossie Completo do Projeto (MASTER LOG)
 
 **Resumo Executivo:**
-Este documento narra a evolucao completa do desenvolvimento da Landing Page para "DaRafa Acessorios". O projeto encontra-se na Versao 4.0 (Estavel), com o Frontend completo. O roadmap agora inclui a preparação da infraestrutura de Backend 100% em nuvem (Cloud-Native) para suportar a futura operação de E-commerce autônomo.
+Este documento narra a evolucao completa do desenvolvimento da Landing Page para "DaRafa Acessorios". O projeto encontra-se na Versao 4.3, com a suite de JavaScript avançado implementada. O foco atual mudou para ajustes finos de layout e correção de bugs pontuais antes da entrega.
 
 ---
 
 ## 1. Mapa Tecnico (Status)
-* **Frontend (Ativo):**
-    * **css/**: Estilizacao modular "Red Chic" (Estável).
-    * **js/main.js**: Versão 4.0 (Analytics, Exit Intent, Prefetch, URL State).
-* **Backend (Planejamento):**
-    * **Ambiente:** GitHub Codespaces (Cloud IDE).
-    * **Linguagem:** Node.js (JavaScript).
-    * **Database:** Supabase (PostgreSQL).
-    * **Deploy:** Render.com.
+* **css/**: Estilizacao modular "Red Chic" (Estável).
+* **js/main.js**: Versão 4.3 (Analytics, Exit Intent, Prefetch, URL State, Sync Favoritos).
 
 ---
 
 ## 5. Historico de Atualizacoes (CHANGELOG)
 
-### [01/12/2025] - Fase 4.1: Ajuste de Layout (ROLLBACK / FALHA)
-**Status: REVERTIDO**
-* Tentativa de alinhamento de busca revertida para manter integridade visual.
+### [02/12/2025] - Fase 4.3: Sincronia de Favoritos (Sucesso com Ressalva)
+**Status: FUNCIONAL / EM POLIMENTO**
 
-### [01/12/2025] - Fase 4.0: Finalização da Lógica JS (Sucesso Total)
-**Status: CONCLUÍDO**
-* Analytics Caseiro, Carregamento Adaptativo, Exit Intent, Prefetch, URL State e Sync de Favoritos implementados.
+**Implementado:**
+* Lógica de "Espelho": Ao clicar no coração dentro do Zoom (Modal), o mini-card correspondente na galeria ganha um ícone de coração instantaneamente.
+* Renderização: Ao carregar a página, o site já marca os favoritos salvos.
+
+**Bug Conhecido (Deferido):**
+* Alguns cards específicos (notadamente nas primeiras linhas e cantos do grid) apresentam inconsistência na atualização visual imediata.
+* **Decisão:** Bug catalogado para resolução na fase final de "Caça aos Bugs", para não travar o progresso atual.
+
+### [01/12/2025] - Fase 4.1 & 4.2 (Rollbacks)
+**Status: REVERTIDOS**
+* Tentativas de alteração de layout da busca e animações de scroll foram revertidas para manter a estabilidade do design.
 
 ---
 
@@ -34,8 +35,8 @@ Tarefas para execução nos próximos dias (Curto Prazo).
 
 1.  **ÉTICA E TRANSPARÊNCIA (Prioridade Alta):** Implementar **Banner de Cookies (LGPD)**.
 2.  **MÉTRICAS DO CLIENTE:** Configurar Google Analytics 4 (GA4).
-3.  **REFINAMENTO UI:** Ajustes finos no cabeçalho e botões de zoom.
-4.  **RODAPÉ:** Revisão final de espaçamentos.
+3.  **BUGFIX FINAL:** Investigar inconsistência na sincronia de favoritos em cards específicos do grid.
+4.  **REFINAMENTO UI:** Ajustes finos no cabeçalho e botões de zoom.
 
 ---
 
@@ -43,10 +44,9 @@ Tarefas para execução nos próximos dias (Curto Prazo).
 **Previsão:** 1 a 2 meses.
 **Infraestrutura:** 100% Cloud (Chromebook Friendly).
 
-1.  **Setup de Ambiente:** Configurar GitHub Codespaces + Supabase.
-2.  **Integração de Pagamentos (API):** Implementar gateway (Mercado Pago/Stripe) via Node.js.
-3.  **Evolução de Arquitetura:** Migrar de "One Page" para **Multi-page Application**.
-4.  **Backend & Banco de Dados:** Desenvolvimento de API para gestão de pedidos e estoque.
+1.  **Setup de Ambiente:** Configurar GitHub Codespaces + Supabase (Contas já criadas).
+2.  **Integração de Pagamentos (API):** Implementar gateway (Mercado Pago/Stripe).
+3.  **Backend & Banco de Dados:** Desenvolvimento de API Node.js para gestão de pedidos.
 
 ---
-*Ultima atualizacao: 01/12/2025 - Stack de Backend definido (Node/Supabase/Render).*
+*Ultima atualizacao: 02/12/2025 - Fase 4.3 entregue. Novo fluxo de trabalho "Cirúrgico" adotado.*
