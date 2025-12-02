@@ -363,9 +363,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const nextBatch = activeData.slice(loadedCount, loadedCount + ITEMS_PER_PAGE);
         let htmlBuffer = '';
         nextBatch.forEach(item => {
+            // [NOVO] Verifica se este item já está na lista de favoritos
+            const isFav = wishlist.includes(item.id);
+            // [NOVO] Se for favorito, cria o HTML do coraçãozinho, senão fica vazio
+            const favMarker = isFav ? '<span class="fav-marker" style="position:absolute; top:8px; right:8px; color:#D00000; font-size:1.2rem; z-index:10; text-shadow:0 2px 5px rgba(0,0,0,0.5);">♥</span>' : '';
+
             htmlBuffer += `
                 <div class="gold-framebox" tabindex="0" data-id="${item.id}" data-category="${item.category}" data-title="${item.title}" data-description="${item.description}">
-                    <img class="lazy-image" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-src="${item.image}" alt="${item.title}" style="transition: opacity 0.8s ease; opacity: 0;">
+                    ${favMarker} <img class="lazy-image" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-src="${item.image}" alt="${item.title}" style="transition: opacity 0.8s ease; opacity: 0;">
                     <div class="card-info-bar">
                         <h3 class="info-title">${item.title}</h3>
                         <p class="info-desc">${item.description}</p>
