@@ -279,6 +279,7 @@ document.addEventListener('DOMContentLoaded', () => {
         checkConnection(); 
         initSEO();
         initOfflineMode();
+        initCookieConsent();
         initCatalog();
         initFilters();
         initControls(); 
