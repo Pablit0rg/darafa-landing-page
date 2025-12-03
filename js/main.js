@@ -740,7 +740,23 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const backToTopBtn = document.getElementById('backToTop');
-    if(backToTopBtn) window.addEventListener('scroll', throttle(() => { if (window.scrollY > 300) backToTopBtn.classList.add('visible'); else backToTopBtn.classList.remove('visible'); }, 100), { passive: true });
+    const contactSection = document.getElementById('contact');
+    
+    if(backToTopBtn && contactSection) {
+        window.addEventListener('scroll', throttle(() => {
+            // Calcula onde a seção de contato começa
+            const contactPosition = contactSection.offsetTop;
+            // Pega a posição atual do scroll + altura da janela (para saber se o rodapé está visível)
+            const scrollPosition = window.scrollY + window.innerHeight;
+
+            // Se o scroll chegou perto do rodapé (ex: 100px antes), mostra o botão
+            if (scrollPosition >= contactPosition - 100) {
+                backToTopBtn.classList.add('visible');
+            } else {
+                backToTopBtn.classList.remove('visible');
+            }
+        }, 100), { passive: true });
+    }
 
     const navbarToggler = document.getElementById('navbar-toggler');
     const navbarMenu = document.getElementById('navbar-menu');

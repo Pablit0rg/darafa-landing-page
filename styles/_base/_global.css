@@ -76,7 +76,7 @@ p {
 .back-to-top {
     position: fixed;
     bottom: 30px;
-    right: 30px;
+    right: 2px;
     width: 50px;
     height: 50px;
     background: var(--color-gold-medium);
@@ -103,7 +103,14 @@ p {
 
 .back-to-top:hover {
     transform: translateY(-5px) scale(1.1);
-    background: var(--color-red-chic);
-    color: #fff;
+    
+    /* [MUDANÇA] Fundo Vermelho Chic */
+    background: #D00000; 
+    
+    /* [MUDANÇA] Seta Branca (Trocando o amarelo) */
+    color: #fff; 
+    
     border-color: transparent;
+    /* Adicionando um brilho vermelho chique */
+    box-shadow: 0 5px 15px rgba(208, 0, 0, 0.4); 
 }
