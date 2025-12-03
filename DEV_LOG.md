@@ -1,45 +1,49 @@
 # DaRafa Acessorios - O Dossie Completo do Projeto (MASTER LOG)
 
 **Resumo Executivo:**
-Este documento narra a evolucao completa do desenvolvimento da Landing Page para "DaRafa Acessorios". O projeto encontra-se na Versao 4.7 (Estável). Uma tentativa de atualização de UX (Reset de Filtros - v4.8) causou um bloqueio crítico na navegação e foi revertida (Rollback). O foco retorna para a estabilidade e aguardo de conteúdo.
+Este documento narra a evolucao completa do desenvolvimento da Landing Page para "DaRafa Acessorios". O projeto encontra-se na Versao 4.9 (Estável). O site está funcional, com rodapé otimizado e ajustes de UX. O foco atual é a **Produção de Conteúdo** e a resolução de pequenos detalhes visuais (Tech Debt) antes do lançamento.
 
 ---
 
 ## 1. Mapa Tecnico (Status)
 * **Frontend (Ativo):**
-    * **css/**: Estilizacao modular "Red Chic" (Estável).
-    * **js/main.js**: Versão 4.7 (Stable Build - Rollback da v4.8).
-    * **Infra:** Domínio `darafa.com` com página de espera (Hamster) ativa.
-* **Pendências:**
-    * **Conteúdo:** Recebimento das 50 fotos oficiais.
-    * **Tech Debt:** Investigar conflito na função `updateGridData` que travou os modais.
+    * **css/**: Estilizacao modular "Red Chic" (99% Concluída).
+    * **js/main.js**: Versão 4.9 (Funcional).
+    * **Infra:** Domínio `darafa.com` em espera (Hamster Page).
+* **Pendências (Tech Debt):**
+    * **Botão Relevância:** A borda vermelha fixa não está aplicando via JS.
+        * *Solução Planejada:* Migrar o estilo do `#js-sort-select` do Javascript para o arquivo `_gallery.css`, forçando `appearance: none`.
+* **Conteúdo:** Aguardando as 50 fotos oficiais.
 
 ---
 
 ## 5. Historico de Atualizacoes (CHANGELOG)
 
-### [03/12/2025] - Fase 4.8: Tentativa de UX Reset (ROLLBACK)
-**Status: REVERTIDO**
-* **Incidente:** A implementação da lógica de "Reset Automático de Filtros" causou um bug crítico (impedimento de abertura dos Cards Pai/Modais).
-* **Ação:** Reversão imediata para a versão 4.7 (Estável). A funcionalidade foi adiada para evitar instabilidade.
-
-### [02/12/2025] - Fase 4.7: Refinamento de UX "Red Chic" - CONCLUÍDO
+### [03/12/2025] - Fase 4.9: Refinamento de Rodapé e UX
 **Status: ESTÁVEL**
-* **Filtro de Favoritos:** Implementada opção no menu "Relevância" para filtrar apenas itens favoritados.
-* **UI Red Chic:** Botões e bordas padronizados com Vermelho Carmesim (#D00000).
-* **Infra:** Configuração de DNS para `darafa.com` (Hamster Page).
+* **Rodapé Slim:** Redução de padding e altura para visual mais leve. Reorganização hierárquica (Dev antes do Copyright).
+* **Back to Top:** Lógica inteligente implementada (só aparece próximo ao rodapé) e estilização vermelha no hover.
+* **UI Fixes:** Ajustes na posição do botão "Fechar" (X) dos modais para evitar conflito com a barra de rolagem.
+
+### [03/12/2025] - Fase 4.8: Rollback de Segurança
+**Status: RESOLVIDO**
+* Reversão da tentativa de "Reset Automático de Filtros" que causou travamento nos modais.
+
+### [02/12/2025] - Fase 4.7: Refinamento "Red Chic"
+**Status: CONCLUÍDO**
+* Filtro de Favoritos e padronização da cor Vermelho Carmesim (#D00000).
 
 ---
 
-## 6. PROXIMOS PASSOS (FASE 5 - CONTEÚDO & LANÇAMENTO)
-Código congelado (Code Freeze) para evitar novos bugs. O foco é conteúdo.
+## 6. PROXIMOS PASSOS (FASE 5 - CONTEÚDO & POLIMENTO FINAL)
 
 1.  **GESTAO DE CONTEÚDO (Prioridade Máxima):**
     * Receber e processar as 50 fotos dos acessórios.
-    * Preencher títulos e descrições finais.
-2.  **DEPLOY:**
-    * Manter o site estável na Vercel (Staging).
-    * Aguardar sinal verde da cliente para virada de chave.
+2.  **POLIMENTO (Quando o conteúdo chegar):**
+    * Aplicar a correção CSS no botão "Relevância".
+    * Verificar responsividade com as fotos reais.
+3.  **DEPLOY:**
+    * Virada de chave na Vercel para produção.
 
 ---
-*Ultima atualizacao: 03/12/2025 - Rollback de segurança realizado. Site operante.*
+*Ultima atualizacao: 03/12/2025 - Rodapé ajustado e pendência visual catalogada.*
