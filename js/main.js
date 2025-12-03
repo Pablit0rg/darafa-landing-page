@@ -589,7 +589,7 @@ document.addEventListener('DOMContentLoaded', () => {
         input.addEventListener('blur', () => input.style.borderColor = '#241000');
         const sortSelect = document.createElement('select');
         sortSelect.id = 'js-sort-select';
-        sortSelect.innerHTML = `<option value="default">✨ Relevância</option><option value="az">A - Z</option><option value="za">Z - A</option><option value="random">🎲 Aleatório</option>`;
+        sortSelect.innerHTML = `<option value="default">Relevância</option><option value="az">A - Z</option><option value="za">Z - A</option><option value="favorites">Favoritos</option>`;
         controlsWrapper.appendChild(input);
         controlsWrapper.appendChild(sortSelect);
         filterContainer.prepend(controlsWrapper); 
@@ -621,10 +621,23 @@ document.addEventListener('DOMContentLoaded', () => {
     function applySort(items) {
         let sortedItems = [...items];
         switch (currentSort) {
-            case 'az': sortedItems.sort((a, b) => a.title.localeCompare(b.title)); break;
-            case 'za': sortedItems.sort((a, b) => b.title.localeCompare(a.title)); break;
-            case 'random': sortedItems.sort(() => Math.random() - 0.5); break;
-            default: sortedItems.sort((a, b) => a.id - b.id);
+            case 'az': 
+                sortedItems.sort((a, b) => a.title.localeCompare(b.title)); 
+                break;
+            case 'za': 
+                sortedItems.sort((a, b) => b.title.localeCompare(a.title)); 
+                break;
+            case 'favorites': 
+                // [LÓGICA NOVA] Filtra apenas os itens que estão na wishlist
+                sortedItems = sortedItems.filter(item => wishlist.includes(item.id));
+                
+                // Feedback visual se não houver favoritos
+                if (sortedItems.length === 0 && items.length > 0) {
+                    showToast('Você ainda não favoritou nada nesta categoria');
+                }
+                break;
+            default: 
+                sortedItems.sort((a, b) => a.id - b.id);
         }
         return sortedItems;
     }
@@ -771,7 +784,7 @@ document.addEventListener('DOMContentLoaded', () => {
              input.placeholder = 'Buscar joia...';
              input.style.cssText = "padding:12px 25px; width:100%; max-width:300px; border-radius:50px; border:2px solid #241000; background:rgba(255,255,255,0.9); color:#241000; font-size:1rem; outline:none;";
              const sortSelect = document.createElement('select');
-             sortSelect.innerHTML = `<option value="default">✨ Relevância</option><option value="az">A - Z</option><option value="za">Z - A</option><option value="random">🎲 Aleatório</option>`;
+             sortSelect.innerHTML = `<option value="default">Relevância</option><option value="az">A - Z</option><option value="za">Z - A</option><option value="favorites">Favoritos</option>`;
              sortSelect.style.cssText = "padding:12px 20px; border-radius:50px; border:2px solid #241000; background:#241000; color:#FDB90C; font-size:0.9rem; font-weight:600; cursor:pointer;";
              
              controlsWrapper.appendChild(input);
