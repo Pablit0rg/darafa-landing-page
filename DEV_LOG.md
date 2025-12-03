@@ -1,49 +1,45 @@
 # DaRafa Acessorios - O Dossie Completo do Projeto (MASTER LOG)
 
 **Resumo Executivo:**
-Este documento narra a evolucao completa do desenvolvimento da Landing Page para "DaRafa Acessorios". O projeto encontra-se na Versao 4.9 (Estável). O site está funcional, com rodapé otimizado e ajustes de UX. O foco atual é a **Produção de Conteúdo** e a resolução de pequenos detalhes visuais (Tech Debt) antes do lançamento.
+Este documento narra a evolucao completa do desenvolvimento da Landing Page para "DaRafa Acessorios". O projeto encontra-se na Versao 4.9 (Estável). A infraestrutura de domínios foi concluída com sucesso após manobra técnica de DNS. O site oficial aguarda apenas o conteúdo fotográfico para o lançamento.
 
 ---
 
 ## 1. Mapa Tecnico (Status)
 * **Frontend (Ativo):**
-    * **css/**: Estilizacao modular "Red Chic" (99% Concluída).
+    * **css/**: Estilizacao modular "Red Chic" (Finalizada).
     * **js/main.js**: Versão 4.9 (Funcional).
-    * **Infra:** Domínio `darafa.com` em espera (Hamster Page).
-* **Pendências (Tech Debt):**
-    * **Botão Relevância:** A borda vermelha fixa não está aplicando via JS.
-        * *Solução Planejada:* Migrar o estilo do `#js-sort-select` do Javascript para o arquivo `_gallery.css`, forçando `appearance: none`.
-* **Conteúdo:** Aguardando as 50 fotos oficiais.
+* **Infraestrutura (RESOLVIDO):**
+    * **Domínio:** `darafa.com` apontado via **A Record + CNAME** para a Vercel.
+    * **Status:** Online e Seguro (SSL Ativo).
+    * **Conteúdo Atual:** Página de Espera (Hamster Loader).
 
 ---
 
 ## 5. Historico de Atualizacoes (CHANGELOG)
 
+### [03/12/2025] - Fase 5.0: Infraestrutura de DNS (Sucesso)
+**Status: CONCLUÍDO**
+* **Incidente:** A propagação via Nameservers travou por mais de 24h, gerando conflito com a rede corporativa e timeout na Vercel.
+* **Solução (Plano B):** Configuração manual de DNS na Hostinger.
+    * **A Record:** `@` apontando para `76.76.21.21` (Vercel IP).
+    * **CNAME:** `www` apontando para `cname.vercel-dns.com`.
+* **Resultado:** Propagação imediata e certificado SSL gerado com sucesso.
+
 ### [03/12/2025] - Fase 4.9: Refinamento de Rodapé e UX
 **Status: ESTÁVEL**
-* **Rodapé Slim:** Redução de padding e altura para visual mais leve. Reorganização hierárquica (Dev antes do Copyright).
-* **Back to Top:** Lógica inteligente implementada (só aparece próximo ao rodapé) e estilização vermelha no hover.
-* **UI Fixes:** Ajustes na posição do botão "Fechar" (X) dos modais para evitar conflito com a barra de rolagem.
-
-### [03/12/2025] - Fase 4.8: Rollback de Segurança
-**Status: RESOLVIDO**
-* Reversão da tentativa de "Reset Automático de Filtros" que causou travamento nos modais.
-
-### [02/12/2025] - Fase 4.7: Refinamento "Red Chic"
-**Status: CONCLUÍDO**
-* Filtro de Favoritos e padronização da cor Vermelho Carmesim (#D00000).
+* Rodapé Slim, Back to Top inteligente e ajustes de UI.
 
 ---
 
-## 6. PROXIMOS PASSOS (FASE 5 - CONTEÚDO & POLIMENTO FINAL)
+## 6. PROXIMOS PASSOS (FASE 6 - O GRANDE LANÇAMENTO)
 
-1.  **GESTAO DE CONTEÚDO (Prioridade Máxima):**
-    * Receber e processar as 50 fotos dos acessórios.
-2.  **POLIMENTO (Quando o conteúdo chegar):**
-    * Aplicar a correção CSS no botão "Relevância".
-    * Verificar responsividade com as fotos reais.
-3.  **DEPLOY:**
-    * Virada de chave na Vercel para produção.
+1.  **GESTAO DE CONTEÚDO (Aguardando):**
+    * Receber e processar as 50 fotos dos acessórios da Rafa.
+2.  **VIRADA DE CHAVE (Deploy):**
+    * Quando as fotos chegarem: Atualizar o código.
+    * Remover o domínio do projeto "Em Breve".
+    * Adicionar o domínio no projeto "Principal".
 
 ---
-*Ultima atualizacao: 03/12/2025 - Rodapé ajustado e pendência visual catalogada.*
+*Ultima atualizacao: 03/12/2025 - Domínio dominado. Hamster operando.*
