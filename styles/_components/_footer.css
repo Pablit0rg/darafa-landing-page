@@ -4,16 +4,16 @@
  */
 
 .footer-section {
-    /* Reduzimos o padding para diminuir a altura total */
-    padding: 15px 0; 
+    /* Reduzimos o padding drasticamente (de 15px para 5px) */
+    padding: 5px 0; 
     
     background-color: var(--color-black-pure);
     border-top: 1px solid var(--color-gray-dark);
     text-align: center;
     margin-top: auto; 
     
-    /* Altura mínima para garantir consistência */
-    min-height: 80px;
+    /* Reduzimos a altura mínima (de 80px para 50px) */
+    min-height: 50px;
     display: flex;
     align-items: center;
 }
@@ -28,7 +28,7 @@
 
 .footer-tagline {
     font-family: var(--font-serif);
-    color: var(--color-gold-medium);
+    color: var(#241000);
     font-size: 1rem; /* Levemente menor */
     letter-spacing: 1px;
     margin: 0;
@@ -37,7 +37,7 @@
 .footer-copyright {
     font-family: var(--font-sans);
     font-size: 0.75rem;
-    color: var(--color-text-muted);
+    color: var(#000000);
     opacity: 0.8;
     margin: 0;
 }
@@ -46,8 +46,9 @@
 .footer-dev {
     font-family: var(--font-sans);
     font-size: 0.7rem;
-    color: #666;
-    margin-top: 2px; /* Espaço mínimo */
+    color: var(--color-text-muted); /* <--- A CORREÇÃO ELEGANTE */
+    opacity: 0.8; /* Adiciona um toque suave para não brigar com o copyright */
+    margin-top: 2px;
 }
 
 .footer-dev a {
@@ -61,7 +62,8 @@
 }
 
 .footer-dev a:hover {
-    color: var(--color-gold-light);
+    /* O Roxo/Magenta oficial do gradiente do Instagram */
+    color: #241000; 
     text-decoration: underline;
 }
 

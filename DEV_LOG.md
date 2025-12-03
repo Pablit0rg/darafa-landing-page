@@ -1,49 +1,45 @@
 # DaRafa Acessorios - O Dossie Completo do Projeto (MASTER LOG)
 
 **Resumo Executivo:**
-Este documento narra a evolucao completa do desenvolvimento da Landing Page para "DaRafa Acessorios". O projeto encontra-se na Versao 4.5 (Estável), com todas as funcionalidades de UX (incluindo sincronia complexa) e conformidade legal (LGPD) operando perfeitamente. O site está pronto para o lançamento oficial.
+Este documento narra a evolucao completa do desenvolvimento da Landing Page para "DaRafa Acessorios". O projeto encontra-se na Versao 4.7 (Estável). Uma tentativa de atualização de UX (Reset de Filtros - v4.8) causou um bloqueio crítico na navegação e foi revertida (Rollback). O foco retorna para a estabilidade e aguardo de conteúdo.
 
 ---
 
 ## 1. Mapa Tecnico (Status)
 * **Frontend (Ativo):**
-    * **css/**: Estilizacao modular "Red Chic" (Polida).
-    * **js/main.js**: Versão 4.5 (Sync Multi-Instância + Banner LGPD).
-    * **assets/**: Imagens otimizadas e ajustadas.
-* **Infraestrutura:**
-    * **Domínio Oficial:** `darafa.com` (Atualmente exibindo página "Em Breve" com Hamster Loader).
-    * **Staging:** Site principal aguardando virada de chave na Vercel.
+    * **css/**: Estilizacao modular "Red Chic" (Estável).
+    * **js/main.js**: Versão 4.7 (Stable Build - Rollback da v4.8).
+    * **Infra:** Domínio `darafa.com` com página de espera (Hamster) ativa.
+* **Pendências:**
+    * **Conteúdo:** Recebimento das 50 fotos oficiais.
+    * **Tech Debt:** Investigar conflito na função `updateGridData` que travou os modais.
 
 ---
 
 ## 5. Historico de Atualizacoes (CHANGELOG)
 
-### [02/12/2025] - Fase 4.5: O Fim dos Bugs (Sync Perfeito) - CONCLUÍDO
+### [03/12/2025] - Fase 4.8: Tentativa de UX Reset (ROLLBACK)
+**Status: REVERTIDO**
+* **Incidente:** A implementação da lógica de "Reset Automático de Filtros" causou um bug crítico (impedimento de abertura dos Cards Pai/Modais).
+* **Ação:** Reversão imediata para a versão 4.7 (Estável). A funcionalidade foi adiada para evitar instabilidade.
+
+### [02/12/2025] - Fase 4.7: Refinamento de UX "Red Chic" - CONCLUÍDO
 **Status: ESTÁVEL**
-
-**Correções Críticas:**
-* **Sync Real-Time (Fix Definitivo):** Corrigido o bug onde alguns minicards não atualizavam o ícone de coração.
-    * *Causa:* O código selecionava apenas a primeira instância do card (muitas vezes oculta).
-    * *Solução:* Implementação de `querySelectorAll` para atualizar visualmente **todas** as cópias do card (Galeria + Modal) simultaneamente.
-
-### [02/12/2025] - Fase 4.4: Polimento Visual & Compliance (LGPD)
-**Status: CONCLUÍDO**
-* **LGPD:** Banner de Cookies justificado e elegante implementado.
-* **UI:** Ajuste fino de imagens (Capas e Thumbnails) e correção de especificidade CSS nos cards do Atelier.
+* **Filtro de Favoritos:** Implementada opção no menu "Relevância" para filtrar apenas itens favoritados.
+* **UI Red Chic:** Botões e bordas padronizados com Vermelho Carmesim (#D00000).
+* **Infra:** Configuração de DNS para `darafa.com` (Hamster Page).
 
 ---
 
-## 6. PROXIMOS PASSOS (FASE 5 - O LANÇAMENTO)
-O código está pronto. O foco agora é estratégia de deploy.
+## 6. PROXIMOS PASSOS (FASE 5 - CONTEÚDO & LANÇAMENTO)
+Código congelado (Code Freeze) para evitar novos bugs. O foco é conteúdo.
 
-1.  **INFRAESTRUTURA FINAL:**
-    * Garantir que este código final (v4.5) esteja no GitHub.
-    * Preparar o projeto `darafa-production` na Vercel.
-2.  **A VIRADA DE CHAVE:**
-    * Remover domínio `darafa.com` do projeto "Em Breve".
-    * Adicionar domínio `darafa.com` no projeto "Principal".
-3.  **FUTURO (Pós-Lançamento):**
-    * Integração com Backend/Supabase para gestão de pedidos real.
+1.  **GESTAO DE CONTEÚDO (Prioridade Máxima):**
+    * Receber e processar as 50 fotos dos acessórios.
+    * Preencher títulos e descrições finais.
+2.  **DEPLOY:**
+    * Manter o site estável na Vercel (Staging).
+    * Aguardar sinal verde da cliente para virada de chave.
 
 ---
-*Ultima atualizacao: 02/12/2025 - Bug de sincronia exterminado. Frontend finalizado.*
+*Ultima atualizacao: 03/12/2025 - Rollback de segurança realizado. Site operante.*

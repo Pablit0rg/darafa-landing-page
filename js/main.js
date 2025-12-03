@@ -704,7 +704,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Adicionar
             wishlist.push(id);
             btnElement.classList.add('active');
-            showToast('Adicionado aos Favoritos ❤️');
+            showToast('Adicionado aos Favoritos');
             trackEvent('interaction', 'wishlist_add');
             
             // Atualiza VISUALMENTE todos os cards encontrados (Ocultos e Visíveis)
@@ -717,7 +717,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Remover
             wishlist.splice(index, 1);
             btnElement.classList.remove('active');
-            showToast('Removido dos Favoritos 💔');
+            showToast('Removido dos Favoritos');
             trackEvent('interaction', 'wishlist_remove');
 
             // Remove o marcador de todos os cards encontrados
