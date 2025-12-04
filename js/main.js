@@ -503,47 +503,54 @@ document.addEventListener('DOMContentLoaded', () => {
     function injectDynamicStyles() {
         const style = document.createElement('style');
         style.innerHTML = `
-            // Linha da controls-wrapper
-// 1. O Container Principal (Permite quebra de linha com 'flex-wrap')
-.controls-wrapper { 
-    width: 100%; 
-    display: flex; 
-    justify-content: center; 
-    align-items: center; 
-    gap: 15px; 
-    margin-bottom: 20px; 
-    flex-wrap: wrap; /* Isso é o segredo para o botão descer */
-}
+            /* 1. O Container (A linha que segura tudo) */
+            .controls-wrapper { 
+                width: 100%; 
+                display: flex; 
+                justify-content: center; /* Centraliza no meio da tela */
+                align-items: center; 
+                gap: 10px; /* Espaço entre a busca e o botão */
+                margin-bottom: 20px; 
+                flex-wrap: wrap; /* Permite quebrar linha só se a tela for minúscula */
+            }
 
-// 2. A Barra de Busca (Tamanho fixo para alinhar bonito)
+            /* 2. A Barra de Busca (Versão Metade) */
 #js-search-input { 
-    padding: 12px 25px; 
-    width: 220px; /* Largura controlada */
+    padding: 10px 20px; 
+    width: 50%;        /* Ocupa metade do espaço disponível */
+    max-width: 180px;  /* Trava em um tamanho pequeno e elegante */
     border-radius: 50px; 
     border: 1px solid #D00000; 
     background: rgba(255,255,255,0.9); 
     color: #241000; 
-    font-size: 1rem; 
+    font-size: 0.95rem; 
     outline: none; 
     box-shadow: 0 4px 10px rgba(36,16,0,0.1); 
     transition: all 0.3s ease; 
 }
 
-// 3. O Menu "Todos" (Relevância)
-#js-sort-select { 
-    padding: 12px 20px; 
-    border-radius: 50px; 
-    border: 1px solid #D00000 !important; 
-    background: #241000; 
-    color: #FDB90C; 
-    font-size: 0.9rem; 
-    font-weight: 600; 
-    cursor: pointer; 
-    outline: none; 
-    -webkit-appearance: none; 
-    text-align: center; 
-    box-shadow: 0 4px 10px rgba(36,16,0,0.2); 
-}
+            /* 3. O Botão de Favoritos (Menu) */
+            #js-sort-select { 
+                padding: 10px 20px; 
+                border-radius: 50px; 
+                border: 1px solid #D00000 !important; 
+                background: #241000; 
+                color: #FDB90C; 
+                font-size: 0.9rem; 
+                font-weight: 600; 
+                cursor: pointer; 
+                outline: none; 
+                -webkit-appearance: none; 
+                appearance: none; 
+                text-align: center; 
+                box-shadow: 0 4px 10px rgba(36,16,0,0.2); 
+            }
+            
+            #js-sort-select option { background-color: #241000; color: #FDB90C; }
+            #js-sort-select:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(208, 0, 0, 0.3); }
+
+            /* ... (Mantenha o resto do código do .toast-notification e .exit-overlay aqui para baixo) ... */
+            
             #js-sort-select:hover { background: #3a1a00; }
             
             .toast-notification {
@@ -664,30 +671,6 @@ document.addEventListener('DOMContentLoaded', () => {
         controlsWrapper.appendChild(input);
         controlsWrapper.appendChild(sortSelect);
         filterContainer.prepend(controlsWrapper); 
-        
-        // 3. Lógica para o Botão HTML Estático (Conecta o clique)
-        const staticBtn = document.getElementById('static-order-btn');
-        if (staticBtn) {
-            staticBtn.addEventListener('click', () => {
-                // Validação: Se não tiver favoritos, avisa
-                if (wishlist.length === 0) {
-                    showToast('Necessário favoritar seus escolhidos antes!');
-                    return;
-                }
-                
-                // Pega os favoritos e gera o link
-                const favorites = productsData.filter(p => wishlist.includes(p.id));
-                const ids = favorites.map(i => i.id).join(',');
-                const magicLink = `${window.location.origin}${window.location.pathname}?pedido=${ids}`;
-                const msg = `Olá Rafaela! Tudo bem? \n\nVisitei seu site e amei essas peças:\n${magicLink}\n\nGostaria de encomendar, por gentileza!`;
-                
-                // Copia e abre o Insta
-                navigator.clipboard.writeText(msg).then(() => {
-                    showToast('Link copiado! Cole no Direct da Rafa');
-                    setTimeout(() => window.open('https://www.instagram.com/darafa_cwb/', '_blank'), 1500);
-                });
-            });
-        }
         
         // 4. Atualização do Grid (Busca e Filtros)
         const updateGridData = () => {
