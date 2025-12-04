@@ -626,6 +626,7 @@ document.addEventListener('DOMContentLoaded', () => {
         filterContainer.prepend(controlsWrapper); 
         
         const updateGridData = () => {
+            removeStickyInstruction();
             const term = input.value.toLowerCase();
             const activeFilterBtn = document.querySelector('.filter-btn.active');
             const filterValue = activeFilterBtn ? activeFilterBtn.dataset.filter : 'all';
@@ -652,9 +653,11 @@ document.addEventListener('DOMContentLoaded', () => {
     function applySort(items) {
         let sortedItems = [...items];
         
-        // Remove botão de pedido antigo se existir (para não duplicar)
+        // 1. LIMPEZA GERAL (Segurança)
+        // Remove botão e mensagem antes de calcular qualquer coisa
         const oldBtn = document.getElementById('btn-send-order');
         if(oldBtn) oldBtn.remove();
+        removeStickyInstruction();
 
         switch (currentSort) {
             case 'az': 
@@ -667,9 +670,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 sortedItems = sortedItems.filter(item => wishlist.includes(item.id));
                 
                 if (sortedItems.length === 0 && items.length > 0) {
-                    showToast('Você ainda não favoritou nada 💔');
+                    showToast('Você ainda não favoritou nada');
                 } else if (sortedItems.length > 0) {
-                    // [NOVO] Cria o botão de enviar pedido apenas se tiver itens
+                    // [NOVO] Cria o botão apenas aqui
                     createOrderButton(sortedItems);
                 }
                 break;

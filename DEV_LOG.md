@@ -1,18 +1,20 @@
 # DaRafa Acessorios - O Dossie Completo do Projeto (MASTER LOG)
 
 **Resumo Executivo:**
-Este documento narra a evolucao completa do desenvolvimento da Landing Page para "DaRafa Acessorios". O projeto encontra-se na Versao 4.9 (Estável). A infraestrutura de domínios está concluída. O foco atual é a **Produção de Conteúdo** e a resolução de pendências técnicas (Tech Debt) de UX que surgiram nos últimos testes.
+Este documento narra a evolucao completa do desenvolvimento da Landing Page para "DaRafa Acessorios". O projeto encontra-se na Versao 4.9 (Estável). A infraestrutura de domínios está concluída. O foco atual é a **Produção de Conteúdo**. O desenvolvimento de features de UX foi congelado devido a um comportamento persistente na interface (Bug do Botão Zumbi).
 
 ---
 
 ## 1. Mapa Tecnico (Status)
 * **Frontend (Ativo):**
     * **css/**: Estilizacao modular "Red Chic" (99% Concluída).
-    * **js/main.js**: Versão 4.9 (Estável - Rollback de features instáveis).
+    * **js/main.js**: Versão 4.9 (Estável - Com Bug de UX Isolado).
     * **Infra:** Domínio `darafa.com` online e seguro (Hamster Page).
 * **Pendências (Tech Debt):**
-    * **[CRÍTICO] Limpeza de Instrução:** A mensagem fixa "Cole no Direct" não está sumindo automaticamente ao mudar filtros. A tentativa de correção causou quebra no JS.
-        * *Ação:* Reimplementar lógica de limpeza com segurança.
+    * **[CRÍTICO] Persistência do Botão de Pedido (Modal):**
+        * *Sintoma:* O botão "Enviar Pedido" desaparece corretamente ao trocar abas (ex: de Favoritos para A-Z). PORÉM, se o usuário fechar o modal (clicar no X ou fora) enquanto "Favoritos" está ativo, o botão **permanece na tela** (vaza para a Home).
+        * *Diagnóstico:* O browser não está priorizando a limpeza do DOM no evento de fechamento.
+        * *Ação Futura:* Implementar uma "Ordem Irrefutável" (Force Remove) no evento `close()`, garantindo que a remoção do botão tenha prioridade máxima sobre o estado do filtro.
     * **Botão Relevância:** Borda vermelha fixa pendente de migração para CSS.
 * **Conteúdo:** Aguardando as 50 fotos oficiais.
 
@@ -20,19 +22,19 @@ Este documento narra a evolucao completa do desenvolvimento da Landing Page para
 
 ## 5. Historico de Atualizacoes (CHANGELOG)
 
-### [04/12/2025] - Fase 5.1: Tentativa de UX Sticky (ROLLBACK)
-**Status: REVERTIDO**
-* **Incidente:** A implementação da função `removeStickyInstruction()` dentro de `updateGridData` causou um erro fatal no Javascript, parando a Navbar e os Cards.
-* **Ação:** Reversão imediata (Ctrl+Z). A funcionalidade de "Mensagem Fixa" continua ativa, mas sem a remoção automática por enquanto.
+### [04/12/2025] - Fase 5.2: Bug Hunt (UX Sticky) - ADIADO
+**Status: EM ANÁLISE**
+* **Problema:** A funcionalidade de "Mensagem Fixa" e o botão flutuante apresentaram resistência à remoção automática em cenários específicos (fechamento de modal).
+* **Decisão:** Feature congelada para evitar instabilidade no código principal. A correção será abordada na etapa de polimento final com foco na limpeza de escopo global.
+
+### [04/12/2025] - Fase 5.1: Ajuste de Posição (Toast)
+**Status: CONCLUÍDO**
+* **Melhoria:** A notificação "Toast" foi movida para o topo da tela (perto da busca) para não cobrir o botão de ação no rodapé.
 
 ### [03/12/2025] - Fase 5.0: Infraestrutura de DNS (Sucesso)
 **Status: CONCLUÍDO**
 * **Infra:** Domínio `darafa.com` configurado e propagado com sucesso (A Record + CNAME).
-* **Feature:** Botão "Enviar Pedido para Rafa" implementado com mensagem fixa no topo (Top Toast).
-
-### [03/12/2025] - Fase 4.9: Refinamento de Rodapé e UX
-**Status: ESTÁVEL**
-* Rodapé Slim, Back to Top inteligente e ajustes de UI.
+* **Feature:** Botão "Enviar Pedido para Rafa" (Link Mágico) implementado.
 
 ---
 
@@ -40,11 +42,11 @@ Este documento narra a evolucao completa do desenvolvimento da Landing Page para
 
 1.  **GESTAO DE CONTEÚDO (Prioridade Máxima):**
     * Receber e processar as 50 fotos dos acessórios.
-2.  **CAÇA AOS BUGS (Polimento):**
-    * Investigar e corrigir o erro de sintaxe na limpeza da mensagem fixa.
-    * Aplicar borda vermelha no botão de relevância via CSS.
+2.  **CAÇA AOS BUGS (Futuro):**
+    * Resolver a persistência do botão no fechamento do modal (Prioridade Alta).
+    * Investigar duplicidade de eventos no DOM.
 3.  **DEPLOY FINAL:**
     * Virada de chave na Vercel para produção apenas com código 100% estável.
 
 ---
-*Ultima atualizacao: 04/12/2025 - Bug de UX catalogado. Código estável.*
+*Ultima atualizacao: 04/12/2025 - Detalhamento do Bug de Persistência (Modal).*
