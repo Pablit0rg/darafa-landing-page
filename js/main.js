@@ -381,6 +381,28 @@ document.addEventListener('DOMContentLoaded', () => {
         const filtro = urlParams.get('filtro');
         const busca = urlParams.get('busca');
         const id = urlParams.get('id');
+        
+        // [NOVO] Lógica para ler o Link Mágico do Pedido (Para a Rafa ver)
+        const pedidoIds = urlParams.get('pedido');
+
+        if (pedidoIds) {
+            // Se tem pedido na URL, força o modo "Pedido Recebido"
+            const ids = pedidoIds.split(',').map(Number);
+            activeData = productsData.filter(p => ids.includes(p.id));
+            
+            // Atualiza o título da seção para avisar
+            const title = document.querySelector('.section-title');
+            if(title) title.innerText = "Itens do Pedido";
+            
+            // Limpa a busca e filtros visuais
+            const input = document.getElementById('js-search-input');
+            if(input) input.value = '';
+            
+            // Renderiza direto
+            resetAndRender(galleryContainer);
+            showToast('Visualizando itens selecionados pelo cliente');
+            return; // Para aqui e não faz o resto
+        }
 
         if (filtro) { 
             const btn = document.querySelector(`.filter-btn[data-filter="${filtro}"]`); 
@@ -492,14 +514,22 @@ document.addEventListener('DOMContentLoaded', () => {
             #js-sort-select:hover { background: #3a1a00; }
             
             .toast-notification {
-                position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px);
+                position: fixed; 
+                top: 130px; /* MUDANÇA: Fica no topo (perto da busca), não embaixo */
+                left: 50%; 
+                transform: translateX(-50%) translateY(-50px); /* Animação vem de cima */
                 background-color: #241000; color: #FDB90C; padding: 12px 24px;
                 border-radius: 50px; box-shadow: 0 5px 15px rgba(0,0,0,0.3);
                 font-family: 'Poppins', sans-serif; font-size: 0.9rem; font-weight: 500;
-                z-index: 5000; opacity: 0; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                z-index: 10000; /* Z-index altíssimo para ficar sobre tudo */
+                opacity: 0; 
+                transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
                 display: flex; align-items: center; gap: 8px; border: 1px solid #FDB90C;
             }
-            .toast-notification.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+            .toast-notification.show { 
+                transform: translateX(-50%) translateY(0); /* Posição final */
+                opacity: 1; 
+            }
             
             /* EXIT INTENT MODAL */
             .exit-overlay {
@@ -621,6 +651,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function applySort(items) {
         let sortedItems = [...items];
+        
+        // Remove botão de pedido antigo se existir (para não duplicar)
+        const oldBtn = document.getElementById('btn-send-order');
+        if(oldBtn) oldBtn.remove();
+
         switch (currentSort) {
             case 'az': 
                 sortedItems.sort((a, b) => a.title.localeCompare(b.title)); 
@@ -629,12 +664,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 sortedItems.sort((a, b) => b.title.localeCompare(a.title)); 
                 break;
             case 'favorites': 
-                // [LÓGICA NOVA] Filtra apenas os itens que estão na wishlist
                 sortedItems = sortedItems.filter(item => wishlist.includes(item.id));
                 
-                // Feedback visual se não houver favoritos
                 if (sortedItems.length === 0 && items.length > 0) {
-                    showToast('Você ainda não favoritou nada nesta categoria');
+                    showToast('Você ainda não favoritou nada 💔');
+                } else if (sortedItems.length > 0) {
+                    // [NOVO] Cria o botão de enviar pedido apenas se tiver itens
+                    createOrderButton(sortedItems);
                 }
                 break;
             default: 
@@ -926,5 +962,91 @@ document.addEventListener('DOMContentLoaded', () => {
         viewer.addEventListener('click', (e) => { if(e.target === viewer) closeViewer(); });
         const closeViewerOnEsc = (e) => { if (e.key === 'Escape') { closeViewer(); document.removeEventListener('keydown', closeViewerOnEsc); } };
         document.addEventListener('keydown', closeViewerOnEsc);
+    }
+
+    // [NOVO] Função que cria o botão flutuante de pedido
+    function createOrderButton(items) {
+        const btn = document.createElement('button');
+        btn.id = 'btn-send-order';
+        btn.innerHTML = '<i class="fab fa-instagram"></i> Enviar Pedido para Rafa';
+        
+        // Estilo do Botão Flutuante
+        btn.style.cssText = `
+            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+            background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+            color: white; padding: 15px 30px; border-radius: 50px;
+            font-family: 'Poppins', sans-serif; font-weight: 600; font-size: 1rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4); border: 2px solid white;
+            z-index: 9999; cursor: pointer; transition: all 0.3s ease;
+            display: flex; align-items: center; gap: 10px;
+            animation: slideUp 0.5s ease;
+        `;
+        
+        btn.addEventListener('hover', () => { btn.style.transform = 'translateX(-50%) scale(1.05)'; });
+
+        btn.addEventListener('click', () => {
+            // 1. Gera o Link Mágico
+            const ids = items.map(i => i.id).join(',');
+            const magicLink = `${window.location.origin}${window.location.pathname}?pedido=${ids}`;
+            
+            // 2. Cria a Mensagem
+            const msg = `Olá Rafaela! Tudo bem? ✨\n\nVisitei seu site e amei essas peças:\n${magicLink}\n\nGostaria de encomendar, por gentileza!`;
+            
+            // 3. Copia para o Clipboard (Área de transferência)
+            navigator.clipboard.writeText(msg).then(() => {
+                showToast('Mensagem copiada! Cole no Direct da Rafa 📋');
+                
+                // 4. Abre o Instagram dela após 1.5s
+                setTimeout(() => {
+                    window.open('https://www.instagram.com/darafa_cwb/', '_blank');
+                }, 1500);
+            }).catch(err => {
+                console.error('Erro ao copiar', err);
+                showToast('Erro ao copiar. Tente printar a tela!');
+            });
+        });
+
+        document.body.appendChild(btn);
+    }
+    
+    // [NOVO] Mostra a instrução fixa no topo
+    function showStickyInstruction() {
+        // Remove se já existir para não duplicar
+        removeStickyInstruction();
+
+        const msg = document.createElement('div');
+        msg.id = 'sticky-instruction';
+        msg.innerHTML = 'Mensagem copiada! Vá ao Direct e cole (Ctrl+V) 📋';
+        
+        // Estilo Fixo (Topo, visível, z-index alto)
+        msg.style.cssText = `
+            position: fixed; top: 100px; left: 50%; transform: translateX(-50%);
+            background-color: #241000; color: #FDB90C; padding: 15px 30px;
+            border-radius: 50px; box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+            font-family: 'Poppins', sans-serif; font-size: 0.95rem; font-weight: 600;
+            z-index: 9998; border: 2px solid #FDB90C; text-align: center;
+            animation: slideDown 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            width: 90%; max-width: 400px;
+        `;
+        
+        // Adiciona estilo de animação se não tiver
+        if (!document.getElementById('anim-style')) {
+            const s = document.createElement('style');
+            s.id = 'anim-style';
+            s.innerHTML = `@keyframes slideDown { from { transform: translate(-50%, -100%); opacity: 0; } to { transform: translate(-50%, 0); opacity: 1; } }`;
+            document.head.appendChild(s);
+        }
+
+        document.body.appendChild(msg);
+    }
+
+    // [NOVO] Remove a instrução fixa
+    function removeStickyInstruction() {
+        const existing = document.getElementById('sticky-instruction');
+        if (existing) {
+            existing.style.opacity = '0';
+            existing.style.transform = 'translate(-50%, -20px)';
+            setTimeout(() => existing.remove(), 300);
+        }
     }
 });
