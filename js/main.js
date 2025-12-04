@@ -503,13 +503,47 @@ document.addEventListener('DOMContentLoaded', () => {
     function injectDynamicStyles() {
         const style = document.createElement('style');
         style.innerHTML = `
-            .controls-wrapper { width: 100%; display: flex; justify-content: center; gap: 15px; margin-bottom: 20px; flex-wrap: wrap; }
-            // Linha 262 (Ajuste da Busca)
-#js-search-input { padding: 12px 25px; width: 100%; max-width: 300px; border-radius: 50px; border: 1px solid #D00000; background: rgba(255,255,255,0.9); color: #241000; font-size: 1rem; outline: none; box-shadow: 0 4px 10px rgba(36,16,0,0.1); transition: all 0.3s ease; }
+            // Linha da controls-wrapper
+// 1. O Container Principal (Permite quebra de linha com 'flex-wrap')
+.controls-wrapper { 
+    width: 100%; 
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    gap: 15px; 
+    margin-bottom: 20px; 
+    flex-wrap: wrap; /* Isso é o segredo para o botão descer */
+}
 
-// Linha 263 (Ajuste do Botão Relevância)
-#js-sort-select option { background-color: #241000; color: #FDB90C; }
-#js-sort-select { padding: 12px 20px; border-radius: 50px; border: 1px solid #D00000 !important; background: #241000; color: #FDB90C; font-size: 0.9rem; font-weight: 600; cursor: pointer; outline: none; -webkit-appearance: none; appearance: none; text-align: center; box-shadow: 0 4px 10px rgba(36,16,0,0.2); }
+// 2. A Barra de Busca (Tamanho fixo para alinhar bonito)
+#js-search-input { 
+    padding: 12px 25px; 
+    width: 220px; /* Largura controlada */
+    border-radius: 50px; 
+    border: 1px solid #D00000; 
+    background: rgba(255,255,255,0.9); 
+    color: #241000; 
+    font-size: 1rem; 
+    outline: none; 
+    box-shadow: 0 4px 10px rgba(36,16,0,0.1); 
+    transition: all 0.3s ease; 
+}
+
+// 3. O Menu "Todos" (Relevância)
+#js-sort-select { 
+    padding: 12px 20px; 
+    border-radius: 50px; 
+    border: 1px solid #D00000 !important; 
+    background: #241000; 
+    color: #FDB90C; 
+    font-size: 0.9rem; 
+    font-weight: 600; 
+    cursor: pointer; 
+    outline: none; 
+    -webkit-appearance: none; 
+    text-align: center; 
+    box-shadow: 0 4px 10px rgba(36,16,0,0.2); 
+}
             #js-sort-select:hover { background: #3a1a00; }
             
             .toast-notification {
@@ -611,36 +645,70 @@ document.addEventListener('DOMContentLoaded', () => {
     function initControls() {
         const filterContainer = document.querySelector('.catalog-filters');
         if (!filterContainer) return;
+        
         const controlsWrapper = document.createElement('div');
         controlsWrapper.className = 'controls-wrapper';
+        
+        // 1. Barra de Busca
         const input = document.createElement('input');
         input.type = 'text'; input.id = 'js-search-input'; input.placeholder = 'Buscar joia...';
         input.addEventListener('focus', () => input.style.borderColor = '#CD4A00');
         input.addEventListener('blur', () => input.style.borderColor = '#241000');
+        
+        // 2. Seletor de Ordem (Menu)
         const sortSelect = document.createElement('select');
         sortSelect.id = 'js-sort-select';
         sortSelect.innerHTML = `<option value="default">Relevância</option><option value="az">A - Z</option><option value="za">Z - A</option><option value="favorites">Favoritos</option>`;
+        
+        // Adiciona Busca e Menu na div (O botão Encomendar já está no HTML ao lado)
         controlsWrapper.appendChild(input);
         controlsWrapper.appendChild(sortSelect);
         filterContainer.prepend(controlsWrapper); 
         
+        // 3. Lógica para o Botão HTML Estático (Conecta o clique)
+        const staticBtn = document.getElementById('static-order-btn');
+        if (staticBtn) {
+            staticBtn.addEventListener('click', () => {
+                // Validação: Se não tiver favoritos, avisa
+                if (wishlist.length === 0) {
+                    showToast('Necessário favoritar seus escolhidos antes!');
+                    return;
+                }
+                
+                // Pega os favoritos e gera o link
+                const favorites = productsData.filter(p => wishlist.includes(p.id));
+                const ids = favorites.map(i => i.id).join(',');
+                const magicLink = `${window.location.origin}${window.location.pathname}?pedido=${ids}`;
+                const msg = `Olá Rafaela! Tudo bem? \n\nVisitei seu site e amei essas peças:\n${magicLink}\n\nGostaria de encomendar, por gentileza!`;
+                
+                // Copia e abre o Insta
+                navigator.clipboard.writeText(msg).then(() => {
+                    showToast('Link copiado! Cole no Direct da Rafa');
+                    setTimeout(() => window.open('https://www.instagram.com/darafa_cwb/', '_blank'), 1500);
+                });
+            });
+        }
+        
+        // 4. Atualização do Grid (Busca e Filtros)
         const updateGridData = () => {
-            removeStickyInstruction();
             const term = input.value.toLowerCase();
-            const activeFilterBtn = document.querySelector('.filter-btn.active');
-            const filterValue = activeFilterBtn ? activeFilterBtn.dataset.filter : 'all';
             let filtered = productsData;
-            if (filterValue !== 'all') filtered = productsData.filter(item => item.category === filterValue);
+            
+            // Filtra por termo de busca
             if (term) {
                 if(term.length > 3) trackEvent('search', term);
                 filtered = filtered.filter(item => item.title.toLowerCase().includes(term) || item.description.toLowerCase().includes(term) || item.category.toLowerCase().includes(term));
             }
+            
+            // Aplica ordenação ou filtro de favoritos
             filtered = applySort(filtered);
             activeData = filtered;
+            
             const parentModal = input.closest('.expansion-content');
             const targetGallery = parentModal ? parentModal.querySelector('.gallery-5-cols') : galleryContainer;
             resetAndRender(targetGallery);
         };
+
         input.addEventListener('input', (e) => {
             if(this.searchTimeout) clearTimeout(this.searchTimeout);
             this.searchTimeout = setTimeout(() => { updateURL('busca', e.target.value.length > 0 ? e.target.value : null); }, 500);
@@ -651,13 +719,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function applySort(items) {
         let sortedItems = [...items];
-        
-        // 1. LIMPEZA GERAL (Segurança)
-        // Remove botão e mensagem antes de calcular qualquer coisa
-        const oldBtn = document.getElementById('btn-send-order');
-        if(oldBtn) oldBtn.remove();
-        removeStickyInstruction();
-
         switch (currentSort) {
             case 'az': 
                 sortedItems.sort((a, b) => a.title.localeCompare(b.title)); 
@@ -667,12 +728,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 break;
             case 'favorites': 
                 sortedItems = sortedItems.filter(item => wishlist.includes(item.id));
-                
+                // Se não tiver nada, avisa (opcional, pois o botão já avisa também)
                 if (sortedItems.length === 0 && items.length > 0) {
                     showToast('Você ainda não favoritou nada');
-                } else if (sortedItems.length > 0) {
-                    // [NOVO] Cria o botão apenas aqui
-                    createOrderButton(sortedItems);
                 }
                 break;
             default: 
@@ -965,90 +1023,5 @@ document.addEventListener('DOMContentLoaded', () => {
         const closeViewerOnEsc = (e) => { if (e.key === 'Escape') { closeViewer(); document.removeEventListener('keydown', closeViewerOnEsc); } };
         document.addEventListener('keydown', closeViewerOnEsc);
     }
-
-    // [NOVO] Função que cria o botão flutuante de pedido
-    function createOrderButton(items) {
-        const btn = document.createElement('button');
-        btn.id = 'btn-send-order';
-        btn.innerHTML = '<i class="fab fa-instagram"></i> Enviar Pedido para Rafa';
-        
-        // Estilo do Botão Flutuante
-        btn.style.cssText = `
-            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
-            background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
-            color: white; padding: 15px 30px; border-radius: 50px;
-            font-family: 'Poppins', sans-serif; font-weight: 600; font-size: 1rem;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.4); border: 2px solid white;
-            z-index: 9999; cursor: pointer; transition: all 0.3s ease;
-            display: flex; align-items: center; gap: 10px;
-            animation: slideUp 0.5s ease;
-        `;
-        
-        btn.addEventListener('hover', () => { btn.style.transform = 'translateX(-50%) scale(1.05)'; });
-
-        btn.addEventListener('click', () => {
-            // 1. Gera o Link Mágico
-            const ids = items.map(i => i.id).join(',');
-            const magicLink = `${window.location.origin}${window.location.pathname}?pedido=${ids}`;
-            
-            // 2. Cria a Mensagem
-            const msg = `Olá Rafaela! Tudo bem? ✨\n\nVisitei seu site e amei essas peças:\n${magicLink}\n\nGostaria de encomendar, por gentileza!`;
-            
-            // 3. Copia para o Clipboard (Área de transferência)
-            navigator.clipboard.writeText(msg).then(() => {
-                showToast('Mensagem copiada! Cole no Direct da Rafa 📋');
-                
-                // 4. Abre o Instagram dela após 1.5s
-                setTimeout(() => {
-                    window.open('https://www.instagram.com/darafa_cwb/', '_blank');
-                }, 1500);
-            }).catch(err => {
-                console.error('Erro ao copiar', err);
-                showToast('Erro ao copiar. Tente printar a tela!');
-            });
-        });
-
-        document.body.appendChild(btn);
-    }
     
-    // [NOVO] Mostra a instrução fixa no topo
-    function showStickyInstruction() {
-        // Remove se já existir para não duplicar
-        removeStickyInstruction();
-
-        const msg = document.createElement('div');
-        msg.id = 'sticky-instruction';
-        msg.innerHTML = 'Mensagem copiada! Vá ao Direct e cole (Ctrl+V) 📋';
-        
-        // Estilo Fixo (Topo, visível, z-index alto)
-        msg.style.cssText = `
-            position: fixed; top: 100px; left: 50%; transform: translateX(-50%);
-            background-color: #241000; color: #FDB90C; padding: 15px 30px;
-            border-radius: 50px; box-shadow: 0 10px 40px rgba(0,0,0,0.6);
-            font-family: 'Poppins', sans-serif; font-size: 0.95rem; font-weight: 600;
-            z-index: 9998; border: 2px solid #FDB90C; text-align: center;
-            animation: slideDown 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            width: 90%; max-width: 400px;
-        `;
-        
-        // Adiciona estilo de animação se não tiver
-        if (!document.getElementById('anim-style')) {
-            const s = document.createElement('style');
-            s.id = 'anim-style';
-            s.innerHTML = `@keyframes slideDown { from { transform: translate(-50%, -100%); opacity: 0; } to { transform: translate(-50%, 0); opacity: 1; } }`;
-            document.head.appendChild(s);
-        }
-
-        document.body.appendChild(msg);
-    }
-
-    // [NOVO] Remove a instrução fixa
-    function removeStickyInstruction() {
-        const existing = document.getElementById('sticky-instruction');
-        if (existing) {
-            existing.style.opacity = '0';
-            existing.style.transform = 'translate(-50%, -20px)';
-            setTimeout(() => existing.remove(), 300);
-        }
-    }
 });

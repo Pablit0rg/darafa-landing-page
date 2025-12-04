@@ -127,3 +127,32 @@
         font-size: 0.75rem;
     }
 }
+
+/* Botão Fixo de Encomenda */
+.btn-instagram-fixo {
+    padding: 0 25px;
+    height: 42px; /* Mesma altura dos inputs */
+    border-radius: 50px;
+    border: none;
+    background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+    color: white;
+    font-family: var(--font-sans);
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    transition: transform 0.2s ease;
+}
+
+.btn-instagram-fixo:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+}
+
+/* Ícone dentro do botão */
+.btn-instagram-fixo i {
+    font-size: 1.1rem;
+}
