@@ -289,15 +289,14 @@ document.addEventListener('DOMContentLoaded', () => {
         initCookieConsent();
         initCatalog();
         initFilters();
-        initControls(); 
-        initExitIntent();
+        initControls();
         injectDynamicStyles(); 
         
         // Ativa o Scroll Spy nas seções principais
         document.querySelectorAll('section, header').forEach(sec => sectionObserver.observe(sec));
 
         if(isLowEndConnection) {
-            setTimeout(() => showToast('Modo Econômico ativado 🍃'), 2000);
+            setTimeout(() => showToast('Modo Econômico ativado'), 2000);
         }
 
         setTimeout(loadStateFromURL, 100); 
