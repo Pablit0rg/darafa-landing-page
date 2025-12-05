@@ -1,33 +1,39 @@
 # DaRafa Acessorios - O Dossie Completo do Projeto (MASTER LOG)
 
 **Resumo Executivo:**
-Este documento narra a evolucao completa do desenvolvimento da Landing Page para "DaRafa Acessorios". O projeto encontra-se na Versao 4.9 (Estável). A infraestrutura de domínios está concluída. O foco atual é a **Produção de Conteúdo**. Funcionalidades invasivas (Exit Intent) foram removidas para melhorar a experiência do usuário.
+Este documento narra a evolucao completa do desenvolvimento da Landing Page para "DaRafa Acessorios". O projeto encontra-se na Versao 5.0 (Clean & Stable). A infraestrutura de domínios está concluída. O foco retornou para a estabilidade do layout e preparação para a **Produção de Conteúdo**. Funcionalidades complexas foram removidas para garantir um código limpo e performático.
 
 ---
 
 ## 1. Mapa Tecnico (Status)
 * **Frontend (Ativo):**
     * **css/**: Estilizacao modular "Red Chic" (99% Concluída).
-    * **js/main.js**: Versão 4.9 (Estável - Sem Exit Intent).
+    * **js/main.js**: Versão 5.0 (Limpeza de Código - Sem Exit Intent/Sticky Buttons).
     * **Infra:** Domínio `darafa.com` online e seguro (Hamster Page).
-* **Pendências (Tech Debt):**
-    * **[UX] Persistência do Botão de Pedido:** O botão "Enviar Pedido" não some ao fechar o modal. Feature congelada até correção.
-    * **Botão Relevância:** Borda vermelha fixa pendente de migração para CSS.
+* **Funcionalidades Ativas:**
+    * Catálogo Dinâmico + Filtros.
+    * Sistema de Favoritos (LocalStorage).
+    * Visualizador de Imagens (Zoom).
+    * Barra de Controle (Busca + Filtros Alinhados).
 * **Conteúdo:** Aguardando as 50 fotos oficiais.
 
 ---
 
 ## 5. Historico de Atualizacoes (CHANGELOG)
 
+### [04/12/2025] - Fase 5.4: Refinamento de Layout & Limpeza (v5.0)
+**Status: CONCLUÍDO**
+* **Refatoração:** Remoção temporária do botão "Encomendar" (Instagram) e suas funções associadas para limpar a interface e o código.
+* **UI/UX:** Ajuste fino de alinhamento (Flexbox) entre a Barra de Busca e o Menu de Filtros ("Todos"), garantindo que fiquem na mesma linha em Desktop.
+* **Limpeza de Código:** Remoção de funções legadas (`createOrderButton`, `stickyInstruction`) do `main.js`.
+
 ### [04/12/2025] - Fase 5.3: Limpeza de UX (Exit Intent)
 **Status: CONCLUÍDO**
-* **Remoção:** A funcionalidade de "Exit Intent" (Modal que abria ao tentar sair do site) foi desativada.
-* **Motivo:** A feature estava se tornando invasiva e prejudicando a navegação fluida ("Red Chic").
+* **Remoção:** A funcionalidade de "Exit Intent" (Modal de saída) foi desativada para melhorar a fluidez da navegação.
 
 ### [04/12/2025] - Fase 5.2: Bug Hunt (UX Sticky) - ADIADO
-**Status: EM ANÁLISE**
-* **Problema:** A funcionalidade de "Mensagem Fixa" e o botão flutuante apresentaram resistência à remoção automática em cenários específicos (fechamento de modal).
-* **Decisão:** Feature congelada para evitar instabilidade. A correção será abordada na etapa de polimento final.
+**Status: RESOLVIDO (VIA REMOÇÃO)**
+* **Decisão:** A funcionalidade de mensagens fixas que causava bugs visuais foi removida em favor de uma interface mais limpa.
 
 ### [04/12/2025] - Fase 5.1: Ajuste de Posição (Toast)
 **Status: CONCLUÍDO**
@@ -35,7 +41,7 @@ Este documento narra a evolucao completa do desenvolvimento da Landing Page para
 
 ### [03/12/2025] - Fase 5.0: Infraestrutura de DNS (Sucesso)
 **Status: CONCLUÍDO**
-* **Infra:** Domínio `darafa.com` configurado e propagado (A Record + CNAME).
+* **Infra:** Domínio `darafa.com` configurado e propagado.
 
 ---
 
@@ -43,11 +49,12 @@ Este documento narra a evolucao completa do desenvolvimento da Landing Page para
 
 1.  **GESTAO DE CONTEÚDO (Prioridade Máxima):**
     * Receber e processar as 50 fotos dos acessórios.
-2.  **POLIMENTO FINAL:**
-    * Resolver o bug de persistência do botão de pedido.
-    * Migrar estilos JS para CSS.
-3.  **DEPLOY FINAL:**
+2.  **REINTRODUÇÃO DE FEATURE (Futuro):**
+    * Reimplementar o botão "Encomendar" de forma nativa no HTML (sem injeção JS) quando o layout estiver consolidado.
+3.  **POLIMENTO FINAL:**
+    * Migrar estilos inline do JS para arquivos CSS externos.
+4.  **DEPLOY FINAL:**
     * Virada de chave na Vercel para produção.
 
 ---
-*Ultima atualizacao: 04/12/2025 - Exit Intent removido. Site mais leve.*
+*Ultima atualizacao: 04/12/2025 - Código limpo. Layout alinhado. Pronto para conteúdo.*
