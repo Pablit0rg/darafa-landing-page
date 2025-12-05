@@ -63,20 +63,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Comando Secreto Global para o Console
     window.relatorio = () => {
-        console.group('%c📊 RELATÓRIO DARAFA', 'color: #FDB90C; font-size: 20px; background: #241000; padding: 10px; border-radius: 5px;');
-        console.log(`👁️ Visitas Totais: ${analyticsData.views}`);
-        console.log('🔥 Interações:', analyticsData.interactions);
+        console.group('%cRELATÓRIO DARAFA', 'color: #FDB90C; font-size: 20px; background: #241000; padding: 10px; border-radius: 5px;');
+        console.log(`Visitas Totais: ${analyticsData.views}`);
+        console.log('Interações:', analyticsData.interactions);
         
-        console.group('🏆 Top 5 Produtos');
+        console.group('Top 5 Produtos');
         const sortedProducts = Object.entries(analyticsData.productClicks).sort((a,b) => b[1] - a[1]).slice(0,5);
         console.table(sortedProducts);
         console.groupEnd();
 
-        console.group('📂 Categorias Mais Buscadas');
+        console.group('Categorias Mais Buscadas');
         console.table(analyticsData.categoryClicks);
         console.groupEnd();
 
-        console.group('📍 Mapa de Calor (Seções)');
+        console.group('Mapa de Calor (Seções)');
         console.table(analyticsData.sectionsViewed);
         console.groupEnd();
         
@@ -117,7 +117,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const conn = navigator.connection;
             if (conn.saveData || conn.effectiveType.includes('2g')) {
                 isLowEndConnection = true;
-                console.log('DaRafa: Modo Econômico Ativado 🍃');
+                console.log('DaRafa: Modo Econômico Ativado');
             }
         }
     }
@@ -172,7 +172,7 @@ document.addEventListener('DOMContentLoaded', () => {
             body.offline-mode .toast-notification { filter: grayscale(0) !important; }
         `;
         document.head.appendChild(style);
-        window.addEventListener('offline', () => { document.body.classList.add('offline-mode'); showToast('⚠️ Você está offline. Modo leitura ativado.'); });
+        window.addEventListener('offline', () => { document.body.classList.add('offline-mode'); showToast('Você está offline. Modo leitura ativado.'); });
         window.addEventListener('online', () => {
             document.body.classList.remove('offline-mode');
             showToast('Conexão restaurada! Atualizando...');
@@ -328,7 +328,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="exit-modal">
                 <button class="close-exit">&times;</button>
                 <div class="exit-content">
-                    <h3>Espere! ✨</h3>
+                    <h3>Espere!</h3>
                     <p>Não vá embora sem conferir nossos lançamentos exclusivos no Instagram.</p>
                     <a href="https://www.instagram.com/darafa_cwb/" target="_blank" class="exit-btn">Seguir @darafa_cwb</a>
                 </div>
