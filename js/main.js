@@ -515,19 +515,21 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             /* 2. A Barra de Busca (Versão Metade) */
-#js-search-input { 
-    padding: 10px 20px; 
-    width: 50%;        /* Ocupa metade do espaço disponível */
-    max-width: 180px;  /* Trava em um tamanho pequeno e elegante */
-    border-radius: 50px; 
-    border: 1px solid #D00000; 
-    background: rgba(255,255,255,0.9); 
-    color: #241000; 
-    font-size: 0.95rem; 
-    outline: none; 
-    box-shadow: 0 4px 10px rgba(36,16,0,0.1); 
-    transition: all 0.3s ease; 
-}
+/* 2. A Barra de Busca (Versão Compacta) */
+            #js-search-input { 
+                padding: 10px 20px; 
+                width: 160px;       /* <--- DIMINUÍMOS BEM AQUI (Era 220px ou 100%) */
+                flex-grow: 1;       /* Deixa ela crescer se tiver espaço */
+                max-width: 200px;   /* Mas trava num limite */
+                border-radius: 50px; 
+                border: 1px solid #D00000; 
+                background: rgba(255,255,255,0.9); 
+                color: #241000; 
+                font-size: 0.95rem; 
+                outline: none; 
+                box-shadow: 0 4px 10px rgba(36,16,0,0.1); 
+                transition: all 0.3s ease; 
+            }
 
             /* 3. O Botão de Favoritos (Menu) */
             #js-sort-select { 
