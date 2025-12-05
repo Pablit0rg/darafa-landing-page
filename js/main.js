@@ -175,7 +175,7 @@ document.addEventListener('DOMContentLoaded', () => {
         window.addEventListener('offline', () => { document.body.classList.add('offline-mode'); showToast('⚠️ Você está offline. Modo leitura ativado.'); });
         window.addEventListener('online', () => {
             document.body.classList.remove('offline-mode');
-            showToast('🟢 Conexão restaurada! Atualizando...');
+            showToast('Conexão restaurada! Atualizando...');
             setTimeout(() => { document.querySelectorAll('img').forEach(img => { if (!img.complete || img.naturalWidth === 0) { const src = img.src; img.src = ''; img.src = src; } }); }, 1000);
         });
     }
@@ -514,15 +514,42 @@ document.addEventListener('DOMContentLoaded', () => {
                 flex-wrap: wrap; /* Permite quebrar linha só se a tela for minúscula */
             }
 
-            /* 2. A Barra de Busca (Versão Metade) */
-/* 2. A Barra de Busca (Versão Compacta) */
-            #js-search-input { 
-                padding: 10px 20px; 
-                width: 160px;       /* <--- DIMINUÍMOS BEM AQUI (Era 220px ou 100%) */
-                flex-grow: 1;       /* Deixa ela crescer se tiver espaço */
-                max-width: 200px;   /* Mas trava num limite */
-                border-radius: 50px; 
-                border: 1px solid #D00000; 
+            /* Botão de Encomenda do Instagram */
+            .btn-insta-order {
+                padding: 11px 15px;
+                border-radius: 50px;
+                border: none;
+                /* Gradiente Oficial do Instagram */
+                background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); 
+                color: #fff;
+                font-size: 0.9rem;
+                font-weight: 600;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                gap: 8px; /* Espaço entre ícone e texto */
+                box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+                transition: transform 0.2s ease;
+                
+                white-space: nowrap; /* Não deixa o texto quebrar */
+            }
+
+            /* --- AJUSTE EXCLUSIVO PARA PC (DESKTOP) --- */
+            @media (min-width: 900px) {
+                .btn-insta-order {
+                    margin-left: 594px; /* Ajuste aqui a distância */
+                    transform: translateY(-57px);
+                }
+            }
+
+            /* 2. A Barra de Busca (Versão Compacta) */
+#js-search-input { 
+    padding: 10px 20px; 
+    width: 80px;        /* Reduzido */
+    flex-grow: 0;       /* Mude para 0 para ele não tentar esticar */
+    max-width: 100px;   /* Travado na metade do tamanho anterior */
+    border-radius: 50px; 
+    border: 1px solid #D00000; 
                 background: rgba(255,255,255,0.9); 
                 color: #241000; 
                 font-size: 0.95rem; 
@@ -557,7 +584,7 @@ document.addEventListener('DOMContentLoaded', () => {
             
             .toast-notification {
                 position: fixed; 
-                top: 130px; /* MUDANÇA: Fica no topo (perto da busca), não embaixo */
+                top: 5px; /* MUDANÇA: Fica no topo (perto da busca), não embaixo */
                 left: 50%; 
                 transform: translateX(-50%) translateY(-50px); /* Animação vem de cima */
                 background-color: #241000; color: #FDB90C; padding: 12px 24px;
@@ -568,6 +595,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
                 display: flex; align-items: center; gap: 8px; border: 1px solid #FDB90C;
             }
+                /* Variação para quando o balão precisa descer */
+            .toast-notification.toast-low {
+                top: auto;      /* Desliga o topo */
+                bottom: 30%;    /* Fixa na parte de baixo da tela */
+                transform: translateX(-50%); /* Centraliza apenas horizontalmente */
+                background-color: #D00000; /* Vermelho alerta (opcional, fica chique) */
+                border-color: #FF4500;
+            }
+
             .toast-notification.show { 
                 transform: translateX(-50%) translateY(0); /* Posição final */
                 opacity: 1; 
@@ -612,15 +648,23 @@ document.addEventListener('DOMContentLoaded', () => {
         document.head.appendChild(style);
     }
 
-    function showToast(message) {
+    // Função de Toast Atualizada (Aceita classe extra)
+    function showToast(message, customClass = '') {
         const oldToast = document.querySelector('.toast-notification');
         if(oldToast) oldToast.remove();
+        
         const toast = document.createElement('div');
-        toast.className = 'toast-notification';
+        // Aqui ele junta a classe padrão + a classe nova (se houver)
+        toast.className = `toast-notification ${customClass}`; 
         toast.innerHTML = message;
+        
         document.body.appendChild(toast);
         requestAnimationFrame(() => toast.classList.add('show'));
-        setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 400); }, 3000);
+        
+        setTimeout(() => { 
+            toast.classList.remove('show'); 
+            setTimeout(() => toast.remove(), 400); 
+        }, 3000);
     }
 
     function attachCardEvents(container) { } 
@@ -651,6 +695,38 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // --- FUNÇÃO DE ENCOMENDA (Lógica "Copiar e Colar") ---
+    function sendFavoritesToInsta() {
+        if (wishlist.length === 0) {
+            showToast('Sua lista de desejos está vazia!');
+            return;
+        }
+        
+        // 1. Pega os produtos favoritados
+        const selectedItems = productsData.filter(p => wishlist.includes(p.id));
+        
+        // 2. Monta o texto bonito
+        let message = "Olá Rafa! Separei essas peças na minha Wishlist:\n\n";
+        selectedItems.forEach(item => {
+            message += ` ${item.title} (Ref: ${item.id})\n`;
+        });
+        message += "\nComo faço para encomendar?";
+
+        // 3. Copia para a área de transferência e abre o Insta
+        navigator.clipboard.writeText(message).then(() => {
+            showToast('Pedido copiado! Cole no Direct da Rafa.');
+            setTimeout(() => {
+                // Abre direto no perfil (ou na DM se preferir, mas perfil é mais seguro em mobile)
+                window.open('https://instagram.com/darafa_cwb', '_blank');
+            }, 1500); // Espera 1.5s para o usuário ler o aviso
+        }).catch(err => {
+            console.error('Erro ao copiar', err);
+            showToast('Erro ao copiar. Tente novamente.');
+        });
+        
+        trackEvent('interaction', 'click_order_insta');
+    }
+
     function initControls() {
         const filterContainer = document.querySelector('.catalog-filters');
         if (!filterContainer) return;
@@ -660,7 +736,9 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // 1. Barra de Busca
         const input = document.createElement('input');
-        input.type = 'text'; input.id = 'js-search-input'; input.placeholder = 'Buscar joia...';
+        input.type = 'text'; 
+        input.id = 'js-search-input'; 
+        input.placeholder = 'Buscar joia...';
         input.addEventListener('focus', () => input.style.borderColor = '#CD4A00');
         input.addEventListener('blur', () => input.style.borderColor = '#241000');
         
@@ -669,9 +747,18 @@ document.addEventListener('DOMContentLoaded', () => {
         sortSelect.id = 'js-sort-select';
         sortSelect.innerHTML = `<option value="default">Relevância</option><option value="az">A - Z</option><option value="za">Z - A</option><option value="favorites">Favoritos</option>`;
         
-        // Adiciona Busca e Menu na div (O botão Encomendar já está no HTML ao lado)
+        // --- 3. NOVO: Botão de Encomenda ---
+        const orderBtn = document.createElement('button');
+        orderBtn.className = 'btn-insta-order';
+        orderBtn.innerHTML = '<i class="fab fa-instagram"></i> Encomendar';
+        orderBtn.onclick = sendFavoritesToInsta; // Liga o botão à função
+
+        // Adiciona na ordem: Busca -> Select -> Botão
         controlsWrapper.appendChild(input);
         controlsWrapper.appendChild(sortSelect);
+        controlsWrapper.appendChild(orderBtn); // <--- Adicionado aqui
+        
+        // Coloca tudo na tela
         filterContainer.prepend(controlsWrapper); 
         
         // 4. Atualização do Grid (Busca e Filtros)
@@ -878,17 +965,31 @@ document.addEventListener('DOMContentLoaded', () => {
         if(modalFilters) {
              const controlsWrapper = document.createElement('div');
              controlsWrapper.className = 'controls-wrapper';
+             
+             // 1. Busca
              const input = document.createElement('input');
              input.placeholder = 'Buscar joia...';
              input.style.cssText = "padding:12px 25px; width:100%; max-width:300px; border-radius:50px; border:2px solid #241000; background:rgba(255,255,255,0.9); color:#241000; font-size:1rem; outline:none;";
+             
+             // 2. Filtro
              const sortSelect = document.createElement('select');
              sortSelect.innerHTML = `<option value="default">Todos</option><option value="az">A - Z</option><option value="za">Z - A</option><option value="favorites">Favoritos</option>`;
              sortSelect.style.cssText = "padding:12px 20px; border-radius:50px; border:2px solid #241000; background:#241000; color:#FDB90C; font-size:0.9rem; font-weight:600; cursor:pointer;";
              
+             // --- 3. BOTÃO DE ENCOMENDA (ADICIONADO) ---
+             const orderBtnModal = document.createElement('button');
+             orderBtnModal.className = 'btn-insta-order';
+             orderBtnModal.innerHTML = '<i class="fab fa-instagram"></i> Encomendar';
+             orderBtnModal.onclick = sendFavoritesToInsta; // A mesma função mágica
+             
+             // Adiciona na ordem: Busca -> Select -> Botão
              controlsWrapper.appendChild(input);
              controlsWrapper.appendChild(sortSelect);
+             controlsWrapper.appendChild(orderBtnModal); // <--- O Vizinho Novo
+             
              modalFilters.prepend(controlsWrapper);
 
+             // Lógica de atualização do Grid
              const updateModal = () => {
                  const term = input.value.toLowerCase();
                  let filtered = productsData.filter(item => item.title.toLowerCase().includes(term) || item.category.includes(term));
