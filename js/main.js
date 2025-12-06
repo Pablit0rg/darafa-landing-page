@@ -180,65 +180,128 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-// [NOVO] Banner de Consentimento LGPD (Ética)
+// [NOVO] Banner de Consentimento LGPD (Design "Preguiça Zen" - Uiverse)
     function initCookieConsent() {
-        // Se já aceitou, não faz nada
-        if (localStorage.getItem('darafa_lgpd_consent')) return;
+        // Verifica se já existe uma decisão salva (seja Aceite ou Recusa)
+        if (localStorage.getItem('darafa_lgpd_status')) return;
 
         const banner = document.createElement('div');
-        banner.className = 'cookie-banner';
+        banner.className = 'cookie-card';
+        
+        // HTML da Ilustração + Texto (Traduzido e Funcional)
         banner.innerHTML = `
-            <div class="cookie-content">
-                <p>Utilizamos cookies para aprimorar sua experiência de navegação e analisar o tráfego do site. Ao continuar, você concorda com nossa política de privacidade.</p>
-                <button id="accept-cookies">Aceitar e Fechar</button>
+            <div class="cookie-illustration">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 65 46" height="46" width="65">
+                    <path stroke="#241000" fill="#FDB90C" d="M49.157 15.69L44.58.655l-12.422 1.96L21.044.654l-8.499 2.615-6.538 5.23-4.576 9.153v11.114l4.576 8.5 7.846 5.23 10.46 1.96 7.845-2.614 9.153 2.615 11.768-2.615 7.846-7.846 1.96-5.884.655-7.191-7.846-1.308-6.537-3.922z"></path>
+                    <path fill="#CD4A00" d="M32.286 3.749c-6.94 3.65-11.69 11.053-11.69 19.591 0 8.137 4.313 15.242 10.724 19.052a20.513 20.513 0 01-8.723 1.937c-11.598 0-21-9.626-21-21.5 0-11.875 9.402-21.5 21-21.5 3.495 0 6.79.874 9.689 2.42z" clip-rule="evenodd" fill-rule="evenodd"></path>
+                    <path fill="#241000" d="M64.472 20.305a.954.954 0 00-1.172-.824 4.508 4.508 0 01-3.958-.934.953.953 0 00-1.076-.11c-.46.252-.977.383-1.502.382a3.154 3.154 0 01-2.97-2.11.954.954 0 00-.833-.634 4.54 4.54 0 01-4.205-4.507c.002-.23.022-.46.06-.687a.952.952 0 00-.213-.767 3.497 3.497 0 01-.614-3.5.953.953 0 00-.382-1.138 3.522 3.522 0 01-1.5-3.992.951.951 0 00-.762-1.227A22.611 22.611 0 0032.3 2.16 22.41 22.41 0 0022.657.001a22.654 22.654 0 109.648 43.15 22.644 22.644 0 0032.167-22.847zM22.657 43.4a20.746 20.746 0 110-41.493c2.566-.004 5.11.473 7.501 1.407a22.64 22.64 0 00.003 38.682 20.6 20.6 0 01-7.504 1.404zm19.286 0a20.746 20.746 0 112.131-41.384 5.417 5.417 0 001.918 4.635 5.346 5.346 0 00-.133 1.182A5.441 5.441 0 0046.879 11a5.804 5.804 0 00-.028.568 6.456 6.456 0 005.38 6.345 5.053 5.053 0 006.378 2.472 6.412 6.412 0 004.05 1.12 20.768 20.768 0 01-20.716 21.897z"></path>
+                    <path fill="#241000" d="M54.962 34.3a17.719 17.719 0 01-2.602 2.378.954.954 0 001.14 1.53 19.637 19.637 0 002.884-2.634.955.955 0 00-1.422-1.274z"></path>
+                    <path stroke-width="1.8" stroke="#241000" fill="#CD4A00" d="M44.5 32.829c-.512 0-1.574.215-2 .5-.426.284-.342.263-.537.736a2.59 2.59 0 104.98.99c0-.686-.458-1.241-.943-1.726-.485-.486-.814-.5-1.5-.5zm-30.916-2.5c-.296 0-.912.134-1.159.311-.246.177-.197.164-.31.459a1.725 1.725 0 00-.086.932c.058.312.2.6.41.825.21.226.477.38.768.442.291.062.593.03.867-.092s.508-.329.673-.594a1.7 1.7 0 00.253-.896c0-.428-.266-.774-.547-1.076-.281-.302-.471-.31-.869-.311zm17.805-11.375c-.143-.492-.647-1.451-1.04-1.78-.392-.33-.348-.255-.857-.31a2.588 2.588 0 10.441 5.06c.66-.194 1.064-.788 1.395-1.39.33-.601.252-.92.06-1.58zm-22 2c-.143-.492-.647-1.451-1.04-1.78-.391-.33-.347-.255-.856-.31a2.589 2.589 0 10.44 5.06c.66-.194 1.064-.788 1.395-1.39.33-.601.252-.92.06-1.58zM38.112 7.329c-.395 0-1.216.179-1.545.415-.328.236-.263.218-.415.611-.151.393-.19.826-.114 1.243.078.417.268.8.548 1.1.28.301.636.506 1.024.59.388.082.79.04 1.155-.123.366-.163.678-.438.898-.792.22-.354.337-.77.337-1.195 0-.57-.354-1.031-.73-1.434-.374-.403-.628-.415-1.158-.415zm-19.123.703c.023-.296-.062-.92-.219-1.18-.157-.26-.148-.21-.432-.347a1.726 1.726 0 00-.922-.159 1.654 1.654 0 00-.856.344 1.471 1.471 0 00-.501.73c-.085.285-.077.589.023.872.1.282.287.532.538.718a1.7 1.7 0 00.873.323c.427.033.793-.204 1.116-.46.324-.256.347-.445.38-.841z"></path>
+                    <path fill="#241000" d="M15.027 15.605a.954.954 0 00-1.553 1.108l1.332 1.863a.955.955 0 001.705-.77.955.955 0 00-.153-.34l-1.331-1.861z"></path>
+                    <path fill="#241000" d="M43.31 23.21a.954.954 0 101.553-1.11l-1.266-1.772a.954.954 0 10-1.552 1.11l1.266 1.772z"></path>
+                    <path fill="#241000" d="M19.672 35.374a.954.954 0 00-.954.953v2.363a.954.954 0 001.907 0v-2.362a.954.954 0 00-.953-.954z"></path>
+                    <path fill="#241000" d="M33.129 29.18l-2.803 1.065a.953.953 0 00-.053 1.764.957.957 0 00.73.022l2.803-1.065a.953.953 0 00-.677-1.783v-.003zm24.373-3.628l-2.167.823a.956.956 0 00-.054 1.764.954.954 0 00.73.021l2.169-.823a.954.954 0 10-.678-1.784v-.001z"></path>
+                </svg>
+            </div>
+            
+            <h5 class="cookie-title">Sua privacidade importa</h5>
+            
+            <p class="cookie-text">
+                Nós usamos cookies para melhorar sua experiência. Ao continuar, você concorda com nossa Política de Privacidade.
+            </p>
+            
+            <div class="cookie-actions">
+                <button id="reject-cookies" class="cookie-btn-options">Recusar</button>
+                <button id="accept-cookies" class="cookie-btn-accept">Aceitar</button>
             </div>
         `;
         
-        // Estilos exclusivos do Banner (Atualizado: Texto Justificado)
+        // CSS Puro do Banner
         const style = document.createElement('style');
         style.innerHTML = `
-            .cookie-banner {
-                position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
-                width: 90%; max-width: 500px; background: rgba(36, 16, 0, 0.95);
-                border: 1px solid #FDB90C; border-radius: 15px; padding: 15px 25px;
-                z-index: 9999; box-shadow: 0 10px 40px rgba(0,0,0,0.6);
-                display: flex; align-items: center; justify-content: center;
-                animation: slideUp 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
-                backdrop-filter: blur(8px);
-            }
-            .cookie-content { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; justify-content: center; }
-            
-            /* MUDANÇA AQUI: text-align: justify */
-            .cookie-content p { 
-                color: #e0d0a0; font-family: 'Poppins', sans-serif; 
-                font-size: 0.85rem; margin: 0; 
-                text-align: justify; /* Texto alinhado e justificado */
-                flex: 1; 
+            .cookie-card {
+                position: fixed; bottom: 20px; right: 20px;
+                width: 300px; max-width: 90%;
+                background: #fff;
+                border-radius: 16px;
+                box-shadow: 0 4px 6px -1px rgba(60,64,67,0.3), 0 2px 4px -1px rgba(60,64,67,0.15);
+                padding: 24px;
+                display: flex; flex-direction: column; align-items: center;
+                z-index: 9999;
+                font-family: 'Poppins', sans-serif;
+                animation: slideUp 0.5s ease-out;
             }
             
-            #accept-cookies {
-                background: linear-gradient(to right, #FDB90C, #FFD700); 
-                color: #241000; border: none; padding: 10px 24px;
-                border-radius: 50px; font-weight: 700; cursor: pointer; white-space: nowrap;
-                font-family: 'Poppins', sans-serif; transition: all 0.2s; box-shadow: 0 4px 10px rgba(253, 185, 12, 0.3);
+            .cookie-illustration {
+                margin-top: -64px;
+                margin-bottom: 20px;
+                filter: drop-shadow(0 4px 6px rgba(0,0,0,0.2));
             }
-            #accept-cookies:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(253, 185, 12, 0.5); background: #fff; }
-            @media(max-width: 600px) { .cookie-content { text-align: center; } .cookie-content p { text-align: center; } }
-            @keyframes slideUp { from { transform: translate(-50%, 150%); opacity: 0; } to { transform: translate(-50%, 0); opacity: 1; } }
+            
+            .cookie-title {
+                font-size: 0.95rem; font-weight: 600; color: #241000;
+                margin-bottom: 8px; text-align: left; width: 100%;
+            }
+            
+            .cookie-text {
+                font-size: 0.85rem; color: #555;
+                text-align: justify; line-height: 1.5; margin-bottom: 16px;
+                width: 100%;
+            }
+            
+            .cookie-actions {
+                width: 100%; display: flex; justify-content: space-between; align-items: center;
+            }
+            
+            .cookie-btn-options {
+                background: none; border: none; font-size: 0.85rem;
+                font-weight: 600; color: #666; cursor: pointer;
+                transition: color 0.2s;
+            }
+            .cookie-btn-options:hover { color: #D00000; text-decoration: underline; }
+            
+            .cookie-btn-accept {
+                background: #FDB90C; color: #241000;
+                border: none; padding: 8px 32px; border-radius: 8px;
+                font-weight: 600; font-size: 0.85rem; cursor: pointer;
+                transition: all 0.2s;
+            }
+            .cookie-btn-accept:hover {
+                background: #241000; color: #FDB90C;
+                box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            }
+            
+            @keyframes slideUp { from { transform: translateY(100px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+            
+            @media(max-width: 600px) {
+                .cookie-card { left: 50%; right: auto; transform: translateX(-50%); bottom: 10px; }
+            }
         `;
         document.head.appendChild(style);
         document.body.appendChild(banner);
 
-        // Lógica de Aceite
-        document.getElementById('accept-cookies').addEventListener('click', () => {
-            localStorage.setItem('darafa_lgpd_consent', 'true');
+        // Função para remover o banner com animação
+        const closeBanner = () => {
             banner.style.transition = 'all 0.5s ease';
             banner.style.opacity = '0';
-            banner.style.transform = 'translate(-50%, 50%)';
+            banner.style.transform = 'translateY(20px)';
             setTimeout(() => banner.remove(), 500);
-            
+        };
+
+        // 1. Botão ACEITAR (Salva 'accepted' e fecha)
+        document.getElementById('accept-cookies').addEventListener('click', () => {
+            localStorage.setItem('darafa_lgpd_status', 'accepted');
+            closeBanner();
             trackEvent('interaction', 'lgpd_accept');
-            showToast('Preferências salvas!');
+            showToast('Preferências salvas! Obrigado.');
+        });
+
+        // 2. Botão RECUSAR (Salva 'rejected' e fecha)
+        document.getElementById('reject-cookies').addEventListener('click', () => {
+            localStorage.setItem('darafa_lgpd_status', 'rejected');
+            closeBanner();
+            // Não trackeamos evento aqui para respeitar a privacidade, ou usamos um label genérico
+            showToast('Cookies não essenciais desativados.');
         });
     }
 

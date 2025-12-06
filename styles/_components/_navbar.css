@@ -41,9 +41,12 @@
 }
 
 .nav-logo-img {
-    height: 60px;
+    height: 100px;
     width: auto;
+    object-fit: contain;
     transition: transform 0.3s ease;
+    position: relative; /* Libera o movimento manual */
+    top: 3px;           /* Empurra para BAIXO (Aumente ou diminua esse número) */
     /* Filtro para garantir que a logo se destaque no amarelo se necessário */
     filter: drop-shadow(0 2px 5px rgba(36, 16, 0, 0.2));
 }
@@ -173,5 +176,34 @@ text-shadow: none; /* Removemos a sombra para ficar nítido e moderno */
     
     .nav-logo-img {
         height: 50px;
+    }
+}
+
+/* --- AJUSTE TURBO PARA MOBILE (NOMES CORRIGIDOS) --- */
+@media (max-width: 768px) {
+    
+    /* 1. Aumentamos a BARRA para caber a logo gigante */
+    .navbar {
+        min-height: 110px !important; /* Espaço para a logo crescer */
+        padding: 5px 0 !important;
+    }
+
+    /* 2. Destrava o LINK (A Mãe - Nome Corrigido) */
+    .navbar-brand-logo {
+        height: 130px !important;      
+        display: flex !important;      
+        align-items: center !important;
+        max-height: none !important;
+    }
+
+    /* 3. Aumentamos a IMAGEM (A Filha - Nome Corrigido) */
+    .nav-logo-img {
+        height: 130px !important;      /* Tamanho final desejado */
+        max-height: none !important;   
+        width: auto !important;        
+        
+        /* Ajuste Fino Manual */
+        position: relative;
+        top: 0px; 
     }
 }
