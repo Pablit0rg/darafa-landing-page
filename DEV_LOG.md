@@ -1,63 +1,33 @@
-# DaRafa Acessorios - O Dossie Completo do Projeto (MASTER LOG)
+# DaRafa Acessórios - O Dossiê Completo do Projeto (MASTER LOG)
 
 **Resumo Executivo:**
-Este documento narra a evolucao completa do desenvolvimento da Landing Page para "DaRafa Acessorios". O projeto encontra-se na Versao 5.0 (Clean & Stable). A infraestrutura de domínios está concluída. O foco retornou para a estabilidade do layout e preparação para a **Produção de Conteúdo**. Funcionalidades complexas foram removidas para garantir um código limpo e performático.
+Este documento narra a evolução completa do desenvolvimento da Landing Page para "DaRafa Acessórios". O projeto encontra-se na Versão 6.0 (Connected & Textured). A infraestrutura de Backend (Firebase) foi implementada com sucesso, transformando o site estático em uma aplicação dinâmica. O design recebeu atualizações táteis (Textura Honeycomb) na navegação.
 
 ---
 
-## 1. Mapa Tecnico (Status)
+## 1. Mapa Técnico (Status)
 * **Frontend (Ativo):**
-    * **css/**: Estilizacao modular "Red Chic" (99% Concluída).
-    * **js/main.js**: Versão 5.0 (Limpeza de Código - Sem Exit Intent/Sticky Buttons).
-    * **Infra:** Domínio `darafa.com` online e seguro (Hamster Page).
+    * **css/**: Estilização modular "Red Chic" + Textura "Honeycomb" na Navbar.
+    * **js/main.js**: Versão 6.0 (Conectada ao Firestore).
+    * **Infra:** Domínio `darafa.com` online.
+* **Backend (Ativo - Firebase):**
+    * **Firestore Database:** Coleção `produtos` criada e populada.
+    * **Dados:** 5 produtos cadastrados (IDs 1, 2, 3, 4, 6) cobrindo todas as categorias.
 * **Funcionalidades Ativas:**
-    * Catálogo Dinâmico + Filtros.
+    * Catálogo Dinâmico (Lê do Banco de Dados).
+    * Filtros de Categoria (Via Menu Dropdown e Busca).
     * Sistema de Favoritos (LocalStorage).
     * Visualizador de Imagens (Zoom).
-    * Barra de Controle (Busca + Filtros Alinhados).
-* **Conteúdo:** Aguardando as 50 fotos oficiais.
 
 ---
 
-## 5. Historico de Atualizacoes (CHANGELOG)
+## 5. Histórico de Atualizações (CHANGELOG)
 
-### [04/12/2025] - Fase 5.4: Refinamento de Layout & Limpeza (v5.0)
+### [08/12/2025] - Fase 6.2: Refinamento Visual (Design Honeycomb)
 **Status: CONCLUÍDO**
-* **Refatoração:** Remoção temporária do botão "Encomendar" (Instagram) e suas funções associadas para limpar a interface e o código.
-* **UI/UX:** Ajuste fino de alinhamento (Flexbox) entre a Barra de Busca e o Menu de Filtros ("Todos"), garantindo que fiquem na mesma linha em Desktop.
-* **Limpeza de Código:** Remoção de funções legadas (`createOrderButton`, `stickyInstruction`) do `main.js`.
-
-### [04/12/2025] - Fase 5.3: Limpeza de UX (Exit Intent)
-**Status: CONCLUÍDO**
-* **Remoção:** A funcionalidade de "Exit Intent" (Modal de saída) foi desativada para melhorar a fluidez da navegação.
-
-### [04/12/2025] - Fase 5.2: Bug Hunt (UX Sticky) - ADIADO
-**Status: RESOLVIDO (VIA REMOÇÃO)**
-* **Decisão:** A funcionalidade de mensagens fixas que causava bugs visuais foi removida em favor de uma interface mais limpa.
-
-### [04/12/2025] - Fase 5.1: Ajuste de Posição (Toast)
-**Status: CONCLUÍDO**
-* **Melhoria:** A notificação "Toast" foi movida para o topo da tela.
-
-### [03/12/2025] - Fase 5.0: Infraestrutura de DNS (Sucesso)
-**Status: CONCLUÍDO**
-* **Infra:** Domínio `darafa.com` configurado e propagado.
-
----
-
-## 6. PROXIMOS PASSOS (FASE 6 - CONTEÚDO & POLIMENTO)
-
-1.  **GESTAO DE CONTEÚDO (Prioridade Máxima):**
-    * Receber e processar as 50 fotos dos acessórios.
-2.  **REINTRODUÇÃO DE FEATURE (Futuro):**
-    * Reimplementar o botão "Encomendar" de forma nativa no HTML (sem injeção JS) quando o layout estiver consolidado.
-3.  **POLIMENTO FINAL:**
-    * Migrar estilos inline do JS para arquivos CSS externos.
-4.  **DEPLOY FINAL:**
-    * Virada de chave na Vercel para produção.
-
----
-*Ultima atualizacao: 04/12/2025 - Código limpo. Layout alinhado. Pronto para conteúdo.*
+* **UI/UX:** Implementação de textura orgânica "Favo de Mel" (`honeycomb-background2.jpg`) no background da Navbar.
+* **Ajuste Fino:** Aplicação de sombras e bordas para garantir legibilidade do menu sobre a textura.
+* **Rollback (Decisão de Design):** Teste de aplicação da mesma textura no Footer foi realizado, mas revertido para manter o equilíbrio visual (Footer permaneceu sólido/limpo).
 
 ### [08/12/2025] - Fase 6.0: Integração do Banco de Dados (Firestore) - SUCESSO
 **Status: CONCLUÍDO & ESTÁVEL**
@@ -67,8 +37,28 @@ Este documento narra a evolucao completa do desenvolvimento da Landing Page para
 * **Infra:** O site está lendo, ordenando e renderizando os dados reais com performance otimizada.
 
 ### [08/12/2025] - Fase 6.1: Interface de Filtros por Botão (UI) - ADIADO
-**Status: MOVIDO PARA BACKLOG (Polimento Final)**
+**Status: MOVIDO PARA BACKLOG**
 * **Ocorrência:** A tentativa de injetar botões de filtro explícitos via JavaScript causou conflito com os "Event Listeners" de abertura dos cards (Modal).
-* **Ação:** Reversão imediata (`Ctrl + Z`) para a versão estável.
-* **Situação Atual:** O sistema de filtros continua funcionando através da Barra de Busca e do Menu Dropdown ("Todos") originais.
-* **Próximos Passos:** A implementação visual dos botões de categoria será feita na fase final de design, com foco exclusivo em CSS/HTML para não impactar a lógica.
+* **Ação:** Reversão imediata para a versão estável.
+* **Situação Atual:** O sistema de filtros continua funcionando perfeitamente através da Barra de Busca e do Menu Dropdown ("Todos") originais.
+
+### [04/12/2025] - Fase 5.4: Refinamento de Layout & Limpeza (v5.0)
+**Status: CONCLUÍDO**
+* **Refatoração:** Remoção temporária do botão "Encomendar" (Instagram) e suas funções associadas para limpar a interface e o código.
+* **UI/UX:** Ajuste fino de alinhamento (Flexbox) entre a Barra de Busca e o Menu de Filtros.
+
+---
+
+## 6. PRÓXIMOS PASSOS (FASE 7 - CONTEÚDO FINAL)
+
+1.  **INFRAESTRUTURA DE IMAGENS (Storage):**
+    * Configurar o Firebase Storage para hospedar as 50 fotos oficiais (quando chegarem), evitando pesar o repositório GitHub.
+2.  **GESTÃO DE CONTEÚDO:**
+    * Cadastrar o produto ID 5 (para fechar a sequência numérica).
+    * Receber e subir o catálogo completo.
+3.  **POLIMENTO FINAL:**
+    * Testes finais de responsividade em dispositivos móveis.
+    * Deploy final de produção.
+
+---
+*Última atualização: 08/12/2025 - Backend Conectado. Design Navbar Honeycomb. Sistema Estável.*
