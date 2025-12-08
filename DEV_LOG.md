@@ -58,3 +58,17 @@ Este documento narra a evolucao completa do desenvolvimento da Landing Page para
 
 ---
 *Ultima atualizacao: 04/12/2025 - Código limpo. Layout alinhado. Pronto para conteúdo.*
+
+### [08/12/2025] - Fase 6.0: Integração do Banco de Dados (Firestore) - SUCESSO
+**Status: CONCLUÍDO & ESTÁVEL**
+* **Backend:** Conexão com Firebase Firestore estabelecida com sucesso.
+* **Dados:** Produtos agora são carregados dinamicamente da nuvem. IDs 1, 2, 3, 4 e 6 foram cadastrados manualmente para teste de categorias.
+* **Refatoração:** Código limpo e imports corrigidos no `main.js`. O site agora ignora a lista fixa local e obedece ao banco de dados.
+* **Infra:** O site está lendo, ordenando e renderizando os dados reais com performance otimizada.
+
+### [08/12/2025] - Fase 6.1: Interface de Filtros por Botão (UI) - ADIADO
+**Status: MOVIDO PARA BACKLOG (Polimento Final)**
+* **Ocorrência:** A tentativa de injetar botões de filtro explícitos via JavaScript causou conflito com os "Event Listeners" de abertura dos cards (Modal).
+* **Ação:** Reversão imediata (`Ctrl + Z`) para a versão estável.
+* **Situação Atual:** O sistema de filtros continua funcionando através da Barra de Busca e do Menu Dropdown ("Todos") originais.
+* **Próximos Passos:** A implementação visual dos botões de categoria será feita na fase final de design, com foco exclusivo em CSS/HTML para não impactar a lógica.
