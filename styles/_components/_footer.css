@@ -4,28 +4,30 @@
  */
 
 .footer-section {
-    /* Padding mantido pequeno */
     padding: 5px 0; 
     
-    /* --- MUDANÇA: Fundo Honeycomb (Igual Navbar) --- */
-    background-image: url('../../assets/images/honeycomb-background2.jpg');
+    /* --- O SEGREDO DO TOM CARAMELO --- */
+    background-image: 
+        /* Camada 1: Um véu cor de chocolate com 40% de opacidade */
+        linear-gradient(rgba(36, 16, 0, 0.4), rgba(36, 16, 0, 0.4)),
+        /* Camada 2: A imagem da colmeia por baixo */
+        url('../../assets/images/honeycomb-background2.jpg');
+        
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
     
-    /* Ajustei a borda para combinar com a Navbar (Tom Dourado Escuro) */
+    /* Borda dourada no topo */
     border-top: 1px solid rgba(187, 99, 2, 0.5);
     
     text-align: center;
     margin-top: auto; 
-    
-    /* Altura mínima mantida */
     min-height: 50px;
     display: flex;
     align-items: center;
     
-    /* Sombra invertida (para cima) para dar profundidade no chão */
-    box-shadow: 0 -4px 20px rgba(36, 16, 0, 0.2);
+    /* Sombra invertida */
+    box-shadow: 0 -4px 20px rgba(36, 16, 0, 0.3);
 }
 
 .footer-content {
