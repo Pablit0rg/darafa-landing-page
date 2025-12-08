@@ -785,14 +785,15 @@ document.addEventListener('DOMContentLoaded', () => {
     function attachCardEvents(container) { } 
 
     function initFilters() {
-        // 1. Lista de Categorias Oficiais
+        // 1. Lista de Categorias Oficiais (SEM o "Ver Tudo")
         const categories = [
-            { id: 'all', label: 'Ver Tudo' },
+            // { id: 'all', label: 'Ver Tudo' }, <--- REMOVIDO!
             { id: 'nose-cuff', label: 'Nose Cuffs' },
             { id: 'brincos', label: 'Brincos' },
             { id: 'aneis', label: 'Anéis' },
             { id: 'colar', label: 'Colares' },
             { id: 'body', label: 'Body Chain' }
+        ];
         ];
 
         // 2. Desenha os botões na tela
