@@ -785,19 +785,71 @@ document.addEventListener('DOMContentLoaded', () => {
     function attachCardEvents(container) { } 
 
     function initFilters() {
-        const injectButtons = (container) => { }; 
+        // 1. Lista de Categorias Oficiais
+        const categories = [
+            { id: 'all', label: 'Ver Tudo' },
+            { id: 'nose-cuff', label: 'Nose Cuffs' },
+            { id: 'brincos', label: 'Brincos' },
+            { id: 'aneis', label: 'Anéis' },
+            { id: 'colar', label: 'Colares' },
+            { id: 'body', label: 'Body Chain' }
+        ];
+
+        // 2. Desenha os botões na tela
         const filterContainers = document.querySelectorAll('.catalog-filters');
         
+        filterContainers.forEach(container => {
+            // Cria uma linha separada para os botões
+            const btnRow = document.createElement('div');
+            btnRow.className = 'filter-buttons-row';
+            btnRow.style.cssText = "display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; width: 100%; margin-top: 15px;";
+
+            categories.forEach(cat => {
+                const btn = document.createElement('button');
+                btn.className = `filter-btn ${cat.id === 'all' ? 'active' : ''}`;
+                btn.dataset.filter = cat.id;
+                btn.textContent = cat.label;
+                
+                // Estilo básico para garantir que apareçam bonitos
+                btn.style.cssText = "padding: 8px 16px; border: 1px solid #241000; border-radius: 30px; background: transparent; color: #241000; cursor: pointer; transition: all 0.3s; font-size: 0.9rem; font-weight: 500;";
+                
+                // Efeito Hover simples via JS (opcional, pois o CSS já trata, mas garante)
+                btn.onmouseover = () => { btn.style.background = '#241000'; btn.style.color = '#FDB90C'; };
+                btn.onmouseout = () => { 
+                    if(!btn.classList.contains('active')) { 
+                        btn.style.background = 'transparent'; btn.style.color = '#241000'; 
+                    } 
+                };
+
+                btnRow.appendChild(btn);
+            });
+
+            container.appendChild(btnRow);
+        });
+        
+        // 3. Lógica do Clique (Filtra os produtos)
         document.body.addEventListener('click', (e) => {
             if (e.target.classList.contains('filter-btn')) {
                 const button = e.target;
+                
+                // Remove classe ativa dos outros
+                document.querySelectorAll('.filter-btn').forEach(b => {
+                    b.classList.remove('active');
+                    b.style.background = 'transparent'; 
+                    b.style.color = '#241000';
+                });
+                
+                // Ativa o botão clicado
+                button.classList.add('active');
+                button.style.background = '#241000';
+                button.style.color = '#FDB90C';
+
                 const filterValue = button.dataset.filter;
                 updateURL('filtro', filterValue);
                 trackEvent('filter', filterValue);
+                
                 const searchInput = document.getElementById('js-search-input');
                 if (searchInput) searchInput.value = '';
-                const container = button.closest('.catalog-filters');
-                if(container) { container.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active')); button.classList.add('active'); }
                 
                 if (filterValue === 'all') activeData = productsData;
                 else activeData = productsData.filter(item => item.category === filterValue);
@@ -805,6 +857,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 activeData = applySort(activeData);
                 const modalContent = button.closest('.expansion-content');
                 const targetGallery = modalContent ? modalContent.querySelector('.gallery-5-cols') : galleryContainer;
+                
                 resetAndRender(targetGallery);
             }
         });
