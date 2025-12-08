@@ -1,3 +1,4 @@
+
 /*
  * COMPONENTE: Navbar
  * Design: Honeycomb Texture (Favo de Mel)
@@ -136,7 +137,7 @@
     .navbar {
         /* [MOBILE] Ajuste aqui para subir/descer o mel no Celular */
         /* Geralmente 'center top' ou 'center 0px' funciona bem */
-        background-position: center top; 
+        background-position: center -40px; 
         
         /* Se precisar forçar a altura no mobile */
         min-height: 80px; 
