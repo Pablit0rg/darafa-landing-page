@@ -4,30 +4,28 @@
  */
 
 .footer-section {
-    /* Altura e Espaçamento */
-    min-height: 80px; /* Igual à Navbar para garantir o mesmo recorte da foto */
-    padding: 20px 0;
-    margin-top: auto; 
+    /* Padding mantido pequeno */
+    padding: 5px 0; 
     
-    /* --- FUNDO IGUAL À NAVBAR --- */
+    /* --- MUDANÇA: Fundo Honeycomb (Igual Navbar) --- */
     background-image: url('../../assets/images/honeycomb-background2.jpg');
     background-size: cover;
-    background-position: center; /* Centraliza o foco da colmeia */
+    background-position: center;
     background-repeat: no-repeat;
     
-    /* --- ACABAMENTO (O Segredo do visual "Dark") --- */
-    /* Borda dourada no topo (invertido da navbar) */
+    /* Ajustei a borda para combinar com a Navbar (Tom Dourado Escuro) */
     border-top: 1px solid rgba(187, 99, 2, 0.5);
     
-    /* Sombra escura subindo (invertido da navbar) */
-    box-shadow: 0 -4px 20px rgba(36, 16, 0, 0.4);
-    
-    /* Texto e Alinhamento */
-    color: var(--color-gold-light); /* Mantém o texto claro */
     text-align: center;
+    margin-top: auto; 
+    
+    /* Altura mínima mantida */
+    min-height: 50px;
     display: flex;
     align-items: center;
-    justify-content: center;
+    
+    /* Sombra invertida (para cima) para dar profundidade no chão */
+    box-shadow: 0 -4px 20px rgba(36, 16, 0, 0.2);
 }
 
 .footer-content {
