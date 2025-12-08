@@ -11,15 +11,20 @@
     left: 0;
     z-index: 1000;
     
-    /* Navbar Invisível (Fundo transparente) */
-    background-color: transparent; 
-    border: none;
-    box-shadow: none;
-    backdrop-filter: none;
+    /* --- Teste de Design: Fundo Honeycomb --- */
+    background-image: url('../../assets/images/honeycomb-background2.jpg');
+    background-size: cover; 
+    background-position: center;
+    background-repeat: no-repeat;
     
+    /* Sombra para separar o menu do resto do site */
+    box-shadow: 0 4px 20px rgba(36, 16, 0, 0.3);
+    
+    /* Layout */
     display: flex;
     align-items: center;
-    transition: background-color 0.3s ease;
+    transition: all 0.3s ease;
+    border: none;
 }
 
 .navbar-container {
