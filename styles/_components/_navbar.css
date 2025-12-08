@@ -1,7 +1,6 @@
 /*
  * COMPONENTE: Navbar
- * Design: Honey Theme (Amarelo & Chocolate)
- * Cores sincronizadas com o Rodapé
+ * Design: Honeycomb Texture (Favo de Mel)
  */
 
 .navbar {
@@ -12,18 +11,21 @@
     left: 0;
     z-index: 1000;
     
-    /* --- CORREÇÃO DE CORES (Igual ao Footer) --- */
-    /* Fundo Amarelo Mel */
-    background-color: var(--color-black-pure);
+    /* --- AQUI ESTÁ A MUDANÇA: Fundo com Textura --- */
+    background-image: url('../../assets/images/honeycomb-background2.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
     
-    /* Borda inferior sutil (Laranja/Caramelo) */
-    border-bottom: 1px solid var(--color-gray-dark);
+    /* Adicionei uma borda inferior dourada sutil para acabamento */
+    border-bottom: 1px solid rgba(187, 99, 2, 0.5);
+    
+    /* Sombra para destacar do resto do site */
+    box-shadow: 0 4px 20px rgba(36, 16, 0, 0.4);
     
     display: flex;
     align-items: center;
-    
-    /* Sombra leve para destacar a barra do resto do site */
-    box-shadow: 0 4px 20px rgba(36, 16, 0, 0.1);
+    transition: all 0.3s ease;
 }
 
 .navbar-container {
@@ -41,13 +43,12 @@
 }
 
 .nav-logo-img {
-    height: 100px;
+    height: 100px; /* Mantive o tamanho original grande */
     width: auto;
     object-fit: contain;
     transition: transform 0.3s ease;
-    position: relative; /* Libera o movimento manual */
-    top: 3px;           /* Empurra para BAIXO (Aumente ou diminua esse número) */
-    /* Filtro para garantir que a logo se destaque no amarelo se necessário */
+    position: relative;
+    top: 3px;
     filter: drop-shadow(0 2px 5px rgba(36, 16, 0, 0.2));
 }
 
@@ -74,20 +75,23 @@
     font-size: 0.9rem;
     text-transform: uppercase;
     letter-spacing: 1px;
-    font-weight: 600; /* Mais peso para ler bem no amarelo */
+    font-weight: 700; /* Negrito para ler bem em cima da textura */
     
-    /* COR DO TEXTO: Chocolate (Igual ao Rodapé) */
+    /* Texto Escuro (Chocolate) para contrastar com o mel amarelo */
     color: var(--color-gold-medium); 
     
     position: relative;
     text-decoration: none;
-    transition: color 0.3s ease;
+    transition: color 0.3s ease, transform 0.3s ease;
+    
+    /* Sombra branca suave ao redor da letra para garantir leitura */
+    text-shadow: 0 0 10px rgba(255,255,255,0.4);
 }
 
 .navbar-link:hover {
-    
-    color: #D00000; /* Vermelho Chic */
-text-shadow: none; /* Removemos a sombra para ficar nítido e moderno */
+    color: #D00000; /* Vermelho Chic no hover */
+    transform: translateY(-2px);
+    text-shadow: none;
 }
 
 .navbar-link::after {
@@ -97,8 +101,7 @@ text-shadow: none; /* Removemos a sombra para ficar nítido e moderno */
     height: 2px;
     bottom: -4px;
     left: 0;
-    /* Linha do hover: Chocolate */
-    background-color: var(--color-gold-medium);
+    background-color: #D00000;
     transition: width 0.3s ease;
 }
 
@@ -120,14 +123,12 @@ text-shadow: none; /* Removemos a sombra para ficar nítido e moderno */
 
 .toggler-icon {
     width: 30px;
-    height: 3px; /* Um pouco mais grosso */
-    /* Cor do ícone: Chocolate */
+    height: 3px;
     background-color: var(--color-gold-medium);
     border-radius: 2px;
     transition: all 0.3s ease;
 }
 
-/* Animação do X */
 .navbar-toggler.is-active .toggler-icon:nth-child(1) {
     transform: rotate(45deg) translate(6px, 6px);
 }
@@ -151,9 +152,9 @@ text-shadow: none; /* Removemos a sombra para ficar nítido e moderno */
         width: 70%;
         height: 100vh;
         
-        /* Fundo do Menu Mobile: Amarelo Mel */
-        background-color: var(--color-black-pure);
-        border-left: 1px solid var(--color-gray-dark);
+        /* Fundo do Menu Mobile (Sólido ou Textura) */
+        background-color: #FDB90C; 
+        border-left: 1px solid var(--color-gold-medium);
         
         flex-direction: column;
         justify-content: center;
@@ -161,7 +162,7 @@ text-shadow: none; /* Removemos a sombra para ficar nítido e moderno */
         gap: var(--spacing-xl);
         
         transition: right 0.4s cubic-bezier(0.77, 0, 0.175, 1);
-        box-shadow: -10px 0 30px rgba(36, 16, 0, 0.3);
+        box-shadow: -10px 0 30px rgba(0,0,0,0.3);
     }
 
     .navbar-menu.active {
@@ -170,40 +171,17 @@ text-shadow: none; /* Removemos a sombra para ficar nítido e moderno */
 
     .navbar-link {
         font-size: 1.3rem;
-        /* Links Mobile: Chocolate */
         color: var(--color-gold-medium);
     }
     
     .nav-logo-img {
         height: 50px;
+        top: 0;
     }
-}
-
-/* --- AJUSTE TURBO PARA MOBILE (NOMES CORRIGIDOS) --- */
-@media (max-width: 768px) {
     
-    /* 1. Aumentamos a BARRA para caber a logo gigante */
+    /* Ajuste da Navbar no Mobile */
     .navbar {
-        min-height: 110px !important; /* Espaço para a logo crescer */
-        padding: 5px 0 !important;
-    }
-
-    /* 2. Destrava o LINK (A Mãe - Nome Corrigido) */
-    .navbar-brand-logo {
-        height: 130px !important;      
-        display: flex !important;      
-        align-items: center !important;
-        max-height: none !important;
-    }
-
-    /* 3. Aumentamos a IMAGEM (A Filha - Nome Corrigido) */
-    .nav-logo-img {
-        height: 130px !important;      /* Tamanho final desejado */
-        max-height: none !important;   
-        width: auto !important;        
-        
-        /* Ajuste Fino Manual */
-        position: relative;
-        top: 0px; 
+        min-height: 80px; /* Voltando ao normal para não ficar gigante */
+        padding: 0;
     }
 }
