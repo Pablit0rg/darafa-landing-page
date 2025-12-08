@@ -11,10 +11,13 @@
     left: 0;
     z-index: 1000;
     
-    /* --- AQUI ESTÁ A MUDANÇA: Fundo com Textura --- */
+    /* --- Fundo com Textura e Controle Manual --- */
     background-image: url('../../assets/images/testesite.png');
     background-size: cover;
-    background-position: center;
+    
+    /* Mude o valor '-30px' abaixo para ajustar para cima ou para baixo */
+    background-position: center -30px; 
+    
     background-repeat: no-repeat;
     
     /* Adicionei uma borda inferior dourada sutil para acabamento */
