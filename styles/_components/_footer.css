@@ -4,18 +4,28 @@
  */
 
 .footer-section {
-    /* Reduzimos o padding drasticamente (de 15px para 5px) */
+    /* Padding mantido pequeno */
     padding: 5px 0; 
     
-    background-color: var(--color-black-pure);
-    border-top: 1px solid var(--color-gray-dark);
+    /* --- MUDANÇA: Fundo Honeycomb (Igual Navbar) --- */
+    background-image: url('../../assets/images/honeycomb-background2.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    
+    /* Ajustei a borda para combinar com a Navbar (Tom Dourado Escuro) */
+    border-top: 1px solid rgba(187, 99, 2, 0.5);
+    
     text-align: center;
     margin-top: auto; 
     
-    /* Reduzimos a altura mínima (de 80px para 50px) */
+    /* Altura mínima mantida */
     min-height: 50px;
     display: flex;
     align-items: center;
+    
+    /* Sombra invertida (para cima) para dar profundidade no chão */
+    box-shadow: 0 -4px 20px rgba(36, 16, 0, 0.2);
 }
 
 .footer-content {
