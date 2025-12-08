@@ -1,7 +1,26 @@
+// --- IMPORTANDO O FIREBASE (Direto da Nuvem) ---
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+// --- SUA CHAVE DE ACESSO ---
+const firebaseConfig = {
+  apiKey: "AIzaSyDnFiPNolgHVa53jhRreQo6pTVtOAGf1IE",
+  authDomain: "darafa-store.firebaseapp.com",
+  projectId: "darafa-store",
+  storageBucket: "darafa-store.firebasestorage.app",
+  messagingSenderId: "530277681068",
+  appId: "1:530277681068:web:26bd0a20ad47ec5b8d1c09",
+  measurementId: "G-ED1N4DPLP7"
+};
+
+// --- INICIANDO O SISTEMA ---
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app); // Esse é o nosso Banco de Dados!
+
+console.log("🔥 Firebase Conectado com Sucesso!");
+
 /**
- * DaRafa Acessórios - Main Script (Versão FINAL 4.0 - Master)
- * * FEATURE: Analytics Caseiro Completo (Scroll Spy + Relatório de Console).
- * * INCLUSO: Todas as features anteriores (Adaptive, Exit Intent, URL State, Prefetch).
+ * DaRafa Acessórios - Main Script...
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -491,9 +510,39 @@ document.addEventListener('DOMContentLoaded', () => {
     // =========================================================
     // 6. RENDERIZAÇÃO DO CATÁLOGO
     // =========================================================
+    // --- NOVA VERSÃO: Buscando do Banco de Dados ---
     async function initCatalog() {
-        if (INSTAGRAM_TOKEN) { try { await fetchInstagramPosts(); } catch (error) { activeData = [...productsData]; resetAndRender(); } } 
-        else { activeData = [...productsData]; resetAndRender(); }
+        console.log("🔄 TENTANDO CONECTAR AO FIREBASE...");
+        
+        try {
+            // 1. Acessa a coleção 'produtos'
+            const produtosRef = collection(db, "produtos");
+            const snapshot = await getDocs(produtosRef);
+            
+            const produtosDoBanco = [];
+
+            // 2. Converte os dados
+            snapshot.forEach(doc => {
+                const dados = doc.data();
+                produtosDoBanco.push({ ...dados });
+            });
+
+            // 3. Verifica se achou algo
+            if (produtosDoBanco.length > 0) {
+                console.log("✅ SUCESSO! Produtos vindos da Nuvem:", produtosDoBanco);
+                activeData = produtosDoBanco; // Substitui os dados fixos
+            } else {
+                console.warn("⚠️ Banco vazio. Usando dados locais de teste.");
+                activeData = [...productsData]; // Fallback
+            }
+
+        } catch (error) {
+            console.error("❌ ERRO FATAL NO FIREBASE:", error);
+            activeData = [...productsData]; // Proteção para o site não quebrar
+        }
+
+        // 4. Desenha na tela
+        resetAndRender();
     }
 
     function resetAndRender(container = galleryContainer) {
@@ -625,7 +674,10 @@ document.addEventListener('DOMContentLoaded', () => {
             #js-sort-select { 
                 padding: 10px 20px; 
                 border-radius: 50px; 
+                
+                /* AQUI ESTÁ A BORDA VERMELHA FINA: */
                 border: 1px solid #D00000 !important; 
+                
                 background: #241000; 
                 color: #FDB90C; 
                 font-size: 0.9rem; 
