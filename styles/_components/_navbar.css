@@ -14,7 +14,7 @@
     /* --- AQUI ESTÁ A MUDANÇA: Fundo com Textura --- */
     background-image: url('../../assets/images/honeycomb-background2.jpg');
     background-size: cover;
-    background-position: center bottom;
+    background-position: center;
     background-repeat: no-repeat;
     
     /* Adicionei uma borda inferior dourada sutil para acabamento */
