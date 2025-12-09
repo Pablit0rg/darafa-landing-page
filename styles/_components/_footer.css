@@ -1,45 +1,49 @@
 /*
  * COMPONENTE: Footer Section
- * Atualizado: Altura Reduzida (Igual à Navbar ~80px)
+ * Design: Honeycomb Texture (Continuação do Mel)
+ * Versão: Adaptativa (Controles Separados)
  */
 
+/* --- 1. VERSÃO DESKTOP (PC/Telas Grandes) --- */
 .footer-section {
-    /* Padding mantido pequeno */
-    padding: 5px 0; 
-    
-    /* --- MUDANÇA: Fundo Honeycomb (Igual Navbar) --- */
-    background-image: url('../../assets/images/honeycomb-background2.jpg');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    
-    /* Ajustei a borda para combinar com a Navbar (Tom Dourado Escuro) */
-    border-top: 1px solid rgba(187, 99, 2, 0.5);
-    
-    text-align: center;
+    /* Altura mínima */
+    min-height: 80px; 
+    padding: 20px 0;
     margin-top: auto; 
     
-    /* Altura mínima mantida */
-    min-height: 50px;
+    /* --- CONFIGURAÇÃO DA IMAGEM --- */
+    background-image: url('../../assets/images/testesite.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+    
+    /* [DESKTOP] MEXA AQUI para ajustar no PC: 👇 */
+    /* Exemplo: 'center bottom -40px' sobe a imagem e esconde o finalzinho */
+    background-position: center bottom -720px; 
+    
+    /* Acabamentos */
+    border-top: 1px solid rgba(187, 99, 2, 0.5); 
+    box-shadow: 0 -4px 20px rgba(36, 16, 0, 0.4);
+    
+    /* Texto e Layout */
+    color: var(--color-gold-light);
+    text-align: center;
     display: flex;
     align-items: center;
-    
-    /* Sombra invertida (para cima) para dar profundidade no chão */
-    box-shadow: 0 -4px 20px rgba(36, 16, 0, 0.2);
+    justify-content: center;
 }
 
 .footer-content {
     display: flex;
     flex-direction: column;
-    gap: 5px; /* Reduzimos o espaço entre os textos */
+    gap: 5px; 
     align-items: center;
     justify-content: center;
 }
 
 .footer-tagline {
     font-family: var(--font-serif);
-    color: var(#241000);
-    font-size: 1rem; /* Levemente menor */
+    color: #241000;
+    font-size: 1rem;
     letter-spacing: 1px;
     margin: 0;
 }
@@ -47,7 +51,7 @@
 .footer-copyright {
     font-family: var(--font-sans);
     font-size: 0.75rem;
-    color: var(#000000);
+    color: #000000;
     opacity: 0.8;
     margin: 0;
 }
@@ -56,8 +60,8 @@
 .footer-dev {
     font-family: var(--font-sans);
     font-size: 0.7rem;
-    color: var(--color-text-muted); /* <--- A CORREÇÃO ELEGANTE */
-    opacity: 0.8; /* Adiciona um toque suave para não brigar com o copyright */
+    color: var(--color-text-muted); 
+    opacity: 0.8; 
     margin-top: 2px;
 }
 
@@ -72,7 +76,6 @@
 }
 
 .footer-dev a:hover {
-    /* O Roxo/Magenta oficial do gradiente do Instagram */
     color: #241000; 
     text-decoration: underline;
 }
@@ -84,4 +87,19 @@
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
+}
+
+
+/* --- 2. VERSÃO MOBILE (Celulares e Tablets) --- */
+@media (max-width: 768px) {
+    .footer-section {
+        /* [MOBILE] MEXA AQUI para ajustar no Celular: 👇 */
+        /* Aqui você pode usar 'center bottom' ou outro valor diferente do PC */
+        background-position: center bottom -70px; 
+        
+        min-height: 80px;
+    }
+    
+    .footer-tagline { font-size: 0.9rem; }
+    .footer-copyright { font-size: 0.65rem; }
 }
