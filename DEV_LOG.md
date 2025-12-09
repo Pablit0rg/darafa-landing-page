@@ -1,18 +1,18 @@
 # DaRafa Acessórios - O Dossiê Completo do Projeto (MASTER LOG)
 
 **Resumo Executivo:**
-Este documento narra a evolução completa do desenvolvimento da Landing Page para "DaRafa Acessórios". O projeto encontra-se na Versão 6.0 (Connected & Textured). A infraestrutura de Backend (Firebase) foi implementada com sucesso, transformando o site estático em uma aplicação dinâmica. O design recebeu atualizações táteis (Textura Honeycomb) na navegação.
+Este documento narra a evolução completa do desenvolvimento da Landing Page para "DaRafa Acessórios". O projeto encontra-se na Versão 6.5 (Stable & Textured). A infraestrutura de Backend (Firebase) está operante. O design visual foi refinado com texturas orgânicas ("Honeycomb") na Navbar e Footer. Tentativas de implementar barras de navegação flutuantes complexas ("Sticky Navbar") no catálogo foram revertidas para garantir a estabilidade do modal de produtos.
 
 ---
 
 ## 1. Mapa Técnico (Status)
 * **Frontend (Ativo):**
-    * **css/**: Estilização modular "Red Chic" + Textura "Honeycomb" na Navbar.
+    * **css/**: Estilização modular "Red Chic" + Textura "Honeycomb" na Navbar e Footer (Desktop/Mobile separados).
     * **js/main.js**: Versão 6.0 (Conectada ao Firestore).
     * **Infra:** Domínio `darafa.com` online.
 * **Backend (Ativo - Firebase):**
     * **Firestore Database:** Coleção `produtos` criada e populada.
-    * **Dados:** 5 produtos cadastrados (IDs 1, 2, 3, 4, 6) cobrindo todas as categorias.
+    * **Dados:** 5 produtos cadastrados (IDs 1, 2, 3, 4, 6).
 * **Funcionalidades Ativas:**
     * Catálogo Dinâmico (Lê do Banco de Dados).
     * Filtros de Categoria (Via Menu Dropdown e Busca).
@@ -23,48 +23,37 @@ Este documento narra a evolução completa do desenvolvimento da Landing Page pa
 
 ## 5. Histórico de Atualizações (CHANGELOG)
 
-### [08/12/2025] - Fase 6.2: Refinamento Visual (Design Honeycomb)
+### [09/12/2025] - Fase 6.5: Estabilidade do Catálogo (Rollback & Lições Aprendidas)
+**Status: CONCLUÍDO (COM RESSALVAS)**
+* **Ocorrência (O que deu errado):** Tentativa de implementar uma "Sticky Navbar" (Barra Fixa) dentro do modal do catálogo usando uma estrutura complexa de **DOM Injection** (Wrapper + Shield/Escudo de Fundo + Navbar).
+* **Motivo da Falha:** A injeção dessa estrutura de containers aninhados (`.sticky-wrapper`) quebrou a cadeia de eventos de clique (`EventListeners`) dos cards de produto, impedindo a abertura do zoom/detalhes.
+* **Ação Imediata:** Reversão total (`Rollback`) para a versão estável anterior, onde a barra de controles é estática e segue o fluxo normal do documento.
+* **Decisão Estratégica:** A funcionalidade de "Barra Fixa no Catálogo" foi classificada como **baixa prioridade/alto risco** no momento e movida para o final do cronograma.
+
+### [08/12/2025] - Fase 6.3: Refinamento Visual (Honeycomb Total)
 **Status: CONCLUÍDO**
-* **UI/UX:** Implementação de textura orgânica "Favo de Mel" (`honeycomb-background2.jpg`) no background da Navbar.
-* **Ajuste Fino:** Aplicação de sombras e bordas para garantir legibilidade do menu sobre a textura.
-* **Rollback (Decisão de Design):** Teste de aplicação da mesma textura no Footer foi realizado, mas revertido para manter o equilíbrio visual (Footer permaneceu sólido/limpo).
+* **Design:** Aplicação da textura `honeycomb-background2.jpg` tanto na **Navbar** quanto no **Footer**.
+* **Responsividade:** Configuração de `background-position` independente para Desktop e Mobile, permitindo ajuste fino do "escorrimento" do mel em cada tela.
+* **Decisão de Projeto:** Optou-se por não utilizar a imagem experimental (`testesite.png`) devido a inconsistências visuais.
 
 ### [08/12/2025] - Fase 6.0: Integração do Banco de Dados (Firestore) - SUCESSO
 **Status: CONCLUÍDO & ESTÁVEL**
-* **Backend:** Conexão com Firebase Firestore estabelecida com sucesso.
-* **Dados:** Produtos agora são carregados dinamicamente da nuvem. IDs 1, 2, 3, 4 e 6 foram cadastrados manualmente para teste de categorias.
+* **Backend:** Conexão com Firebase Firestore estabelecida.
 * **Refatoração:** Código limpo e imports corrigidos no `main.js`. O site agora ignora a lista fixa local e obedece ao banco de dados.
-* **Infra:** O site está lendo, ordenando e renderizando os dados reais com performance otimizada.
-
-### [08/12/2025] - Fase 6.1: Interface de Filtros por Botão (UI) - ADIADO
-**Status: MOVIDO PARA BACKLOG**
-* **Ocorrência:** A tentativa de injetar botões de filtro explícitos via JavaScript causou conflito com os "Event Listeners" de abertura dos cards (Modal).
-* **Ação:** Reversão imediata para a versão estável.
-* **Situação Atual:** O sistema de filtros continua funcionando perfeitamente através da Barra de Busca e do Menu Dropdown ("Todos") originais.
-
-### [04/12/2025] - Fase 5.4: Refinamento de Layout & Limpeza (v5.0)
-**Status: CONCLUÍDO**
-* **Refatoração:** Remoção temporária do botão "Encomendar" (Instagram) e suas funções associadas para limpar a interface e o código.
-* **UI/UX:** Ajuste fino de alinhamento (Flexbox) entre a Barra de Busca e o Menu de Filtros.
 
 ---
 
-## 6. PRÓXIMOS PASSOS (FASE 7 - CONTEÚDO FINAL)
+## 6. PRÓXIMOS PASSOS (FASE 7 - CONTEÚDO & FINALIZAÇÃO)
 
 1.  **INFRAESTRUTURA DE IMAGENS (Storage):**
-    * Configurar o Firebase Storage para hospedar as 50 fotos oficiais (quando chegarem), evitando pesar o repositório GitHub.
+    * Configurar o Firebase Storage para hospedar as 50 fotos oficiais (quando chegarem).
 2.  **GESTÃO DE CONTEÚDO:**
     * Cadastrar o produto ID 5 (para fechar a sequência numérica).
     * Receber e subir o catálogo completo.
-3.  **POLIMENTO FINAL:**
-    * Testes finais de responsividade em dispositivos móveis.
+3.  **POLIMENTO FINAL (Onde faremos a Sticky Navbar):**
+    * Testes finais de responsividade.
+    * **Revisitar a "Sticky Navbar" do Catálogo:** Implementar de forma nativa (CSS puro se possível) ou simplificada, sem injetar estruturas complexas via JS que quebrem o modal.
     * Deploy final de produção.
 
 ---
-*Última atualização: 08/12/2025 - Backend Conectado. Design Navbar Honeycomb. Sistema Estável.*
-
-### [08/12/2025] - Fase 6.3: Refinamento Visual (Honeycomb Total) - DEFINIDO
-**Status: CONCLUÍDO**
-* **Design:** Aplicação da textura `honeycomb-background2.jpg` tanto na **Navbar** quanto no **Footer**.
-* **Decisão de Projeto:** Optou-se por não utilizar a imagem experimental (`testesite.png` com mel escorrendo) devido a inconsistências de responsividade entre Desktop e Mobile.
-* **Resultado:** O site agora possui uma identidade visual unificada ("Imersão na Colmeia") com o backend Firebase totalmente funcional.
+*Última atualização: 09/12/2025 - Sistema Estável. Design Texturizado. Funcionalidade Sticky adiada para fase final.*
