@@ -372,7 +372,7 @@ document.addEventListener('DOMContentLoaded', () => {
         initCatalog();
         initFilters();
         initControls();
-        injectDynamicStyles(); 
+        injectDynamicStyles();
         
         // Ativa o Scroll Spy nas seções principais
         document.querySelectorAll('section, header').forEach(sec => sectionObserver.observe(sec));
@@ -615,150 +615,144 @@ document.addEventListener('DOMContentLoaded', () => {
     function injectDynamicStyles() {
         const style = document.createElement('style');
         style.innerHTML = `
-            /* 1. O Container (A linha que segura tudo) */
-            .controls-wrapper { 
-                width: 100%; 
-                display: flex; 
-                justify-content: center; /* Centraliza no meio da tela */
-                align-items: center; 
-                gap: 10px; /* Espaço entre a busca e o botão */
-                margin-bottom: 20px; 
-                flex-wrap: wrap; /* Permite quebrar linha só se a tela for minúscula */
+            /* --- NAVBAR DO CATÁLOGO (CARD FLUTUANTE) --- */
+            .catalog-navbar {
+                position: sticky;
+                
+                /* [MUDANÇA] Flutua 15px abaixo do topo para mostrar a borda superior */
+                top: 15px; 
+                z-index: 500;
+                width: 100%;
+                
+                margin-bottom: 30px; 
+                
+                /* Fundo Sólido Chocolate */
+                background: #241000; 
+                
+                /* [MUDANÇA] Borda Amarela em TODA a volta */
+                border: 1px solid #FDB90C;   
+                
+                box-shadow: 0 10px 30px rgba(0,0,0,0.6); /* Sombra mais forte */
+                
+                display: flex;
+                justify-content: space-between; 
+                align-items: center;
+                padding: 15px 20px;
+                gap: 15px;
+                
+                /* [MUDANÇA] Arredonda os 4 cantos (Cápsula) */
+                border-radius: 15px;
+                
+                transition: all 0.3s ease;
             }
 
-            /* Botão de Encomenda do Instagram */
+            /* [ATUALIZADO] O "Escudo Invisível" (Esconde o scroll acima da ilha) */
+            .catalog-navbar::before {
+                content: '';
+                position: absolute;
+                
+                /* Começa bem acima e desce até encostar no topo da ilha */
+                bottom: 100%; 
+                left: 0;
+                width: 100%;
+                height: 200px; /* Grande área de proteção para cima */
+                
+                /* Cor Sólida para apagar o que passa */
+                background-color: #241000; 
+                
+                z-index: -1;
+                pointer-events: none; 
+                
+                /* Removemos o backdrop-filter pois é sólido agora */
+            }
+
+            /* Grupo da Direita (Filtros + Botão) */
+            .catalog-actions {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+
+            /* Barra de Busca */
+            #js-search-input {
+                padding: 10px 20px;
+                width: 100%;
+                max-width: 250px;
+                border-radius: 50px;
+                border: 1px solid #4a2500;
+                background: rgba(255, 255, 255, 0.1);
+                color: #FDB90C;
+                font-size: 0.95rem;
+                outline: none;
+                transition: all 0.3s ease;
+            }
+            #js-search-input:focus {
+                background: rgba(255, 255, 255, 0.2);
+                border-color: #FDB90C;
+                box-shadow: 0 0 15px rgba(253, 185, 12, 0.2);
+            }
+            #js-search-input::placeholder { color: rgba(253, 185, 12, 0.5); }
+
+            /* Select de Filtros */
+            #js-sort-select {
+                padding: 10px 20px;
+                border-radius: 50px;
+                border: 1px solid #FDB90C;
+                background: #241000;
+                color: #FDB90C;
+                font-size: 0.9rem;
+                font-weight: 600;
+                cursor: pointer;
+                outline: none;
+                text-align: center;
+                transition: all 0.3s ease;
+            }
+            #js-sort-select:hover { background: #3a1a00; transform: translateY(-2px); }
+
+            /* Botão de Encomenda */
             .btn-insta-order {
-                padding: 11px 15px;
+                padding: 10px 20px;
                 border-radius: 50px;
                 border: none;
-                /* Gradiente Oficial do Instagram */
-                background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); 
+                background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
                 color: #fff;
                 font-size: 0.9rem;
                 font-weight: 600;
                 cursor: pointer;
                 display: flex;
                 align-items: center;
-                gap: 8px; /* Espaço entre ícone e texto */
+                gap: 8px;
                 box-shadow: 0 4px 15px rgba(0,0,0,0.3);
                 transition: transform 0.2s ease;
-                
-                white-space: nowrap; /* Não deixa o texto quebrar */
+                white-space: nowrap;
             }
+            .btn-insta-order:hover { transform: scale(1.05); box-shadow: 0 6px 20px rgba(220, 39, 67, 0.4); }
 
-            /* --- AJUSTE EXCLUSIVO PARA PC (DESKTOP) --- */
-            @media (min-width: 900px) {
-                .btn-insta-order {
-                    margin-left: 594px; /* Ajuste aqui a distância */
-                    transform: translateY(-57px);
+            /* Responsividade */
+            @media (max-width: 768px) {
+                .catalog-navbar {
+                    flex-direction: column;
+                    padding: 15px;
+                    border-radius: 15px; /* Mantém arredondado no mobile também */
+                    top: 10px; /* Ajuste fino para mobile */
                 }
+                #js-search-input { max-width: 100%; }
+                .catalog-actions { width: 100%; justify-content: space-between; }
+                #js-sort-select, .btn-insta-order { flex: 1; justify-content: center; }
             }
 
-            /* 2. A Barra de Busca (Versão Compacta) */
-#js-search-input { 
-    padding: 10px 20px; 
-    width: 80px;        /* Reduzido */
-    flex-grow: 0;       /* Mude para 0 para ele não tentar esticar */
-    max-width: 100px;   /* Travado na metade do tamanho anterior */
-    border-radius: 50px; 
-    border: 1px solid #D00000; 
-                background: rgba(255,255,255,0.9); 
-                color: #241000; 
-                font-size: 0.95rem; 
-                outline: none; 
-                box-shadow: 0 4px 10px rgba(36,16,0,0.1); 
-                transition: all 0.3s ease; 
-            }
-
-            /* 3. O Botão de Favoritos (Menu) */
-            #js-sort-select { 
-                padding: 10px 20px; 
-                border-radius: 50px; 
-                
-                /* AQUI ESTÁ A BORDA VERMELHA FINA: */
-                border: 1px solid #D00000 !important; 
-                
-                background: #241000; 
-                color: #FDB90C; 
-                font-size: 0.9rem; 
-                font-weight: 600; 
-                cursor: pointer; 
-                outline: none; 
-                -webkit-appearance: none; 
-                appearance: none; 
-                text-align: center; 
-                box-shadow: 0 4px 10px rgba(36,16,0,0.2); 
-            }
-            
-            #js-sort-select option { background-color: #241000; color: #FDB90C; }
-            #js-sort-select:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(208, 0, 0, 0.3); }
-
-            /* ... (Mantenha o resto do código do .toast-notification e .exit-overlay aqui para baixo) ... */
-            
-            #js-sort-select:hover { background: #3a1a00; }
-            
+            /* Toast */
             .toast-notification {
-                position: fixed; 
-                top: 5px; /* MUDANÇA: Fica no topo (perto da busca), não embaixo */
-                left: 50%; 
-                transform: translateX(-50%) translateY(-50px); /* Animação vem de cima */
+                position: fixed; top: 20px; left: 50%; 
+                transform: translateX(-50%) translateY(-100px);
                 background-color: #241000; color: #FDB90C; padding: 12px 24px;
-                border-radius: 50px; box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+                border-radius: 50px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
                 font-family: 'Poppins', sans-serif; font-size: 0.9rem; font-weight: 500;
-                z-index: 10000; /* Z-index altíssimo para ficar sobre tudo */
-                opacity: 0; 
+                z-index: 10000; opacity: 0; 
                 transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
                 display: flex; align-items: center; gap: 8px; border: 1px solid #FDB90C;
             }
-                /* Variação para quando o balão precisa descer */
-            .toast-notification.toast-low {
-                top: auto;      /* Desliga o topo */
-                bottom: 30%;    /* Fixa na parte de baixo da tela */
-                transform: translateX(-50%); /* Centraliza apenas horizontalmente */
-                background-color: #D00000; /* Vermelho alerta (opcional, fica chique) */
-                border-color: #FF4500;
-            }
-
-            .toast-notification.show { 
-                transform: translateX(-50%) translateY(0); /* Posição final */
-                opacity: 1; 
-            }
-            
-            /* EXIT INTENT MODAL */
-            .exit-overlay {
-                position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-                background: rgba(36, 16, 0, 0.9); z-index: 6000;
-                display: flex; justify-content: center; align-items: center;
-                opacity: 0; visibility: hidden; transition: all 0.4s ease;
-                backdrop-filter: blur(5px);
-            }
-            .exit-overlay.active { opacity: 1; visibility: visible; }
-            
-            .exit-modal {
-                background: #241000; border: 1px solid #D00000;
-                padding: 40px; border-radius: 10px; text-align: center;
-                position: relative; max-width: 400px; width: 90%;
-                box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-                transform: translateY(20px); transition: transform 0.4s ease;
-            }
-            .exit-overlay.active .exit-modal { transform: translateY(0); }
-            
-            .exit-modal h3 { color: #FDB90C; font-family: 'Playfair Display', serif; font-size: 2rem; margin-bottom: 10px; }
-            .exit-modal p { color: #e0d0a0; font-family: 'Poppins', sans-serif; margin-bottom: 25px; line-height: 1.6; }
-            
-            .exit-btn {
-                background: #D00000; color: #fff; text-decoration: none;
-                padding: 12px 30px; border-radius: 50px; font-weight: 600;
-                display: inline-block; transition: transform 0.2s;
-                text-transform: uppercase; font-size: 0.9rem; letter-spacing: 1px;
-            }
-            .exit-btn:hover { transform: scale(1.05); background: #ff2a00; }
-            
-            .close-exit {
-                position: absolute; top: 10px; right: 15px;
-                background: none; border: none; color: #FDB90C;
-                font-size: 1.5rem; cursor: pointer;
-            }
+            .toast-notification.show { transform: translateX(-50%) translateY(0); opacity: 1; }
         `;
         document.head.appendChild(style);
     }
@@ -1073,52 +1067,93 @@ document.addEventListener('DOMContentLoaded', () => {
         overlay.addEventListener('touchstart', e => { touchStartY = e.changedTouches[0].screenY; }, {passive: true});
         overlay.addEventListener('touchend', e => { touchEndY = e.changedTouches[0].screenY; if (touchEndY - touchStartY > 60) close(); }, {passive: true});
 
-        const oldControls = overlay.querySelector('.controls-wrapper');
-        if(oldControls) oldControls.remove();
+        // --- CONSTRUÇÃO DA NOVA NAVBAR DO CATÁLOGO ---
+        // Verifica se estamos abrindo o Catálogo (procura pelos filtros antigos para confirmar)
+        const modalFiltersPlaceholder = overlay.querySelector('.catalog-filters');
         
-        const modalFilters = overlay.querySelector('.catalog-filters');
-        if(modalFilters) {
-             const controlsWrapper = document.createElement('div');
-             controlsWrapper.className = 'controls-wrapper';
+        if(modalFiltersPlaceholder) {
+             // 1. Cria a Navbar Container (A barra chocolate fixa)
+             const navbar = document.createElement('nav');
+             navbar.className = 'catalog-navbar';
              
-             // 1. Busca
+             // 2. Elemento da Esquerda: Busca
              const input = document.createElement('input');
-             input.placeholder = 'Buscar joia...';
-             input.style.cssText = "padding:12px 25px; width:100%; max-width:300px; border-radius:50px; border:2px solid #241000; background:rgba(255,255,255,0.9); color:#241000; font-size:1rem; outline:none;";
+             input.id = 'js-search-input';
+             input.type = 'text';
+             input.placeholder = '🔍 Buscar joia...';
              
-             // 2. Filtro
-             const sortSelect = document.createElement('select');
-             sortSelect.innerHTML = `<option value="default">Todos</option><option value="az">A - Z</option><option value="za">Z - A</option><option value="favorites">Favoritos</option>`;
-             sortSelect.style.cssText = "padding:12px 20px; border-radius:50px; border:2px solid #241000; background:#241000; color:#FDB90C; font-size:0.9rem; font-weight:600; cursor:pointer;";
-             
-             // --- 3. BOTÃO DE ENCOMENDA (ADICIONADO) ---
-             const orderBtnModal = document.createElement('button');
-             orderBtnModal.className = 'btn-insta-order';
-             orderBtnModal.innerHTML = '<i class="fab fa-instagram"></i> Encomendar';
-             orderBtnModal.onclick = sendFavoritesToInsta; // A mesma função mágica
-             
-             // Adiciona na ordem: Busca -> Select -> Botão
-             controlsWrapper.appendChild(input);
-             controlsWrapper.appendChild(sortSelect);
-             controlsWrapper.appendChild(orderBtnModal); // <--- O Vizinho Novo
-             
-             modalFilters.prepend(controlsWrapper);
+             // 3. Container da Direita: Ações (Select + Botão Insta)
+             const actionsDiv = document.createElement('div');
+             actionsDiv.className = 'catalog-actions';
 
-             // Lógica de atualização do Grid
+             // 3a. Select de Filtros (Todos, A-Z, Favoritos)
+             const sortSelect = document.createElement('select');
+             sortSelect.id = 'js-sort-select';
+             sortSelect.innerHTML = `
+                <option value="default">✨ Todos</option>
+                <option value="az">A - Z</option>
+                <option value="za">Z - A</option>
+                <option value="favorites">♥ Favoritos</option>
+             `;
+
+             // 3b. Botão Encomendar (Instagram)
+             const orderBtn = document.createElement('button');
+             orderBtn.className = 'btn-insta-order';
+             orderBtn.innerHTML = '<i class="fab fa-instagram"></i> Encomendar';
+             orderBtn.onclick = sendFavoritesToInsta; // Liga a função de copiar pedido
+
+             // Monta o lado direito
+             actionsDiv.appendChild(sortSelect);
+             actionsDiv.appendChild(orderBtn);
+
+             // Monta a Navbar completa
+             navbar.appendChild(input);      // Esquerda
+             navbar.appendChild(actionsDiv); // Direita
+             
+             // 4. INJEÇÃO NO TOPO (A Mágica)
+             // Inserimos a navbar ANTES de qualquer coisa dentro do conteúdo
+             const contentMain = overlay.querySelector('.expansion-content');
+             contentMain.insertBefore(navbar, contentMain.firstChild);
+             
+             // 5. Limpeza: Esconde a barra antiga que veio do HTML estático
+             const oldBar = overlay.querySelector('.catalog-controls-bar');
+             if(oldBar) oldBar.style.display = 'none';
+             if(modalFiltersPlaceholder) modalFiltersPlaceholder.style.display = 'none';
+
+             // --- LÓGICA DE FILTRAGEM (Reativada para os novos elementos) ---
              const updateModal = () => {
                  const term = input.value.toLowerCase();
-                 let filtered = productsData.filter(item => item.title.toLowerCase().includes(term) || item.category.includes(term));
-                 activeData = applySort(filtered);
+                 let filtered = productsData;
+                 
+                 // Filtra por texto
+                 if (term) {
+                    filtered = filtered.filter(item => 
+                        item.title.toLowerCase().includes(term) || 
+                        item.category.toLowerCase().includes(term)
+                    );
+                 }
+                 
+                 // Aplica ordenação/favoritos
+                 // (Precisamos atualizar a variável global currentSort com o valor deste select novo)
+                 currentSort = sortSelect.value;
+                 filtered = applySort(filtered);
+                 
+                 // Atualiza a grid
+                 activeData = filtered;
                  const targetGallery = overlay.querySelector('.gallery-5-cols');
                  resetAndRender(targetGallery);
              };
-             input.addEventListener('input', updateModal);
-             sortSelect.addEventListener('change', (e) => { currentSort = e.target.value; updateModal(); });
 
+             // Liga os eventos
+             input.addEventListener('input', updateModal);
+             sortSelect.addEventListener('change', updateModal);
+
+             // Renderiza inicial
              const targetGallery = overlay.querySelector('.gallery-5-cols');
              resetAndRender(targetGallery);
         }
 
+        // --- PREPARAÇÃO DAS IMAGENS (Lazy Load no Modal) ---
         const modalImages = overlay.querySelectorAll('.lazy-image');
         if(modalImages.length > 0) {
             const modalObserver = new IntersectionObserver((entries, observer) => {
@@ -1134,6 +1169,7 @@ document.addEventListener('DOMContentLoaded', () => {
             modalImages.forEach(img => modalObserver.observe(img));
         }
         
+        // --- CLIQUES NOS CARDS (Abrir Zoom) ---
         overlay.addEventListener('click', (e) => {
             const card = e.target.closest('.gold-framebox');
             if (card && overlay.contains(card)) {
