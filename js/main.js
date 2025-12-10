@@ -615,48 +615,51 @@ document.addEventListener('DOMContentLoaded', () => {
     function injectDynamicStyles() {
         const style = document.createElement('style');
         style.innerHTML = `
-            /* --- NAVBAR DO CATÁLOGO (ESTILO ILHA FLUTUANTE) --- */
-            .catalog-navbar {
-                position: sticky;
-                top: 20px; 
-                z-index: 500;
-                width: 95%;
-                max-width: 1000px;
-                margin: 0 auto 30px auto; 
-                background: #241000; 
-                border: 1px solid #FDB90C;   
-                box-shadow: 0 10px 40px rgba(0,0,0,0.8);
-                display: flex;
-                justify-content: space-between; 
-                align-items: center;
-                padding: 12px 20px;
-                gap: 15px;
-                border-radius: 50px; 
-                transition: all 0.3s ease;
-            }
-
-            /* --- A NÉVOA MÁGICA (FADE MASK) --- */
-            /* Isso cria um degradê no topo do modal que "come" os produtos */
-            .expansion-overlay::after {
-                content: '';
-                position: fixed; /* Fica preso na tela */
+            /* --- 1. CABEÇALHO FIXO (Prego na Parede) --- */
+            .catalog-header-bg {
+                position: fixed; /* MUDANÇA: Agora é FIXO, não mexe nunca */
                 top: 0;
                 left: 0;
                 width: 100%;
-                height: 120px; /* Altura da névoa (cobre a barra e um pouco mais) */
+                height: auto;
+                z-index: 1500; /* Alto para ficar acima do scroll */
                 
-                /* O Degradê: Transparente embaixo -> Chocolate Sólido em cima */
-                background: linear-gradient(to bottom, 
-                    rgba(36, 16, 0, 1) 0%,    /* Topo Sólido (esconde tudo) */
-                    rgba(36, 16, 0, 0.8) 60%, /* Começa a ficar transparente */
-                    rgba(36, 16, 0, 0) 100%   /* Totalmente transparente */
-                );
+                /* Fundo Chocolate Sólido */
+                background-color: #241000; 
                 
-                z-index: 499; /* Fica ACIMA dos produtos (z=10) mas ABAIXO da Navbar (z=500) */
-                pointer-events: none; /* Deixa clicar através na parte transparente */
+                /* Sombra para dar profundidade sobre os produtos */
+                box-shadow: 0 10px 30px rgba(0,0,0,0.9);
+                
+                padding: 15px 0;
+                display: flex;
+                justify-content: center;
             }
 
-            /* O resto continua igual... */
+            /* --- 2. A BARRA FLUTUANTE (Ilha) --- */
+            .catalog-navbar {
+                position: relative;
+                width: 95%;
+                max-width: 1000px;
+                
+                /* Visual da Ilha */
+                background: #241000; 
+                border: 1px solid #FDB90C; /* Borda Amarela */
+                border-radius: 50px;
+                
+                display: flex;
+                justify-content: space-between; 
+                align-items: center;
+                padding: 10px 20px;
+                gap: 15px;
+            }
+
+            /* --- AJUSTE DE CONTEÚDO (Para não esconder o 1º produto) --- */
+            /* Quando o modal abre, empurramos o conteúdo para baixo */
+            .expansion-overlay .expansion-content {
+                margin-top: 100px !important; /* Espaço para o cabeçalho fixo */
+            }
+
+            /* --- ELEMENTOS INTERNOS (Iguais) --- */
             .catalog-actions { display: flex; align-items: center; gap: 10px; }
 
             #js-search-input {
@@ -692,11 +695,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
             @media (max-width: 768px) {
                 .catalog-navbar {
-                    flex-direction: column; padding: 20px; border-radius: 20px;
-                    width: 90%; gap: 15px; top: 10px;
+                    flex-direction: column; padding: 15px; border-radius: 20px;
+                    width: 90%; gap: 15px;
                 }
-                /* Ajuste da névoa no mobile */
-                .expansion-overlay::after { height: 180px; } /* Mais alta pq a barra é maior */
+                .catalog-header-bg {
+                    height: auto; /* Deixa crescer se precisar */
+                }
+                /* Empurra mais no mobile pq a barra é maior */
+                .expansion-overlay .expansion-content { margin-top: 160px !important; }
                 
                 #js-search-input { max-width: 100%; }
                 .catalog-actions { width: 100%; flex-direction: column; gap: 10px; }
@@ -1028,93 +1034,71 @@ document.addEventListener('DOMContentLoaded', () => {
         overlay.addEventListener('touchstart', e => { touchStartY = e.changedTouches[0].screenY; }, {passive: true});
         overlay.addEventListener('touchend', e => { touchEndY = e.changedTouches[0].screenY; if (touchEndY - touchStartY > 60) close(); }, {passive: true});
 
-        // --- CONSTRUÇÃO DA NOVA NAVBAR DO CATÁLOGO ---
-        // Verifica se estamos abrindo o Catálogo (procura pelos filtros antigos para confirmar)
+        // --- CONSTRUÇÃO DO HEADER SÓLIDO ---
         const modalFiltersPlaceholder = overlay.querySelector('.catalog-filters');
         
         if(modalFiltersPlaceholder) {
-             // 1. Cria a Navbar Container (A barra chocolate fixa)
+             // 1. Cria o Fundo Sólido (Header)
+             const headerBg = document.createElement('div');
+             headerBg.className = 'catalog-header-bg';
+
+             // 2. Cria a Navbar (A Ilha)
              const navbar = document.createElement('nav');
              navbar.className = 'catalog-navbar';
              
-             // 2. Elemento da Esquerda: Busca
              const input = document.createElement('input');
              input.id = 'js-search-input';
              input.type = 'text';
              input.placeholder = '🔍 Buscar joia...';
              
-             // 3. Container da Direita: Ações (Select + Botão Insta)
              const actionsDiv = document.createElement('div');
              actionsDiv.className = 'catalog-actions';
 
-             // 3a. Select de Filtros (Todos, A-Z, Favoritos)
              const sortSelect = document.createElement('select');
              sortSelect.id = 'js-sort-select';
-             sortSelect.innerHTML = `
-                <option value="default">✨ Todos</option>
-                <option value="az">A - Z</option>
-                <option value="za">Z - A</option>
-                <option value="favorites">♥ Favoritos</option>
-             `;
+             sortSelect.innerHTML = `<option value="default">✨ Todos</option><option value="az">A - Z</option><option value="za">Z - A</option><option value="favorites">♥ Favoritos</option>`;
 
-             // 3b. Botão Encomendar (Instagram)
              const orderBtn = document.createElement('button');
              orderBtn.className = 'btn-insta-order';
              orderBtn.innerHTML = '<i class="fab fa-instagram"></i> Encomendar';
-             orderBtn.onclick = sendFavoritesToInsta; // Liga a função de copiar pedido
+             orderBtn.onclick = sendFavoritesToInsta;
 
-             // Monta o lado direito
              actionsDiv.appendChild(sortSelect);
              actionsDiv.appendChild(orderBtn);
+             navbar.appendChild(input);      
+             navbar.appendChild(actionsDiv); 
 
-             // Monta a Navbar completa
-             navbar.appendChild(input);      // Esquerda
-             navbar.appendChild(actionsDiv); // Direita
+             // 3. Coloca a Navbar DENTRO do Fundo Sólido
+             headerBg.appendChild(navbar);
              
-             // 4. INJEÇÃO NO TOPO (A Mágica)
-             // Inserimos a navbar ANTES de qualquer coisa dentro do conteúdo
-             const contentMain = overlay.querySelector('.expansion-content');
-             contentMain.insertBefore(navbar, contentMain.firstChild);
+             // 4. MUDANÇA CRUCIAL: Injeta o Header direto no Overlay (Fixo na tela), 
+             // NÃO no conteúdo que rola.
+             overlay.insertBefore(headerBg, overlay.firstChild);
              
-             // 5. Limpeza: Esconde a barra antiga que veio do HTML estático
+             // Limpeza
              const oldBar = overlay.querySelector('.catalog-controls-bar');
              if(oldBar) oldBar.style.display = 'none';
              if(modalFiltersPlaceholder) modalFiltersPlaceholder.style.display = 'none';
 
-             // --- LÓGICA DE FILTRAGEM (Reativada para os novos elementos) ---
+             // Lógica de Filtros
              const updateModal = () => {
                  const term = input.value.toLowerCase();
                  let filtered = productsData;
-                 
-                 // Filtra por texto
                  if (term) {
-                    filtered = filtered.filter(item => 
-                        item.title.toLowerCase().includes(term) || 
-                        item.category.toLowerCase().includes(term)
-                    );
+                    filtered = filtered.filter(item => item.title.toLowerCase().includes(term) || item.category.toLowerCase().includes(term));
                  }
-                 
-                 // Aplica ordenação/favoritos
-                 // (Precisamos atualizar a variável global currentSort com o valor deste select novo)
                  currentSort = sortSelect.value;
                  filtered = applySort(filtered);
-                 
-                 // Atualiza a grid
                  activeData = filtered;
                  const targetGallery = overlay.querySelector('.gallery-5-cols');
                  resetAndRender(targetGallery);
              };
-
-             // Liga os eventos
              input.addEventListener('input', updateModal);
              sortSelect.addEventListener('change', updateModal);
-
-             // Renderiza inicial
              const targetGallery = overlay.querySelector('.gallery-5-cols');
              resetAndRender(targetGallery);
         }
 
-        // --- PREPARAÇÃO DAS IMAGENS (Lazy Load no Modal) ---
         const modalImages = overlay.querySelectorAll('.lazy-image');
         if(modalImages.length > 0) {
             const modalObserver = new IntersectionObserver((entries, observer) => {
@@ -1130,7 +1114,6 @@ document.addEventListener('DOMContentLoaded', () => {
             modalImages.forEach(img => modalObserver.observe(img));
         }
         
-        // --- CLIQUES NOS CARDS (Abrir Zoom) ---
         overlay.addEventListener('click', (e) => {
             const card = e.target.closest('.gold-framebox');
             if (card && overlay.contains(card)) {
