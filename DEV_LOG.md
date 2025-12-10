@@ -40,7 +40,7 @@ Este documento narra a evolução completa do desenvolvimento da Landing Page pa
 ### [08/12/2025] - Fase 6.3: Refinamento Visual (Honeycomb Total)
 **Status: CONCLUÍDO**
 * **Design:** Aplicação da textura `honeycomb-background2.jpg` tanto na **Navbar** quanto no **Footer**.
-* **Responsividade:** Configuração de `background-position` independente para Desktop e Mobile, permitindo ajuste fino do "escorrimento" do mel.
+* **Responsividade:** Configuração de `background-position` independente para Desktop e Mobile, permitindo ajuste fino do "escorrimento" do mel em cada tela.
 
 ### [08/12/2025] - Fase 6.0: Integração do Banco de Dados (Firestore) - SUCESSO
 **Status: CONCLUÍDO & ESTÁVEL**
@@ -56,10 +56,13 @@ Este documento narra a evolução completa do desenvolvimento da Landing Page pa
 2.  **GESTÃO DE CONTEÚDO:**
     * Cadastrar o produto ID 5 (para fechar a sequência numérica).
     * Receber e subir o catálogo completo.
-3.  **POLIMENTO FINAL (A Lista de Ouro):**
+3.  **SEO & IDENTIDADE VISUAL (Novas Tarefas):**
+    * **Social Share (Open Graph):** Criar uma imagem chamada `social-share.jpg` (1200x630px) com a logo bonita e salvar na pasta assets. Configurar as tags meta no `index.html`.
+    * **Favicon:** Gerar um ícone `.ico` ou `.png` (32x32) da "Abelhinha" e instalar no `<head>` para aparecer na aba do navegador.
+4.  **POLIMENTO FINAL (A Lista de Ouro):**
     * Testes finais de responsividade.
     * **Revisitar a "Sticky Navbar" do Catálogo:** Tentar abordagem via CSS puro removendo transformações do modal, ou aceitar o comportamento padrão.
     * Deploy final de produção.
 
 ---
-*Última atualização: 10/12/2025 - Bug da Sticky Navbar isolado. Sistema Estável.*
+*Última atualização: 10/12/2025 - Tarefas de SEO adicionadas. Sistema Estável.*
