@@ -615,133 +615,94 @@ document.addEventListener('DOMContentLoaded', () => {
     function injectDynamicStyles() {
         const style = document.createElement('style');
         style.innerHTML = `
-            /* --- NAVBAR DO CATÁLOGO (CARD FLUTUANTE) --- */
+            /* --- NAVBAR DO CATÁLOGO (ESTILO ILHA FLUTUANTE) --- */
             .catalog-navbar {
                 position: sticky;
-                
-                /* [MUDANÇA] Flutua 15px abaixo do topo para mostrar a borda superior */
-                top: 15px; 
+                top: 20px; 
                 z-index: 500;
-                width: 100%;
-                
-                margin-bottom: 30px; 
-                
-                /* Fundo Sólido Chocolate */
+                width: 95%;
+                max-width: 1000px;
+                margin: 0 auto 30px auto; 
                 background: #241000; 
-                
-                /* [MUDANÇA] Borda Amarela em TODA a volta */
                 border: 1px solid #FDB90C;   
-                
-                box-shadow: 0 10px 30px rgba(0,0,0,0.6); /* Sombra mais forte */
-                
+                box-shadow: 0 10px 40px rgba(0,0,0,0.8);
                 display: flex;
                 justify-content: space-between; 
                 align-items: center;
-                padding: 15px 20px;
+                padding: 12px 20px;
                 gap: 15px;
-                
-                /* [MUDANÇA] Arredonda os 4 cantos (Cápsula) */
-                border-radius: 15px;
-                
+                border-radius: 50px; 
                 transition: all 0.3s ease;
             }
 
-            /* [ATUALIZADO] O "Escudo Invisível" (Esconde o scroll acima da ilha) */
-            .catalog-navbar::before {
+            /* --- A NÉVOA MÁGICA (FADE MASK) --- */
+            /* Isso cria um degradê no topo do modal que "come" os produtos */
+            .expansion-overlay::after {
                 content: '';
-                position: absolute;
-                
-                /* Começa bem acima e desce até encostar no topo da ilha */
-                bottom: 100%; 
+                position: fixed; /* Fica preso na tela */
+                top: 0;
                 left: 0;
                 width: 100%;
-                height: 200px; /* Grande área de proteção para cima */
+                height: 120px; /* Altura da névoa (cobre a barra e um pouco mais) */
                 
-                /* Cor Sólida para apagar o que passa */
-                background-color: #241000; 
+                /* O Degradê: Transparente embaixo -> Chocolate Sólido em cima */
+                background: linear-gradient(to bottom, 
+                    rgba(36, 16, 0, 1) 0%,    /* Topo Sólido (esconde tudo) */
+                    rgba(36, 16, 0, 0.8) 60%, /* Começa a ficar transparente */
+                    rgba(36, 16, 0, 0) 100%   /* Totalmente transparente */
+                );
                 
-                z-index: -1;
-                pointer-events: none; 
-                
-                /* Removemos o backdrop-filter pois é sólido agora */
+                z-index: 499; /* Fica ACIMA dos produtos (z=10) mas ABAIXO da Navbar (z=500) */
+                pointer-events: none; /* Deixa clicar através na parte transparente */
             }
 
-            /* Grupo da Direita (Filtros + Botão) */
-            .catalog-actions {
-                display: flex;
-                align-items: center;
-                gap: 10px;
-            }
+            /* O resto continua igual... */
+            .catalog-actions { display: flex; align-items: center; gap: 10px; }
 
-            /* Barra de Busca */
             #js-search-input {
-                padding: 10px 20px;
-                width: 100%;
-                max-width: 250px;
-                border-radius: 50px;
-                border: 1px solid #4a2500;
-                background: rgba(255, 255, 255, 0.1);
-                color: #FDB90C;
-                font-size: 0.95rem;
-                outline: none;
-                transition: all 0.3s ease;
+                padding: 10px 20px; width: 100%; max-width: 250px;
+                border-radius: 50px; border: 1px solid #4a2500;
+                background: rgba(255, 255, 255, 0.05); color: #FDB90C;
+                font-size: 0.95rem; outline: none; transition: all 0.3s ease;
             }
             #js-search-input:focus {
-                background: rgba(255, 255, 255, 0.2);
-                border-color: #FDB90C;
+                background: rgba(255, 255, 255, 0.1); border-color: #FDB90C;
                 box-shadow: 0 0 15px rgba(253, 185, 12, 0.2);
             }
             #js-search-input::placeholder { color: rgba(253, 185, 12, 0.5); }
 
-            /* Select de Filtros */
             #js-sort-select {
-                padding: 10px 20px;
-                border-radius: 50px;
-                border: 1px solid #FDB90C;
-                background: #241000;
-                color: #FDB90C;
-                font-size: 0.9rem;
-                font-weight: 600;
-                cursor: pointer;
-                outline: none;
-                text-align: center;
+                padding: 10px 20px; border-radius: 50px;
+                border: 1px solid #FDB90C; background: #241000;
+                color: #FDB90C; font-size: 0.9rem; font-weight: 600;
+                cursor: pointer; outline: none; text-align: center;
                 transition: all 0.3s ease;
             }
             #js-sort-select:hover { background: #3a1a00; transform: translateY(-2px); }
 
-            /* Botão de Encomenda */
             .btn-insta-order {
-                padding: 10px 20px;
-                border-radius: 50px;
-                border: none;
+                padding: 10px 25px; border-radius: 50px; border: none;
                 background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
-                color: #fff;
-                font-size: 0.9rem;
-                font-weight: 600;
-                cursor: pointer;
-                display: flex;
-                align-items: center;
-                gap: 8px;
-                box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-                transition: transform 0.2s ease;
+                color: #fff; font-size: 0.9rem; font-weight: 600;
+                cursor: pointer; display: flex; align-items: center; gap: 8px;
+                box-shadow: 0 4px 15px rgba(0,0,0,0.3); transition: transform 0.2s ease;
                 white-space: nowrap;
             }
             .btn-insta-order:hover { transform: scale(1.05); box-shadow: 0 6px 20px rgba(220, 39, 67, 0.4); }
 
-            /* Responsividade */
             @media (max-width: 768px) {
                 .catalog-navbar {
-                    flex-direction: column;
-                    padding: 15px;
-                    border-radius: 15px; /* Mantém arredondado no mobile também */
-                    top: 10px; /* Ajuste fino para mobile */
+                    flex-direction: column; padding: 20px; border-radius: 20px;
+                    width: 90%; gap: 15px; top: 10px;
                 }
+                /* Ajuste da névoa no mobile */
+                .expansion-overlay::after { height: 180px; } /* Mais alta pq a barra é maior */
+                
                 #js-search-input { max-width: 100%; }
-                .catalog-actions { width: 100%; justify-content: space-between; }
-                #js-sort-select, .btn-insta-order { flex: 1; justify-content: center; }
+                .catalog-actions { width: 100%; flex-direction: column; gap: 10px; }
+                #js-sort-select, .btn-insta-order { width: 100%; justify-content: center; }
             }
 
-            /* Toast */
             .toast-notification {
                 position: fixed; top: 20px; left: 50%; 
                 transform: translateX(-50%) translateY(-100px);

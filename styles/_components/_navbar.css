@@ -87,7 +87,7 @@
 }
 
 .navbar-link:hover {
-    color: #D00000;
+    color: #4a2500; /* Chocolate mais claro/elegante para leitura */
     transform: translateY(-2px);
     text-shadow: none;
 }
@@ -99,7 +99,10 @@
     height: 2px;
     bottom: -4px;
     left: 0;
-    background-color: #D00000;
+    
+    /* Linha Marrom */
+    background-color: #4a2500; 
+    
     transition: width 0.3s ease;
 }
 
