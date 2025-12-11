@@ -2,6 +2,13 @@
  * ARQUIVO DE ESTILOS GLOBAIS - VERSÃO "ARTÍSTICA EDITORIAL"
  */
 
+/* [NOVO] Isso corrige o fundo amarelado nas bordas do celular (overscroll) */
+html {
+    background-color: #ffffff; /* Fundo branco puro */
+    scroll-behavior: smooth;
+    overflow-x: hidden; /* Evita rolagem lateral indesejada */
+}
+
 body {
     /* --- FUNDO MEL ESPARRAMADO (Mantido) --- */
     background-color: #FDB90C;
@@ -58,11 +65,7 @@ h1, h2, h3, h4, h5, h6 {
     padding-bottom: 10px;
 }
 
-/* * PARÁGRAFOS EDITORIAIS 
- * Aqui está a mágica que você pediu.
- * Usamos a mesma família do título (Serif), mas ajustamos o tamanho e espaçamento
- * para ficar legível e sofisticado.
- */
+/* * PARÁGRAFOS EDITORIAIS */
 p {
     font-family: var(--font-serif); /* A mesma dos títulos */
     line-height: 1.8; /* Respiro elegante */
@@ -75,9 +78,9 @@ p {
 /* --- Botão Voltar ao Topo --- */
 .back-to-top {
     position: fixed;
-    bottom: 15px;
+    bottom: 15px; /* Mantido seu ajuste de altura */
     
-    /* [MUDANÇA] Afastando da borda direita (era 2px) */
+    /* Afastando da borda direita */
     right: 20px; 
     
     width: 50px;
@@ -106,14 +109,8 @@ p {
 
 .back-to-top:hover {
     transform: translateY(-5px) scale(1.1);
-    
-    /* [MUDANÇA] Fundo Vermelho Chic */
-    background: #D00000; 
-    
-    /* [MUDANÇA] Seta Branca (Trocando o amarelo) */
-    color: #fff; 
-    
+    background: #D00000; /* Vermelho Chic */
+    color: #fff; /* Seta Branca */
     border-color: transparent;
-    /* Adicionando um brilho vermelho chique */
     box-shadow: 0 5px 15px rgba(208, 0, 0, 0.4); 
 }
